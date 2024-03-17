@@ -2,6 +2,7 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "ios": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "tuple": "cpp"
     }
 }

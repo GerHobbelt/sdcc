@@ -16,150 +16,216 @@ extern "C"
 #include "SDCCbtree.h"
 }
 
-
+std::map<int, unsigned int> key_to_index;
 typedef int merge_type;
-
-structure merge_node{
-  merge_type type;
-  ps_cfg_t &left;
-  ps_cfg_t &right;
-}
-
 stucture ps_cfg_t{
 
   cfg_node &begin; //s node
   cfg_node &end; //t node
   cfg_t &cfg; //graph contains s and t node
-  merge_node &merge; //merge type
+  merge_type type;
+  ps_cfg_t &left;
+  ps_cfg_t &right;
 }
 
-static merge_node merge_node_init(merge_type type, ps_cfg_t &left, ps_cfg_t &right){
-  merge_node &m;
-  m.type = type;
-  m.left = left;
-  m.right = right;
-  return &m;
+static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node){
+  ps_cfg_t ps_cfg;
+  ps_cfg.cfg=cfg;
+  ps_cfg.begin=begin_node;
+  ps_cfg.end=end_node;
+  ps_cfg.type=0;
+  ps_cfg.left=NULL;
+  ps_cfg.right=NULL;
+  return ps_cfg;
 }
 
-//series_merge
-static void series_merge(ps_cfg_t &cfg_1, ps_cfg_t &cfg_2, ps_cfg_t &cfg_3)
-{
-  boost::copy_graph(cfg_1.cfg, cfg_3.cfg, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
-  boost::copy_graph(cfg_2.cfg, cfg_3.cfg, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
-  boost::add_edge(cfg_1.end, cfg_2.begin, cfg_3.cfg);
-  cfg_3.begin = cfg_1.begin;
-  cfg_3.end = cfg_2.end;
-  cfg_3.merge = merge_node_init(1, cfg_1, cfg_2);
-}
-
-//parallel_merge
-static void parallel_merge(ps_cfg_t &cfg_1, ps_cfg_t &cfg_2,ps_cfg_t &cfg_3 )
-{
-  boost::copy_graph(cfg_1.cfg, cfg_3.cfg, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
-  boost::copy_graph(cfg_2.cfg, cfg_3.cfg, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
-  boost::add_edge(cfg_1.begin, cfg_2.begin, cfg_3.cfg);
-  boost::add_edge(cfg_2.end, cfg_1.end, cfg_3.cfg);
-  cfg_3.begin = cfg_1.begin;
-  cfg_3.end = cfg_1.end;
-  cfg_3.merge = merge_node_init(2, cfg_1, cfg_2);
-}
-
-//loop_merge
-static void loop_merge(ps_cfg_t &cfg_1, ps_cfg_t &cfg_2, ps_cfg_t &cfg_3){
-
-  boost::copy_graph(cfg_1.cfg, cfg_3.cfg, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
-  boost::copy_graph(cfg_2.cfg, cfg_3.cfg, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
-  boost::add_edge(cfg_1.begin, cfg_2.begin, cfg_1.cfg);
-  boost::add_edge(cfg_2.end, cfg_1.begin, cfg_1.cfg);
-  cfg_3.begin = cfg_1.begin;
-  cfg_3.end = cfg_1.end;
-  cfg_3.merge = merge_node_init(3, cfg_1, cfg_2);
-}
-
-static int if_loop_end(cfg_t &cfg, vertex vi){
-  if(indegree(vi,cfg)!=1){
-    return 0;
-  }
-  typename GraphTraits::in_edge_iterator in_i, in_end;
-  boost::tie(in_i, in_end) = in_edges(vi, cfg);
-  Vertex src = source(*in_i, cfg);
-  if(indegree(src,cfg)!=1){
-    return 0;
-  }
-  boost::tie(in_i, in_end) = in_edges(source, cfg);
-  Vertex src = source(*in_i, cfg);
-  if(indegree(src,cfg)==2){
-     for ( boost::tie(in_i, in_end) = in_edges(src, cfg);in_i != in_end; ++in_i) {
-          e = *in_i;
-          Vertex src = source(e, cfg);
-          if(src.index<vi.index){
-            flag++;
-          }
-      }
-      if (flag==1){
-        return 1;
-      }
-  }
-  return 0;
-}
-
-static ps_cfg_t get_parallel_part(cfg_t &cfg, vertex begin_loop){
-  graph_traits<Graph>::vertex_iterator vi, vi_end, next;
-  boost::tie(vi, vi_end) = vertices(cfg);
-  vi=begin_loop;
-  for (next = vi; vi != vi_end; vi = next) {
+//break the graph into two series part
+static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+  graph_traits<Graph>::vertex_iterator vi, vi_end, next,f;
+  boost::tie(vi, vi_end) = boost::vertices(cfg);
+  ps_cfg.merge_type=1;
+  vi=begin_node;
+ 
+  for (next = vi; next != vi_end; vi=next){
       ++next;
-      flag=0;
-      if(indegree(vi,cfg)=2 && out_degree(vi, cfg) == 1){
-        typename GraphTraits::in_edge_iterator in_i, in_end;
-        for ( boost::tie(in_i, in_end) = in_edges(vi, cfg);in_i != in_end; ++in_i) {
-          e = *in_i;
-          Vertex src = source(e, cfg);
-          if(src.index<vi.index){
-            flag++;
-          }
-        }
-        if (flag==2){
-          //this is the end of loop, create the tree  
-       }
+      boost::remove_vertex(cfg[i], cfg_1);
+      if (*next==end_node){
+        break;
       }
-      if(indegree(vi,cfg)=1 && out_degree(vi, cfg) == 2){
-        //check if it is the end of loop or the start of parallel
-       }
+  }
+  ps_cfg.right=init_ps_cfg(cfg_1,end_node, *(vi_end-1));
+  f=vi;
+  vi=next;
+  for (next = vi; next != vi_end; vi=next) {
+      ++next;
+      boost::remove_vertex(*vi, cfg_2);
+  }
+  ps_cfg.left=init_ps_cfg(cfg_2,begin_node, *f);
 }
 
+static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+  graph_traits<Graph>::vertex_iterator vi, vi_end, next;
+  boost::tie(vi, vi_end) = boost::vertices(cfg);
+  ps_cfg.merge_type=2;
+  graph_traits < Graph >::out_edge_iterator ei, ei_end;
+  vertex p_s=NULL;
+  for (boost::tie(ei, ei_end) = boost::out_edges(begin_node, cfg); ei != ei_end; ++ei) {
+    vertex target = boost::target ( *ei, g );
+    if (p_s==NULL || key_to_index[source->ic->key]>key_to_index[p_end->ic->key]){
+      p_s=source;
+    }
+  }
+  ++vi;
+  for (next = vi; next != vi_end; vi=next) {
+      ++next;
+      boost::remove_vertex(*vi, cfg_1);
+      if (*next==p_s){
+        break;
+      }
+  }
+  ps_cfg.left=init_ps_cfg(cfg_1,begin_node, end_node);
+  vi=next;
+  --vi_end;
+  for (next = vi; next != vi_end; vi=next) {
+      ++next;
+      boost::remove_vertex(*vi, cfg_2);
+  }
+  ps_cfg.right=init_ps_cfg(cfg_2,begin_node, end_node); 
+}
 
-static pscfg convert_cfg_to_spcfg(cfg_t &cfg){
+static vertex find_parallel_end(cfg_t &cfg){
+  graph_traits<Graph>::vertex_iterator vi, vi_end, next;
+  boost::tie(vi, vi_end) = boost::vertices(cfg);
+  int count=0;
+  for (next = vi; next != vi_end; vi=next) {
+    ++next;
+    if (boost::in_degree(*vi,cfg)=2 ){
+         graph_traits < Graph >::in_edge_iterator ei, ei_end;
+         int flag=0;
+         for (boost::tie(ei, ei_end) = boost::in_edges(*vi, cfg); ei != ei_end; ++ei) {
+             vertex source = boost::source ( *ei, g );
+             if(key_to_index[source->ic->key]<key_to_index[(*vi)->ic->key]){
+               flag++;
+             }
+         }
+         if (flag==2){
+            count=count-1;
+            if (count==0){
+              return *vi;
+            }
+         }else{
+            next=next+1;
+            graph_traits < Graph >::out_edge_iterator eei, eei_end;
+            vertex l_end=NULL;
+            for (boost::tie(eei, eei_end) = boost::out_edges(*next, cfg); eei != eei_end; ++eei) {
+              vertex target = boost::target ( *eei, g );
+              if( l_end=NULL||key_to_index[target->ic->key]>key_to_index[l_end->ic->key]){
+                l_end=target;
+              }
+            }
+            while (*next!=l_end){
+              next++;
+            }
+          }
+         
+    }
+    if(boost::out_degree(*vi,cfg)=2){
+      count++;
+    }
+  }
+  return NULL;
+}
+
+static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+  ps_cfg.merge_type=3;
+  graph_traits<Graph>::vertex_iterator vi, vi_end, next,f;
+  boost::tie(vi, vi_end) = boost::vertices(cfg);
+  f=vi+3;
+  for(next=vi; next!=vi_end; vi=next){
+    ++next;
+    boost::remove_vertex(*vi, cfg_1);
+    if (next==f){
+      break;
+    }
+  }
+  ps_cfg.left=init_ps_cfg(cfg_1,begin_node, *vi);
+  vi=f;
+  for(next=vi; next!=vi_end; vi=next){
+    ++next;
+    boost::remove_vertex(*vi, cfg_1);
+  }
+  ps_cfg.right=init_ps_cfg(cfg_2,*f, *(vi_end-1));
+}
+
+static ps_cfg_t convert_cfg_to_spcfg_one_step(cfg_t &cfg){
   //convert the original cfg to the root node of ps_cfg
   ps_cfg_t pscfg;
-  pscfg.cfg=cfg;
   graph_traits<Graph>::vertex_iterator vi, vi_end, next;
-  boost::tie(vi, vi_end) = vertices(cfg);
+  boost::tie(vi, vi_end) = boost::vertices(cfg);
+  pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
   if (*vi == *(vi_end-1)) {
-    ps_cfg.begin=*vi;
-    ps_cfg.end=vi;
-    ps_cfg.merge=NULL; 
     return ps_cfg;
   }
-  pscfg.begin = *vi;
-  pscfg.end = *(vi_end-1);
-  //series merge - indegree=1, outdegree=1
-  if (indegree(vi,cfg)=0 && out_degree(vi, cfg) == 1 && indegree(next,cfg)=1 ){
+
+  next=vi;
+  next++;
+  //series merge - boost::in_degree=1, boost::out_degree=1
+  if (boost::in_degree(*vi,cfg)=0 && out_degree(*vi, cfg) == 1 && boost::in_degree(*next,cfg)=1 ){
     cfg_t cfg_1, cfg_2;
     boost::copy_graph(cfg, cfg_1, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
     boost::copy_graph(cfg, cfg_2, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
-    remove_vertex(*vi, cfg_2);
-    vi=next;
-    for (next = vi; vi != vi_end; vi = next) {
-      ++next;
-      remove_vertex(*vi, cfg_1);
-   }
-   pscfg.merge = merge_node_init(1, convert_cfg_to_spcfg(cfg_1),convert_cfg_to_spcfg(cfg_2) );
+    break_graph_series(cfg, *vi, *next, cfg_1, cfg_2,pscfg);
+    return pscfg;
   }
   //start of parallel merge - in degree=1, out degree=2, both next verdexes with larger index
   //end of parallel merge - in degree=2, out degree=1, both previous vertexes with smaller index
+  if (boost::out_degree(*vi,cfg)=2){
+    vertex p_end=find_parallel_end(cfg);
+    if(*(vi_end-1)!=p_end){
+      //if the graph is built by parallel merge then series merge
+      cfg_t cfg_1, cfg_2;
+      boost::copy_graph(cfg, cfg_1, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      boost::copy_graph(cfg, cfg_2, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      next=vi;
+      while(*next!=p_end){
+        next++;
+      }
+      break_graph_series(cfg, *vi, *(next+1), cfg_1, cfg_2, pscfg);
+      return pscfg;
+    }else{
+      //if the graph is built by parallel merge directly
+      cfg_t cfg_1, cfg_2;
+      boost::copy_graph(cfg, cfg_1, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      boost::copy_graph(cfg, cfg_2, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      break_graph_parallel(cfg, *vi, p_end, cfg_1, cfg_2, pscfg);
+    }
+    return pscfg;
+  }
   //start of loop merge - in degree=2, out degree=1, one previous vertex is larger and one is smaller
   //end of loop merge - in degree=1, out degree=2, both next vertexes with larger index.
-  //index of end of loop is always 2 larger than loop of begin
-  
+  if (boost::in_degree(*vi,cfg)==2){
+    if (boost::out_degree(*(vi+2),cfg)==1){
+      cfg_t cfg_1, cfg_2;
+      boost::copy_graph(cfg, cfg_1, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      boost::copy_graph(cfg, cfg_2, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      break_graph_loop(cfg, *vi, *(vi+2), cfg_1, cfg_2, pscfg);
+      return pscfg;
+    }else{
+      graph_traits < Graph >::out_edge_iterator eei, eei_end;
+      vertex l_end=NULL;
+      next=vi+2;
+      for (boost::tie(eei, eei_end) = boost::out_edges(*next, cfg); eei != eei_end; ++eei) {
+        vertex target = boost::target ( *eei, g );
+        if( l_end=NULL||key_to_index[target->ic->key]>key_to_index[l_end->ic->key]){
+          l_end=target;
+        }
+      }
+      cfg_t cfg_1, cfg_2;
+      boost::copy_graph(cfg, cfg_1, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      boost::copy_graph(cfg, cfg_2, boost::vertex_copy(forget_properties()).edge_copy(forget_properties()));
+      break_graph_series(cfg, *vi, l_end, cfg_1, cfg_2, pscfg);
+      return pscfg
+    }
+  }
+  return pscfg
 }

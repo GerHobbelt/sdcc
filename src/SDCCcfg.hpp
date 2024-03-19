@@ -229,3 +229,15 @@ static ps_cfg_t convert_cfg_to_spcfg_one_step(cfg_t &cfg){
   }
   return pscfg
 }
+
+static void convert_cfg_to_spcfg(ps_cfg_t &ps_cfg,cfg_t &cfg){
+  ps_cfg_t pscfg=convert_cfg_to_spcfg_one_step(cfg);
+  while(pscfg.left!=NULL || pscfg.right!=NULL){
+    if (pscfg.left!=NULL){
+      convert_cfg_to_spcfg(pscfg.left,pscfg.left.cfg);
+    }
+    if (pscfg.right!=NULL){
+      convert_cfg_to_spcfg(pscfg.right,pscfg.right.cfg);
+    }
+  }
+}

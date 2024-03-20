@@ -230,7 +230,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //series merge - boost::in_degree=1, boost::out_degree=1
   if (boost::in_degree(*vi,cfg)==0 && boost::out_degree(*vi, cfg) == 1){
    // std::cout<<"series merge break!"<<std::endl;
-    boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
+   // boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
     cfg_t cfg_1, cfg_2;
     boost::copy_graph(cfg, cfg_1);
     boost::copy_graph(cfg, cfg_2);
@@ -278,7 +278,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
     }else{
       boost::graph_traits < cfg_t >::out_edge_iterator eei, eei_end;
       //std::cout<<"series merge break!2"<<std::endl;
-      boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
+     // boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
       vertex l_end=0;
       next=vi+2;
       for (boost::tie(eei, eei_end) = boost::out_edges(*next, cfg); eei != eei_end; ++eei) {

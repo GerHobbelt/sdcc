@@ -10,6 +10,7 @@
 #include <boost/container/flat_map.hpp>
 
 #include "common.h"
+#include "SDCCralloc2.hpp"
 
 extern "C"
 {
@@ -33,6 +34,7 @@ struct ps_cfg_t{
   int right;
   int index;
   int parent;
+  assignment_ps_list assignments;
 };
 
 std::map<int,ps_cfg_t> ps_cfg_map;
@@ -63,6 +65,7 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   ps_cfg.right=-1;
   ps_cfg.index=index;
   ps_cfg.parent=parent;
+  ps_cfg.assignments.clear();
   return ps_cfg;
 }
 

@@ -17,6 +17,7 @@ extern "C"
 }
 
 
+
 typedef int merge_type;
 typedef boost::graph_traits<cfg_t>::vertex_descriptor vertex;
 
@@ -30,6 +31,8 @@ struct ps_cfg_t{
   merge_type type;
   int left;
   int right;
+  int index;
+  int parent;
 };
 
 std::map<int,ps_cfg_t> ps_cfg_map;
@@ -50,7 +53,7 @@ static vertex find_vertex_from_node(cfg_node node,cfg_t &cfg){
 
 
 
-static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node){
+static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int index, int parent){
   ps_cfg_t ps_cfg;
   ps_cfg.cfg=&cfg;
   ps_cfg.begin=begin_node;
@@ -58,6 +61,8 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node){
   ps_cfg.type=0;
   ps_cfg.left=-1;
   ps_cfg.right=-1;
+  ps_cfg.index=index;
+  ps_cfg.parent=parent;
   return ps_cfg;
 }
 
@@ -76,7 +81,7 @@ static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, c
       }
   }
   cfg_map[cfg_count]=cfg_1;
-  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[end_node],cfg_1), find_vertex_from_node(cfg[*(vi_end-1)],cfg_1));
+  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[end_node],cfg_1), find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=right;
   ps_cfg.right=ps_cfg_count;
@@ -89,7 +94,7 @@ static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, c
       boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map[cfg_count]=cfg_2;
-  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_2), find_vertex_from_node(cfg[*f],cfg_2));
+  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_2), find_vertex_from_node(cfg[*f],cfg_2),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=left;
   ps_cfg.left=ps_cfg_count;
@@ -118,7 +123,7 @@ static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node,
       }
   }
   cfg_map[cfg_count]=cfg_1;
-  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_1), find_vertex_from_node(cfg[end_node], cfg_1));
+  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_1), find_vertex_from_node(cfg[end_node], cfg_1),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=left;
   ps_cfg.left=ps_cfg_count;
@@ -131,7 +136,7 @@ static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node,
       boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map[cfg_count]=cfg_2;
-  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_2), find_vertex_from_node(cfg[end_node], cfg_2));
+  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_2), find_vertex_from_node(cfg[end_node], cfg_2),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=right;
   ps_cfg.right=ps_cfg_count;
@@ -196,7 +201,7 @@ static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg
     }
   }
   cfg_map[cfg_count]=cfg_1;
-  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node],cfg_1), find_vertex_from_node(cfg[*vi],cfg_1));
+  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node],cfg_1), find_vertex_from_node(cfg[*vi],cfg_1),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=left;
   ps_cfg.left=ps_cfg_count;
@@ -208,7 +213,7 @@ static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg
     boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map[cfg_count]=cfg_2;
-  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[*f],cfg_2), find_vertex_from_node(cfg[*(vi_end-1)],cfg_2));
+  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[*f],cfg_2), find_vertex_from_node(cfg[*(vi_end-1)],cfg_2),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=right;
   ps_cfg.right=ps_cfg_count;
@@ -230,7 +235,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //series merge - boost::in_degree=1, boost::out_degree=1
   if (boost::in_degree(*vi,cfg)==0 && boost::out_degree(*vi, cfg) == 1){
    // std::cout<<"series merge break!"<<std::endl;
-   // boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
+    //boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
     cfg_t cfg_1, cfg_2;
     boost::copy_graph(cfg, cfg_1);
     boost::copy_graph(cfg, cfg_2);
@@ -278,7 +283,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
     }else{
       boost::graph_traits < cfg_t >::out_edge_iterator eei, eei_end;
       //std::cout<<"series merge break!2"<<std::endl;
-     // boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
+      //boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
       vertex l_end=0;
       next=vi+2;
       for (boost::tie(eei, eei_end) = boost::out_edges(*next, cfg); eei != eei_end; ++eei) {

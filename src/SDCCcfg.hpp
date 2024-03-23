@@ -34,7 +34,9 @@ struct ps_cfg_t{
   int right;
   int index;
   int parent;
-  assignment_ps_list assignments;
+  varset_t begin_v;
+  varset_t end_v;
+  assignment_ps_map assignments;
 };
 
 std::map<int,ps_cfg_t> ps_cfg_map;
@@ -66,6 +68,8 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   ps_cfg.index=index;
   ps_cfg.parent=parent;
   ps_cfg.assignments.clear();
+  ps_cfg.begin_v=cfg[begin_node].alive;
+  ps_cfg.end_v=cfg[end_node].dying;
   return ps_cfg;
 }
 

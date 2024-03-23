@@ -36,50 +36,9 @@ extern "C"
 #define MAX_NUM_REGS 9
 
 
-typedef std::vector<var_t> f;
-
-//assignment for one instuction
-struct i_assignment_ps{
-   f registers_begin;
-   f registers_end;
-
-   cfg_node *node; //the corresponding node(with ic) in the cfg
-   float cost; //cost of the assignment
-
-   i_assignment_ps(){
-      for(int i=0; i<MAX_NUM_REGS; i++){
-         registers_begin[i]=-1;
-         registers_end[i]=-1;
-      }
-      node = NULL;
-   }
-
-   bool equal(i_assignment_ps *a){
-      for(int i=0; i<MAX_NUM_REGS; i++){
-         if(registers_end[i] != a->registers_end[i] || registers_begin[i] != a->registers_begin[i]){
-            return false;
-         }
-      }
-      return true;
-   }
-};
-
-//assignment for graph
-struct assignment_ps{
-   float s; //cost
-   std::vector<i_assignment_ps> insts; //assignments for each instruction
-   i_assignment_ps begin_i;
-   i_assignment_ps end_i;
-};
-
-typedef std::vector<assignment_ps> assignment_ps_list;
-
-
 //we need to see if we can get the cost of each instruction directly from this function
 //I hope it is not hard, but I am not sure.
 //static float instruction_cost(i_assignment_ps &a);
-
-typedef std::map<std::pair<f,f>,assignment_ps> assignment_ps_map;
 
 void calcSubset(f& A, std::vector<f >& res,
                 f& subset, int index)
@@ -135,20 +94,20 @@ static std::vector<f> generate_possibility(f variables){
         for(int i=0;i<len;i++){
           v[MAX_NUM_REGS-len+i]=sub[i];
         }
-        cout<<"current sub:"<<endl;
-        for(auto i:v){
-          cout<<i<<" ";
-        }
-        cout<<endl;
-        vector<f> p=generate_permutation(v);
-        cout<<"current p:"<<endl;
-        for(auto i:p){
-          for(auto j:i){
-            cout<<j<<" ";
-          }
-          cout<<endl;
-        }
-        cout<<endl;
+        //cout<<"current sub:"<<endl;
+        //for(auto i:v){
+        //  cout<<i<<" ";
+        //}
+        //cout<<endl;
+        std::vector<f> p=generate_permutation(v);
+        //cout<<"current p:"<<endl;
+        //for(auto i:p){
+        //  for(auto j:i){
+        //    cout<<j<<" ";
+        //  }
+        //  cout<<endl;
+        //}
+        //cout<<endl;
         results.reserve(results.size() + distance(p.begin(),p.end()));
         results.insert(results.end(),p.begin(),p.end());
       }
@@ -157,7 +116,7 @@ static std::vector<f> generate_possibility(f variables){
 }
 
 //this function is used to combine two assignment_ps_list while series merge
-staic assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b){
+static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
@@ -171,10 +130,12 @@ staic assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b
             assignment_ps ab=b_map[std::pair<f,f>(j,k)];
             assignment_ps ac;
             ac.s = aa.s + ab.s;
+            ac.begin_i = aa.begin_i;
+            ac.end_i = ab.end_i;
             ac.insts.reserve(aa.insts.size() + ab.insts.size());
             ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
             ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,k)]==NULL || c[std::pair<f,f>(i,k)].s > ac.s)
+            if(c[std::pair<f,f>(i,k)].s > ac.s)
                c[std::pair<f,f>(i,k)] = ac;
          }
       }
@@ -182,7 +143,7 @@ staic assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b
    return c;
 }
 
-static combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b){
+static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
@@ -194,10 +155,12 @@ static combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b){
             assignment_ps ab=b_map[std::pair<f,f>(i,j)];
             assignment_ps ac;
             ac.s = aa.s + ab.s - aa.begin_i.cost - aa.end_i.cost;
+            ac.begin_i = aa.begin_i;
+            ac.end_i = ab.end_i;
             ac.insts.reserve(aa.insts.size() + ab.insts.size());
             ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
             ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,j)]==NULL || c[std::pair<f,f>(i,j)].s > ac.s)
+            if(c[std::pair<f,f>(i,j)].s > ac.s)
                c[std::pair<f,f>(i,j)] = ac;
          }
       }
@@ -206,7 +169,7 @@ static combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b){
    
 }
 
-static combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b){
+static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
@@ -218,17 +181,32 @@ static combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b){
             assignment_ps ab=b_map[std::pair<f,f>(i,j)];
             assignment_ps ac;
             ac.s = aa.s + ab.s;
+            ac.begin_i = aa.begin_i;
+            ac.end_i = aa.end_i;
             ac.insts.reserve(aa.insts.size() + ab.insts.size());
             ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
             ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,j)]==NULL || c[std::pair<f,f>(i,j)].s > ac.s)
+            if(c[std::pair<f,f>(i,j)].s > ac.s)
                c[std::pair<f,f>(i,j)] = ac;
          }
       }
    return c;
 }
 
-float instruction_cost(const i_assignment_ps &a);
+float instruction_cost(const i_assignment_ps &a){
+   float c=10.0f;
+   for (auto i:a.registers_begin){
+      if(i!=-1){
+         c=c-0.5f;
+      }
+   }
+   for (auto i:a.registers_end){
+      if(i!=-1){
+         c=c-0.5f;
+      }
+   }
+   return c;
+}
 
 static void initlize_assignment_ps_list(ps_cfg_t &a){
    assignment_ps_map c;
@@ -237,30 +215,32 @@ static void initlize_assignment_ps_list(ps_cfg_t &a){
    for(auto i:begin){
       for(auto j:end){
          assignment_ps aa;
-         aa.s = 0;
-         aa.insts.reserve(1);
-         i_assignment_ps a;
-         a.cost = instruction_cost(a);
-         a.registers_begin = i;
-         a.registers_end = j;
-         aa.insts.push_back(a);
+         i_assignment_ps as;
+         as.registers_begin = i;
+         as.registers_end = j;
+         as.node=&((*(a.cfg))[a.begin]);
+         as.cost = instruction_cost(as);
+         aa.s = as.cost;
+         aa.begin_i = as;
+         aa.end_i = as;
+         aa.insts.push_back(as);
          c[std::pair<f,f>(i,j)] = aa;
       }
    }
    a.assignments = c;
-
 }
 
 static void generate_spcfg(ps_cfg_t &ps_cfg){
+
    if (ps_cfg.assignments.size() == 0){
-      if(ps_cfg.left==-1 && ps_cfg.right==-1){
-         init_assignment_ps_list(&ps_cfg);
+      if(ps_cfg.left==-1 || ps_cfg.right==-1){
+         initlize_assignment_ps_list(ps_cfg);
          return;
       }
-      if (ps_cfg_map[ps_cfg.left].assgnments.size() == 0){
+      if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
          generate_spcfg(ps_cfg_map[ps_cfg.left]);
       }
-      if (ps_cfg_map[ps_cfg.right].assgnments.size() == 0){
+      if (ps_cfg_map[ps_cfg.right].assignments.size() == 0){
          generate_spcfg(ps_cfg_map[ps_cfg.right]);
       }
       switch (ps_cfg.type){
@@ -286,7 +266,7 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
    }
    assignment_ps_map a = ps_cfg.assignments;
    assignment_ps b;
-   b.s = std::numeric_limits<float>::infinity()
+   b.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
       if(b.s > i.second.s){
          b = i.second;
@@ -294,4 +274,3 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
    }
    return b;
 }
-

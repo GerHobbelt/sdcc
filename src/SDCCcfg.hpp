@@ -18,9 +18,50 @@ extern "C"
 }
 
 
-
 typedef int merge_type;
 typedef boost::graph_traits<cfg_t>::vertex_descriptor vertex;
+typedef std::vector<var_t> f;
+
+#define MAX_NUM_REGS 9
+
+
+//assignment for one instuction
+struct i_assignment_ps{
+   f registers_begin;
+   f registers_end;
+
+   cfg_node *node; //the corresponding node(with ic) in the cfg
+   float cost; //cost of the assignment
+
+   i_assignment_ps(){
+      for(int i=0; i<MAX_NUM_REGS; i++){
+         registers_begin[i]=-1;
+         registers_end[i]=-1;
+      }
+      node = NULL;
+      cost = std::numeric_limits<float>::infinity();
+   }
+
+   bool equal(i_assignment_ps *a){
+      for(int i=0; i<MAX_NUM_REGS; i++){
+         if(registers_end[i] != a->registers_end[i] || registers_begin[i] != a->registers_begin[i]){
+            return false;
+         }
+      }
+      return true;
+   }
+};
+
+//assignment for graph
+struct assignment_ps{
+   float s; //cost
+   std::vector<i_assignment_ps> insts; //assignments for each instruction
+   i_assignment_ps begin_i;
+   i_assignment_ps end_i;
+};
+
+
+typedef std::map<std::pair<f,f>,assignment_ps> assignment_ps_map;
 
 
 

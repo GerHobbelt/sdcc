@@ -193,22 +193,11 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    return c;
 }
 
-float instruction_cost(const i_assignment_ps &a){
-   float c=10.0f;
-   for (auto i:a.registers_begin){
-      if(i!=-1){
-         c=c-0.5f;
-      }
-   }
-   for (auto i:a.registers_end){
-      if(i!=-1){
-         c=c-0.5f;
-      }
-   }
-   return c;
-}
+template <class I_t>
+static float instruction_cost(const i_assignment_ps &ia, const I_t &I);
 
-static void initlize_assignment_ps_list(ps_cfg_t &a){
+template <class I_t>
+static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(a.end_v);
@@ -219,7 +208,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a){
          as.registers_begin = i;
          as.registers_end = j;
          as.node=&((*(a.cfg))[a.begin]);
-         as.cost = instruction_cost(as);
+         as.cost = instruction_cost(as,I);
          aa.s = as.cost;
          aa.begin_i = as;
          aa.end_i = as;
@@ -230,18 +219,19 @@ static void initlize_assignment_ps_list(ps_cfg_t &a){
    a.assignments = c;
 }
 
-static void generate_spcfg(ps_cfg_t &ps_cfg){
+template <class I_t>
+static void generate_spcfg(ps_cfg_t &ps_cfg, I_t &I){
 
    if (ps_cfg.assignments.size() == 0){
       if(ps_cfg.left==-1 || ps_cfg.right==-1){
-         initlize_assignment_ps_list(ps_cfg);
+         initlize_assignment_ps_list(ps_cfg, I);
          return;
       }
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
-         generate_spcfg(ps_cfg_map[ps_cfg.left]);
+         generate_spcfg(ps_cfg_map[ps_cfg.left], I);
       }
       if (ps_cfg_map[ps_cfg.right].assignments.size() == 0){
-         generate_spcfg(ps_cfg_map[ps_cfg.right]);
+         generate_spcfg(ps_cfg_map[ps_cfg.right], I);
       }
       switch (ps_cfg.type){
          case 1:

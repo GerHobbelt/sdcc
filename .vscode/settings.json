@@ -71,6 +71,8 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "algorithm": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "chrono": "cpp",
+        "*.def": "cpp"
     }
 }

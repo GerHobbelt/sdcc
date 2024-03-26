@@ -17,7 +17,7 @@ extern "C"
 #define REG_X 1
 #define REG_H 2
 
-void getIndex(vector<var_t> v, int K) 
+static int getIndex(vector<var_t> v, int K) 
 { 
     auto it = find(v.begin(), v.end(), K); 
   
@@ -28,12 +28,12 @@ void getIndex(vector<var_t> v, int K)
         // calculating the index 
         // of K 
         int index = it - v.begin(); 
-        cout << index << endl; 
+        return index;
     } 
     else { 
         // If the element is not 
         // present in the vector 
-        cout << "-1" << endl; 
+        return -1;
     } 
 } 
 

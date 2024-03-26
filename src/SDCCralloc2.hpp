@@ -251,9 +251,10 @@ static void generate_spcfg(ps_cfg_t &ps_cfg, I_t &I){
    }
 }
 
-static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
+template <class I_t>
+static assignment_ps get_optimal(ps_cfg_t &ps_cfg,I_t &I){
    if (ps_cfg.assignments.size() == 0){
-      generate_spcfg(ps_cfg);
+      generate_spcfg(ps_cfg, I);
    }
    assignment_ps_map a = ps_cfg.assignments;
    assignment_ps b;

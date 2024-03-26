@@ -16,7 +16,7 @@ extern "C"
 #define REG_X 1
 #define REG_H 2
 
-static int getIndex(std::vector<int> v, int K) 
+static int getIndex(std::vector<short int> v, int K) 
 { 
     auto it = find(v.begin(), v.end(), K); 
   
@@ -115,7 +115,7 @@ static bool operand_is_ax(const operand *o, const i_assignment_ps &ia, const cfg
     return(false);
   
   // Register combinations code generation cannot handle yet (AX, AH, XH, HA).
-  if(std::binary_search(node.alive.begin(), node.alive.end(), oi->second) && std::binary_search(G[i].alive.begin(), G[i].alive.end(), oi2->second))
+  if(std::binary_search(node.alive.begin(), node.alive.end(), oi->second) && std::binary_search(node.alive.begin(), node.alive.end(), oi2->second))
     {
       const reg_t l = getIndex(ia.registers_begin, oi->second);
       const reg_t h = getIndex(ia.registers_begin, oi2->second);

@@ -108,9 +108,8 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   ps_cfg.index=index;
   ps_cfg.parent=parent;
   ps_cfg.assignments.clear();
-  auto view = boost::transform(cfg[end_node].dying, std::mem_fn(&myclass::get_a));
-  copy(cfg[begin_node].alive.begin(), cfg[begin_node].alive.end(), ps_cfg.begin_v.begin());
-  copy(view.dying.begin(), view.dying.end(), ps_cfg.end_v.begin());
+  ps_cfg.begin_v=cfg[begin_node].alive;
+  ps_cfg.end_v= std::vector<short int> myvector(cfg[end_node].dying.begin(), cfg[end_node].dying.end());;
   return ps_cfg;
 }
 

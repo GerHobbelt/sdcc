@@ -16,7 +16,7 @@ extern "C"
 #define REG_X 1
 #define REG_H 2
 
-static int getIndex(std::vector<short int> v, int K) 
+static int getIndex(std::vector<short int> v, short int K) 
 { 
     auto it = find(v.begin(), v.end(), K); 
   
@@ -421,7 +421,7 @@ static bool inst_sane(const i_assignment_ps &ia,cfg_node &node, const I_t &I)
 template <class I_t>
 static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
 {
-  cfg_node node=&(ia.node);
+  cfg_node node=*(ia.node);
   iCode *ic = node.ic;
   float c;
 
@@ -563,7 +563,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   generate_spcfg(root,I2);
   
 
-  const assignment &winner = get_optimal(root);
+  const assignment_ps &winner = get_optimal(root,I2);
 
 #ifdef DEBUG_RALLOC_DEC
   std::cout << "Winner: ";

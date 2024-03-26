@@ -16,7 +16,7 @@ extern "C"
 #define REG_X 1
 #define REG_H 2
 
-int getIndex(std::vector<short int> v, int K) 
+static int getIndex(std::vector<short int> v, int K) 
 { 
     auto it = find(v.begin(), v.end(), K); 
   
@@ -282,9 +282,9 @@ static bool AXinst_ok(const i_assignment_ps &ia, const cfg_node &node, const I_t
   bool right_in_A = operand_in_reg(result, REG_A, ia, node);
   bool right_in_X = operand_in_reg(result, REG_X, ia, node);
 
-  bool result_is_ax = operand_is_ax (result, ia, node);
-  bool left_is_ax = operand_is_ax (left, ia, node);
-  bool right_is_ax = operand_is_ax (right, ia, node);
+  bool result_is_ax = operand_is_ax (result, ia, node,I);
+  bool left_is_ax = operand_is_ax (left, ia, node,I);
+  bool right_is_ax = operand_is_ax (right, ia, node,I);
 
   if (!result_is_ax && !left_is_ax && !right_is_ax)
     return(true);

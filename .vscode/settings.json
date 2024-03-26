@@ -73,6 +73,7 @@
         "algorithm": "cpp",
         "functional": "cpp",
         "chrono": "cpp",
-        "*.def": "cpp"
+        "*.def": "cpp",
+        "cfg.h": "c"
     }
 }

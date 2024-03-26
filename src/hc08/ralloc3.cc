@@ -303,12 +303,12 @@ static void set_surviving_regs(const i_assignment_ps &ia, cfg_node &node, const 
   cfg_alive_t::const_iterator v, v_end;
   for (v = node.alive.begin(), v_end = node.alive.end(); v != v_end; ++v)
     {
-      if(findIndex(ia.registers_begin,*v) < 0)
+      if(getIndex(ia.registers_begin,*v) < 0)
         continue;
-      ic->rMask = bitVectSetBit(ic->rMask, findIndex(ia.registers_begin,v));
+      ic->rMask = bitVectSetBit(ic->rMask, getIndex(ia.registers_begin,v));
       if(node.dying.find(*v) == node.dying.end())
         if(!((IC_RESULT(ic) && !POINTER_SET(ic)) && IS_SYMOP(IC_RESULT(ic)) && OP_SYMBOL_CONST(IC_RESULT(ic))->key == I[*v].v))
-          ic->rSurv = bitVectSetBit(ic->rSurv, findIndex(ia.registers_begin,*v));
+          ic->rSurv = bitVectSetBit(ic->rSurv, getIndex(ia.registers_begin,*v));
     }
 }
 
@@ -322,9 +322,9 @@ static void assign_operand_for_cost(operand *o, const i_assignment_ps &ia,  cfg_
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
     {
       var_t v = oi->second;
-      if(findIndex(ia.registers_begin,v) >= 0)
+      if(getIndex(ia.registers_begin,v) >= 0)
         { 
-          sym->regs[I[v].byte] = regshc08 + findIndex(ia.registers_begin,v);   
+          sym->regs[I[v].byte] = regshc08 + getIndex(ia.registers_begin,v);   
           sym->isspilt = false;
           sym->nRegs = I[v].size;
           sym->accuse = 0;
@@ -386,8 +386,8 @@ static bool operand_sane(const operand *o, const i_assignment_ps &ia, cfg_node &
   // Register combinations code generation cannot handle yet (AH, XH, HA).
   if(std::binary_search(node.alive.begin(),node.alive.end(), oi->second) && std::binary_search(node.alive.begin(), node.alive.end(), oi2->second))
     {
-      const reg_t l = findIndex(ia.registers_begin, oi->second);
-      const reg_t h = findIndex(ia.registers_begin, oi2->second);
+      const reg_t l = getIndex(ia.registers_begin, oi->second);
+      const reg_t h = getIndex(ia.registers_begin, oi2->second);
       if(l == REG_A && h == REG_H || l == REG_H)
         return(false);
     }

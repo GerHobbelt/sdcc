@@ -26,7 +26,7 @@
 #include <boost/container/flat_map.hpp>
 
 #include "common.h"
-#include "SDCCcfg.h"
+#include "SDCCcfg.hpp"
 
 extern "C"
 {

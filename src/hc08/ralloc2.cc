@@ -634,6 +634,19 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   for(unsigned int i = 0; i < boost::num_vertices(G); i++)
     set_surviving_regs(winner, i, G, I);
+  std::ofstream outputFile("optimalCost.txt");
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << "1.philip's optimal cost: "<< winner.s<<"\n";  // Write a line of text to the file
+   
+    // Close the file
+    outputFile.close();  // Close the file after writing
+
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
+
 
   return(!assignment_optimal);
 }

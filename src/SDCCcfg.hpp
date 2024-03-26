@@ -109,7 +109,7 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   ps_cfg.parent=parent;
   ps_cfg.assignments.clear();
   cfg_dying_t::const_iterator v2;
-  for (v2 = cfg[i].dying.begin(); v2 != cfg[i].dying.end(); ++v)
+  for (v2 = cfg[end_node].dying.begin(); v2 != cfg[end_node].dying.end(); ++v2)
          ps_cfg.end_v.push_back(*v2);
   ps_cfg.begin_v=cfg[begin_node].alive;
     return ps_cfg;

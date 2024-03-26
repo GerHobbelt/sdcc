@@ -1292,7 +1292,7 @@ static void dump_cfg(const cfg_t &cfg)
         os << *v << " ";
       os<< "dying: ";
       cfg_dying_t::const_iterator v2;
-      for (v2 = cfg[i].dying.begin(); v2 != cfg[i].dying.end(); ++v)
+      for (v2 = cfg[i].dying.begin(); v2 != cfg[i].dying.end(); ++v2)
         os << *v2 << " ";
       name[i] = os.str();
     }

@@ -16,7 +16,7 @@ extern "C"
 #define REG_X 1
 #define REG_H 2
 
-static int getIndex(vector<int> v, int K) 
+static int getIndex(std::vector<int> v, int K) 
 { 
     auto it = find(v.begin(), v.end(), K); 
   

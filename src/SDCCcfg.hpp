@@ -109,7 +109,7 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   ps_cfg.parent=parent;
   ps_cfg.assignments.clear();
   ps_cfg.begin_v=cfg[begin_node].alive;
-  ps_cfg.end_v= std::vector<short int> myvector(cfg[end_node].dying.begin(), cfg[end_node].dying.end());;
+  ps_cfg.end_v(cfg[end_node].dying.begin(), cfg[end_node].dying.end());;
   return ps_cfg;
 }
 

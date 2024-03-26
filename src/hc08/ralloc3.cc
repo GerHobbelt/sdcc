@@ -2,7 +2,7 @@
 #define CH_SALLOC
 
 #include "SDCCralloc.hpp"
-#include "SDCCcfg.hpp"
+#include "SDCCralloc2.hpp"
 
 extern "C"
 {

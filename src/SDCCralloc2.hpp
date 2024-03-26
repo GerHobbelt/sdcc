@@ -26,6 +26,7 @@
 #include <boost/container/flat_map.hpp>
 
 #include "common.h"
+#include "SDCCcfg.h"
 
 extern "C"
 {
@@ -40,7 +41,7 @@ extern "C"
 //I hope it is not hard, but I am not sure.
 //static float instruction_cost(i_assignment_ps &a);
 
-staic void calcSubset(f& A, std::vector<f >& res,
+static void calcSubset(f& A, std::vector<f>& res,
                 f& subset, int index)
 {
     // Add the current subset to the result list

@@ -16,7 +16,7 @@ extern "C"
 #define REG_X 1
 #define REG_H 2
 
-static int getIndex(std::vector<short int> v, int K) 
+int getIndex(std::vector<short int> v, int K) 
 { 
     auto it = find(v.begin(), v.end(), K); 
   
@@ -194,11 +194,11 @@ static bool XAinst_ok( const i_assignment_ps &ia ,const cfg_node &node, const I_
   bool left_in_A = operand_in_reg(result, REG_A, ia, node);
   bool left_in_X = operand_in_reg(result, REG_X, ia, node);
 
-  const cfg_dying_t &dying = G[i].dying;
+  const cfg_dying_t &dying = node.dying;
 
-  bool dying_A = result_in_A || dying.find(ia.registers_end[REG_A]) != dying.end() || dying.find(ia.registers_begin[REG_A]]) != dying.end();
-  bool dying_H = result_in_H || dying.find(ia.registers_end[REG_H]) != dying.end() || dying.find(ia.registers_begin[REG_H]]) != dying.end();
-  bool dying_X = result_in_X || dying.find(ia.registers_end[REG_X]) != dying.end() || dying.find(ia.registers_begin[REG_X]]) != dying.end();
+  bool dying_A = result_in_A || dying.find(ia.registers_end[REG_A]) != dying.end() || dying.find(ia.registers_begin[REG_A]) != dying.end();
+  bool dying_H = result_in_H || dying.find(ia.registers_end[REG_H]) != dying.end() || dying.find(ia.registers_begin[REG_H]) != dying.end();
+  bool dying_X = result_in_X || dying.find(ia.registers_end[REG_X]) != dying.end() || dying.find(ia.registers_begin[REG_X]) != dying.end();
 
   bool result_only_XA = (result_in_X || unused_X || dying_X) && (result_in_A || unused_A || dying_A);
 
@@ -282,9 +282,9 @@ static bool AXinst_ok(const i_assignment_ps &ia, const cfg_node &node, const I_t
   bool right_in_A = operand_in_reg(result, REG_A, ia, node);
   bool right_in_X = operand_in_reg(result, REG_X, ia, node);
 
-  bool result_is_ax = operand_is_ax (result, ia, i, node);
-  bool left_is_ax = operand_is_ax (left, ia, i, node);
-  bool right_is_ax = operand_is_ax (right, ia, i, node);
+  bool result_is_ax = operand_is_ax (result, ia, node);
+  bool left_is_ax = operand_is_ax (left, ia, node);
+  bool right_is_ax = operand_is_ax (right, ia, node);
 
   if (!result_is_ax && !left_is_ax && !right_is_ax)
     return(true);
@@ -421,7 +421,7 @@ static bool inst_sane(const i_assignment_ps &ia,cfg_node &node, const I_t &I)
 template <class I_t>
 static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
 {
-  cfg_node node=ia.node;
+  cfg_node node=&(ia.node);
   iCode *ic = node.ic;
   float c;
 
@@ -602,7 +602,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
 
   ps_cfg_t root;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
-  boost::tie(vi, vi_end) = boost::vertices(cfg);
+  boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*vi_end,-1,-1);
 
   return  get_ps_optimal_cst(root,conflict_graph);

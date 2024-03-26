@@ -305,7 +305,7 @@ static void set_surviving_regs(const i_assignment_ps &ia, cfg_node &node, const 
     {
       if(getIndex(ia.registers_begin,*v) < 0)
         continue;
-      ic->rMask = bitVectSetBit(ic->rMask, getIndex(ia.registers_begin,v));
+      ic->rMask = bitVectSetBit(ic->rMask, getIndex(ia.registers_begin,*v));
       if(node.dying.find(*v) == node.dying.end())
         if(!((IC_RESULT(ic) && !POINTER_SET(ic)) && IS_SYMOP(IC_RESULT(ic)) && OP_SYMBOL_CONST(IC_RESULT(ic))->key == I[*v].v))
           ic->rSurv = bitVectSetBit(ic->rSurv, getIndex(ia.registers_begin,*v));

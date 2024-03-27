@@ -559,10 +559,11 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
+  std::cout<<"I2 created"<<std::endl;
 
   generate_spcfg(root,I2);
   
-
+ std::cout<<"fi;; spcfg with assignments"<<std::endl;
   const assignment_ps &winner = get_optimal(root,I2);
 
 #ifdef DEBUG_RALLOC_DEC

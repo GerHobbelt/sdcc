@@ -537,7 +537,7 @@ static float assign_operand_for_cost_easy(operand *o, const assignment &a, unsig
 
 
 template <class G_t, class I_t>
-static float assign_operands_for_cost_easy(const assignment &a, unsigned short int i, const G_t &G, const I_t &I,float)
+static float assign_operands_for_cost_easy(const assignment &a, unsigned short int i, const G_t &G, const I_t &I,float c)
 {
   const iCode *ic = G[i].ic;
   
@@ -551,7 +551,7 @@ static float assign_operands_for_cost_easy(const assignment &a, unsigned short i
       c=assign_operand_for_cost_easy(IC_RIGHT(ic), a, i, G, I,c);
       c=assign_operand_for_cost_easy(IC_RESULT(ic), a, i, G, I,c);
     }
-  return c
+  return c;
 }
 
 

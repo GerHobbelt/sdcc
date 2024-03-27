@@ -553,7 +553,7 @@ static float assign_operands_for_cost_easy(const i_assignment_ps &ia,  cfg_node 
       c=assign_operand_for_cost_easy(IC_RIGHT(ic), ia, node, I);
       c=assign_operand_for_cost_easy(IC_RESULT(ic), ia, node, I);
     }
-    
+    return c;
     //TOFIX: This is a hack to handle the case where the result of a SEND is used in the next instruction.
   //if(ic->op == SEND && ic->builtinSEND)
    // {

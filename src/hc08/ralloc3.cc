@@ -600,7 +600,10 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*vi_end,-1,-1);
   convert_cfg_to_spcfg(root);
+
+  std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
+  std::cout<<"get cost"<<std::endl;
 
    std::ofstream outputFile("optimalCost.txt");
    if (outputFile.is_open()) {  // Check if the file was successfully opened

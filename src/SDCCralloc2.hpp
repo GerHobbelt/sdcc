@@ -41,12 +41,12 @@ extern "C"
 //I hope it is not hard, but I am not sure.
 //static float instruction_cost(i_assignment_ps &a);
 
-vector<var_t> unionVectors(vector<var_t>& vec1, 
-                         vector<var_t>& vec2) 
+static std::vector<var_t> unionVectors(std::vector<var_t>& vec1, 
+                         std::vector<var_t>& vec2) 
 { 
-    vector<var_t> ans; 
+    std::vector<var_t> ans; 
     // Declare the set to store the unique elements 
-    set<var_t> s; 
+    std::set<var_t> s; 
     // insert elements from vector 1 into the set 
     for (int i = 0; i < vec1.size(); i++) { 
         s.insert(vec1[i]); 

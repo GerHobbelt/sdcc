@@ -21,7 +21,7 @@ typedef int merge_type;
 typedef boost::graph_traits<cfg_t>::vertex_descriptor vertex;
 typedef std::vector<var_t> f;
 
-#define MAX_NUM_REGS 9
+#define MAX_NUM_REGS 3
 
 
 //assignment for one instuction
@@ -33,14 +33,14 @@ struct i_assignment_ps{
    float cost; //cost of the assignment
 
    i_assignment_ps(){
-    std::cout<<"i_assignment_ps constructor"<<std::endl;
+   // std::cout<<"i_assignment_ps constructor"<<std::endl;
       registers_begin.clear();
       registers_end.clear();
       for(int i=0; i<MAX_NUM_REGS; i++){
          registers_begin.push_back(-1);
          registers_end.push_back(-1);
       }
-      std::cout<<"i_assignment_ps constructor end"<<std::endl;
+     // std::cout<<"i_assignment_ps constructor end"<<std::endl;
       node = NULL;
       cost = std::numeric_limits<float>::infinity();
    }
@@ -63,10 +63,10 @@ struct assignment_ps{
    i_assignment_ps end_i;
 
    assignment_ps(){
-    std::cout<<"assignment_ps constructor"<<std::endl;
+    //std::cout<<"assignment_ps constructor"<<std::endl;
       s = std::numeric_limits<float>::infinity();
       insts.clear();
-      std::cout<<"assignment_ps constructor end"<<std::endl;
+     // std::cout<<"assignment_ps constructor end"<<std::endl;
       begin_i = i_assignment_ps();
       end_i = i_assignment_ps();
    }

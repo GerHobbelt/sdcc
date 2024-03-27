@@ -742,7 +742,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   ps_cfg_t root;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
-  root=init_ps_cfg(control_flow_graph,*vi,*vi_end,-1,-1);
+  root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
   convert_cfg_to_spcfg(root);
 
   std::cout<<"spcfg created"<<std::endl;

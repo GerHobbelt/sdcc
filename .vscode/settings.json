@@ -74,6 +74,8 @@
         "functional": "cpp",
         "chrono": "cpp",
         "*.def": "cpp",
-        "cfg.h": "c"
+        "cfg.h": "c",
+        "ralloc.h": "c",
+        "common.h": "c"
     }
 }

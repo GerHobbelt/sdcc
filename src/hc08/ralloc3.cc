@@ -605,7 +605,21 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*vi_end,-1,-1);
 
-  return  get_ps_optimal_cst(root,conflict_graph);
+  float cost= get_ps_optimal_cst(root,conflict_graph);
 
+   std::ofstream outputFile("optimalCost.txt");
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << "2.our's optimal cost: "<<cost<<"\n";  // Write a line of text to the file
+   
+    // Close the file
+    outputFile.close();  // Close the file after writing
+
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
+
+  return  cost;
 }
 

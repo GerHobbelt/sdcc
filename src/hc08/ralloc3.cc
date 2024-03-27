@@ -499,8 +499,11 @@ static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
     case CRITICAL:
     case ENDCRITICAL:
     case SWAP:
+      std::cout<<"assign operands for cost"<<std::endl;
       assign_operands_for_cost(ia, node, I);
+      std::cout<<"set surviving regs"<<std::endl;
       set_surviving_regs(ia, node, I);
+      std::cout<<"get cost"<<std::endl;
       c = dryhc08iCode(ic);
       std :: cout<<"cost is "<<c<<std::endl;
       ic->generated = false;

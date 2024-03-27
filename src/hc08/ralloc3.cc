@@ -509,6 +509,7 @@ static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
       ic->generated = false;
       return(c);
     default:
+      std::cout<<"default"<<std::endl;
       return(0.0f);
     }
 }

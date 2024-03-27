@@ -544,14 +544,14 @@ static float assign_operands_for_cost_easy(const i_assignment_ps &ia,  cfg_node 
   const iCode *ic = node.ic;
   
   if(ic->op == IFX)
-    c=assign_operand_for_cost_easy(IC_COND(ic), ia, node,I);
+    c=assign_operand_for_cost_easy(IC_COND(ic), ia, node,I,c);
   else if(ic->op == JUMPTABLE)
-    c=assign_operand_for_cost_easy(IC_JTCOND(ic), ia, node, I);
+    c=assign_operand_for_cost_easy(IC_JTCOND(ic), ia, node, I,c);
   else
     {
-      c=assign_operand_for_cost_easy(IC_LEFT(ic), ia, node, I);
-      c=assign_operand_for_cost_easy(IC_RIGHT(ic), ia, node, I);
-      c=assign_operand_for_cost_easy(IC_RESULT(ic), ia, node, I);
+      c=assign_operand_for_cost_easy(IC_LEFT(ic), ia, node, I,c);
+      c=assign_operand_for_cost_easy(IC_RIGHT(ic), ia, node, I,c);
+      c=assign_operand_for_cost_easy(IC_RESULT(ic), ia, node, I,c);
     }
     return c;
     //TOFIX: This is a hack to handle the case where the result of a SEND is used in the next instruction.

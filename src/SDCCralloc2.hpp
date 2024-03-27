@@ -136,6 +136,9 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
             assignment_ps aa=a_map[std::pair<f,f>(i,j)];
             assignment_ps ab=b_map[std::pair<f,f>(j,k)];
             assignment_ps ac;
+            if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
+               continue;
+            }
             ac.s = aa.s + ab.s;
             ac.begin_i = aa.begin_i;
             ac.end_i = ab.end_i;
@@ -161,6 +164,9 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
             assignment_ps aa=a_map[std::pair<f,f>(i,j)];
             assignment_ps ab=b_map[std::pair<f,f>(i,j)];
             assignment_ps ac;
+            if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
+               continue;
+            }
             ac.s = aa.s + ab.s - aa.begin_i.cost - aa.end_i.cost;
             ac.begin_i = aa.begin_i;
             ac.end_i = ab.end_i;
@@ -187,6 +193,9 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
             assignment_ps aa=a_map[std::pair<f,f>(j,i)];
             assignment_ps ab=b_map[std::pair<f,f>(i,j)];
             assignment_ps ac;
+            if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
+               continue;
+            }
             ac.s = aa.s + ab.s;
             ac.begin_i = aa.begin_i;
             ac.end_i = aa.end_i;

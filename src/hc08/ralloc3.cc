@@ -419,9 +419,8 @@ static bool inst_sane(const i_assignment_ps &ia,cfg_node &node, const I_t &I)
 
 // Cost function.
 template <class I_t>
-static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
+static float instruction_cost(const i_assignment_ps &ia,cfg_node &node, const I_t &I)
 {
-  cfg_node node=*(ia.node);
   iCode *ic = node.ic;
   float c;
 
@@ -457,6 +456,7 @@ static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
     case LABEL:
     case GOTO:
     case INLINEASM:
+      std::cout<<"return 0"<<std::endl;
       return(0.0f);
     case '!':
     case '~':

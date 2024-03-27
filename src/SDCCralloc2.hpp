@@ -201,7 +201,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
 }
 
 template <class I_t>
-static float instruction_cost(const i_assignment_ps &ia, const I_t &I);
+static float instruction_cost(const i_assignment_ps &ia, cfg_node &node, const I_t &I);
 
 template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
@@ -222,7 +222,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
          std::cout<<"try to get cost"<<std::endl;
-         as.cost = instruction_cost(as,I);
+         as.cost = instruction_cost(as,((*(a.cfg))[a.begin]),I);
          aa.s = as.cost;
          aa.begin_i = as;
          aa.end_i = as;

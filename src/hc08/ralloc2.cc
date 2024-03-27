@@ -504,16 +504,9 @@ static float instruction_cost(const assignment &a, unsigned short int i, const G
     case SWAP:
       assign_operands_for_cost(a, i, G, I);
       set_surviving_regs(a, i, G, I);
-      try{
-        c = dryhc08iCode(ic);
-        ic->generated = false;
-        return(c);
-      }
-      catch(std::exception& e)
-      {
-        ic->generated = fase;
-        return(std::numeric_limits<float>::infinity());
-      }
+      c = dryhc08iCode(ic);
+      ic->generated = false;
+      return(c);
     default:
       return(0.0f);
     }

@@ -503,10 +503,16 @@ static float instruction_cost(const i_assignment_ps &ia,cfg_node &node, const I_
       std::cout<<"set surviving regs"<<std::endl;
       set_surviving_regs(ia, node, I);
       std::cout<<"get cost"<<std::endl;
-      c = dryhc08iCode(node.ic);
-      std :: cout<<"cost is "<<c<<std::endl;
-      node.ic->generated = false;
-      return(c);
+     try{
+        c = dryhc08iCode(ic);
+        ic->generated = false;
+        return(c);
+      }
+      catch(std::exception& e)
+      {
+        ic->generated = false;
+        return(std::numeric_limits<float>::infinity());
+      }
     default:
       std::cout<<"default"<<std::endl;
       return(0.0f);

@@ -442,13 +442,13 @@ static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
 
   if(ic->generated)
     return(0.0f);
-
+  std::cout<<"begin to check ic"<<std::endl;
   if(!XAinst_ok(ia, node, I))
     return(std::numeric_limits<float>::infinity());
 
   if(!AXinst_ok(ia, node, I))
     return(std::numeric_limits<float>::infinity());
-
+  std::cout<<"ic is ok"<<std::endl;
   switch(ic->op)
     {
     // Register assignment doesn't matter for these:
@@ -502,6 +502,7 @@ static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
       assign_operands_for_cost(ia, node, I);
       set_surviving_regs(ia, node, I);
       c = dryhc08iCode(ic);
+      std :: cout<<"cost is "<<c<<std::endl;
       ic->generated = false;
       return(c);
     default:

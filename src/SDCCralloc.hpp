@@ -136,6 +136,7 @@ typedef boost::container::flat_map<int, float> icosts_t; // Faster than std::map
 typedef std::vector<var_t> cfg_alive_t; // Faster than stx::btree_set here .
 typedef boost::container::flat_set<var_t> cfg_dying_t; // Faster than stx::btree_set and std::set here.
 
+
 struct assignment
 {
   float s;
@@ -195,6 +196,7 @@ struct cfg_node
   operand_map_t operands;
   cfg_alive_t alive;
   cfg_dying_t dying;
+  cfg_alive_t after;
 
   std::set<var_t> stack_alive;
 
@@ -1291,13 +1293,7 @@ static void dump_cfg(const cfg_t &cfg)
       for (v = cfg[i].alive.begin(); v != cfg[i].alive.end(); ++v)
         os << *v << " ";
       os<< "dying: ";
-      cfg_dying_t::const_iterator v2;
-      for (v2 = cfg[i].dying.begin(); v2 != cfg[i].dying.end(); ++v2)
-        os << *v2 << " ";
-      os<<"stack: ";
-      std::vector<unsigned int>::const_iterator v3;
-      for (v3 = cfg[i].stack_alive.begin(); v3 != cfg[i].stack_alive.end(); ++v3)
-        os << *v3 << " ";
+
       name[i] = os.str();
     }
 

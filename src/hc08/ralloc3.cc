@@ -737,6 +737,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   con_t conflict_graph;
 
   iCode *ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
+  initial_after(control_flow_graph);
 
   //std::cout<<"cfg created"<<std::endl;
   ps_cfg_t root;

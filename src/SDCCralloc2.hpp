@@ -41,6 +41,42 @@ extern "C"
 //I hope it is not hard, but I am not sure.
 //static float instruction_cost(i_assignment_ps &a);
 
+vector<var_t> unionVectors(vector<var_t>& vec1, 
+                         vector<var_t>& vec2) 
+{ 
+    vector<var_t> ans; 
+    // Declare the set to store the unique elements 
+    set<var_t> s; 
+    // insert elements from vector 1 into the set 
+    for (int i = 0; i < vec1.size(); i++) { 
+        s.insert(vec1[i]); 
+    } 
+    // insert elements from vector 2 into the set 
+    for (int i = 0; i < vec2.size(); i++) { 
+        s.insert(vec2[i]); 
+    } 
+    // Store the union of both the vectors into a resultant 
+    // vector 
+    for (auto it = s.begin(); it != s.end(); it++) { 
+        ans.push_back(*it); 
+    } 
+    return ans; 
+} 
+
+
+static void initial_after(cfg_t &cfg){
+   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
+   for (boost::tie(vi, vi_end) = vertices(cfg); vi != vi_end; ++vi){
+          boost::graph_traits<cfg_t>::out_edge_iterator eout, eout_end;
+            for (boost::tie(eout, eout_end) = out_edges(*vi, cfg); eout != eout_end; ++eout){
+               vertex target=boost::target(*eout, cfg);
+               cfg[*vi].after=unionVectors(cfg[*vi].after,cfg[target].alive);
+            }
+
+   }
+
+}
+
 static void calcSubset(f& A, std::vector<f>& res,
                 f& subset, int index)
 {
@@ -291,7 +327,7 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg,I_t &I){
    b.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
       std::cout<<"i.second.s:"<<i.second.s<<std::endl;
-      std::cout<<"first assignment:";
+      std::cout<<"assignment:";
       for (auto e: i.first.first)
          std::cout << e << ' ';
       std::cout << std::endl;

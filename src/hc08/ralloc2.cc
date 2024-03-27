@@ -512,6 +512,141 @@ static float instruction_cost(const assignment &a, unsigned short int i, const G
     }
 }
 
+
+template <class G_t, class I_t>
+static float assign_operand_for_cost_easy(operand *o, const assignment &a, unsigned short int i, const G_t &G, const I_t &I,float c)
+{
+  if(!o || !IS_SYMOP(o))
+    return c;
+  symbol *sym = OP_SYMBOL(o);
+  operand_map_t::const_iterator oi, oi_end;
+  for(boost::tie(oi, oi_end) = G[i].operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
+    {
+      var_t v = oi->second;
+      if(a.global[v] >= 0)
+        { 
+          c=c+1;
+        }
+      else
+        {
+          c=c+4;
+        }
+    }
+  return c;
+}
+
+
+template <class G_t, class I_t>
+static float assign_operands_for_cost_easy(const assignment &a, unsigned short int i, const G_t &G, const I_t &I,float)
+{
+  const iCode *ic = G[i].ic;
+  
+  if(ic->op == IFX)
+    c=assign_operand_for_cost_easy(IC_COND(ic), a, i, G, I,c);
+  else if(ic->op == JUMPTABLE)
+    c=assign_operand_for_cost_easy(IC_JTCOND(ic), a, i, G, I,c);
+  else
+    {
+      c=assign_operand_for_cost_easy(IC_LEFT(ic), a, i, G, I,c);
+      c=assign_operand_for_cost_easy(IC_RIGHT(ic), a, i, G, I,c);
+      c=assign_operand_for_cost_easy(IC_RESULT(ic), a, i, G, I,c);
+    }
+  return c
+}
+
+
+// Easy Cost function.
+template <class G_t, class I_t>
+static float instruction_cost_easy(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+{
+  iCode *ic = G[i].ic;
+  float c;
+
+  wassert (TARGET_IS_HC08 || TARGET_IS_S08);
+
+  if(!inst_sane(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+#if 0
+  std::cout << "Calculating at cost at ic " << ic->key << " for: ";
+  for(unsigned int i = 0; i < boost::num_vertices(I); i++)
+  {
+  	std::cout << "(" << i << ", " << int(a.global[i]) << ") ";
+  }
+  std::cout << "\n";
+  std::cout.flush();
+#endif
+
+  if(ic->generated)
+    return(0.0f);
+
+  if(!XAinst_ok(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+  if(!AXinst_ok(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+  switch(ic->op)
+    {
+    // Register assignment doesn't matter for these:
+    case FUNCTION:
+    case ENDFUNCTION:
+    case LABEL:
+    case GOTO:
+    case INLINEASM:
+      return(0.0f);
+    case '!':
+    case '~':
+    case UNARYMINUS:
+    case '+':
+    case '-':
+    case '^':
+    case '|':
+    case BITWISEAND:
+    case IPUSH:
+    //case IPOP:
+    case CALL:
+    case PCALL:
+    case RETURN:
+    case '*':
+    case '/':
+    case '%':
+    case '>':
+    case '<':
+    case LE_OP:
+    case GE_OP:
+    case EQ_OP:
+    case NE_OP:
+    case AND_OP:
+    case OR_OP:
+    case GETABIT:
+    case GETBYTE:
+    case GETWORD:
+    case LEFT_OP:
+    case RIGHT_OP:
+    case GET_VALUE_AT_ADDRESS:
+    case '=':
+    case IFX:
+    case ADDRESS_OF:
+    case JUMPTABLE:
+    case CAST:
+    case RECEIVE:
+    case SEND:
+    case DUMMY_READ_VOLATILE:
+    case CRITICAL:
+    case ENDCRITICAL:
+    case SWAP:
+      c=assign_operands_for_cost_easy(a, i, G, I,c); 
+      return(c);
+    default:
+      return(0.0f);
+    }
+}
+
+
+
+
+
 // For early removal of assignments that cannot be extended to valid assignments. This is just a dummy for now, it probably isn't really needed for hc08 due to the low number of registers.
 template <class G_t, class I_t>
 static bool assignment_hopeless(const assignment &a, unsigned short int i, const G_t &G, const I_t &I, const var_t lastvar)
@@ -686,7 +821,6 @@ iCode *hc08_ralloc2_cc(ebbIndex *ebbi)
   guessCounts (ic, ebbi);
 
   hc08_assignment_optimal = !tree_dec_ralloc(tree_decomposition, control_flow_graph, conflict_graph);
-  
 
   return(ic);
 }

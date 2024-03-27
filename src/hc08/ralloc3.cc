@@ -516,6 +516,142 @@ static float instruction_cost(const i_assignment_ps &ia,cfg_node &node, const I_
 }
 
 
+template <class I_t>
+static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,  cfg_node &node, const I_t &I,float c)
+{
+  if(!o || !IS_SYMOP(o))
+    return;
+  symbol *sym = OP_SYMBOL(o);
+  operand_map_t::const_iterator oi, oi_end;
+  for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
+    {
+      var_t v = oi->second;
+      if(getIndex(ia.registers_begin,v) >= 0)
+        { 
+          c=c+1;
+        }
+      else
+        {
+          c=c+4;
+        }
+    }
+    return c;
+}
+
+template < class I_t>
+static float assign_operands_for_cost_easy(const i_assignment_ps &ia,  cfg_node &node, const I_t &I, float c)
+{
+  const iCode *ic = node.ic;
+  
+  if(ic->op == IFX)
+    c=assign_operand_for_cost_easy(IC_COND(ic), ia, node,I);
+  else if(ic->op == JUMPTABLE)
+    c=assign_operand_for_cost_easy(IC_JTCOND(ic), ia, node, I);
+  else
+    {
+      c=assign_operand_for_cost_easy(IC_LEFT(ic), ia, node, I);
+      c=assign_operand_for_cost_easy(IC_RIGHT(ic), ia, node, I);
+      c=assign_operand_for_cost_easy(IC_RESULT(ic), ia, node, I);
+    }
+    
+    //TOFIX: This is a hack to handle the case where the result of a SEND is used in the next instruction.
+  //if(ic->op == SEND && ic->builtinSEND)
+   // {
+   //   assign_operands_for_cost(ia, *(adjacent_vertices(i, G).first), G, I);
+   // }
+}
+
+
+
+// Easy Cost function.
+template <class I_t>
+static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, const I_t &I)
+{
+  iCode *ic = node.ic;
+  float c;
+
+  wassert (TARGET_IS_HC08 || TARGET_IS_S08);
+
+  if(!inst_sane(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+#if 0
+  std::cout << "Calculating at cost at ic " << ic->key << " for: ";
+  for(unsigned int i = 0; i < boost::num_vertices(I); i++)
+  {
+  	std::cout << "(" << i << ", " << int(a.global[i]) << ") ";
+  }
+  std::cout << "\n";
+  std::cout.flush();
+#endif
+
+  if(ic->generated)
+    return(0.0f);
+
+  if(!XAinst_ok(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+  if(!AXinst_ok(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+  switch(ic->op)
+    {
+    // Register assignment doesn't matter for these:
+    case FUNCTION:
+    case ENDFUNCTION:
+    case LABEL:
+    case GOTO:
+    case INLINEASM:
+      return(0.0f);
+    case '!':
+    case '~':
+    case UNARYMINUS:
+    case '+':
+    case '-':
+    case '^':
+    case '|':
+    case BITWISEAND:
+    case IPUSH:
+    //case IPOP:
+    case CALL:
+    case PCALL:
+    case RETURN:
+    case '*':
+    case '/':
+    case '%':
+    case '>':
+    case '<':
+    case LE_OP:
+    case GE_OP:
+    case EQ_OP:
+    case NE_OP:
+    case AND_OP:
+    case OR_OP:
+    case GETABIT:
+    case GETBYTE:
+    case GETWORD:
+    case LEFT_OP:
+    case RIGHT_OP:
+    case GET_VALUE_AT_ADDRESS:
+    case '=':
+    case IFX:
+    case ADDRESS_OF:
+    case JUMPTABLE:
+    case CAST:
+    case RECEIVE:
+    case SEND:
+    case DUMMY_READ_VOLATILE:
+    case CRITICAL:
+    case ENDCRITICAL:
+    case SWAP:
+      c=assign_operands_for_cost_easy(ia,node, I,c); 
+      return(c);
+    default:
+      return(0.0f);
+    }
+}
+
+
 
 // Code for another ic is generated when generating this one. Mark the other as generated.
 static void extra_ic_generated(iCode *ic)

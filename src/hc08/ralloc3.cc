@@ -594,17 +594,12 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
 
   iCode *ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
 
-  if(options.dump_graphs)
-    dump_cfg(control_flow_graph);
-
-  if(options.dump_graphs)
-    dump_con(conflict_graph);
 
   ps_cfg_t root;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*vi_end,-1,-1);
-
+  convert_cfg_to_spcfg(root);
   float cost= get_ps_optimal_cst(root,conflict_graph);
 
    std::ofstream outputFile("optimalCost.txt");

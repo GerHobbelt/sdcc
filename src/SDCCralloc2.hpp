@@ -83,7 +83,7 @@ std::vector<f > subsets(f& A)
 }
 
 static std::vector<f> generate_possibility(f variables){
-   std::cout<<"begin generate_possibility"<<std::endl;
+  // std::cout<<"begin generate_possibility"<<std::endl;
    std::vector<f> results;
    std::vector<f> sub_set=subsets(variables);
    for(auto sub:sub_set){
@@ -101,10 +101,10 @@ static std::vector<f> generate_possibility(f variables){
         //  cout<<i<<" ";
         //}
         //cout<<endl;
-         std::cout<<"begin generate_permutation"<<std::endl;
+       //  std::cout<<"begin generate_permutation"<<std::endl;
 
         std::vector<f> p=generate_permutation(v);
-        std :: cout<<"finish generate_permutation"<<std::endl;
+      //  std :: cout<<"finish generate_permutation"<<std::endl;
         //cout<<"current p:"<<endl;
         //for(auto i:p){
         //  for(auto j:i){
@@ -117,7 +117,7 @@ static std::vector<f> generate_possibility(f variables){
         results.insert(results.end(),p.begin(),p.end());
       }
    }
-   std::cout<<"finish generate_possibility"<<std::endl;
+ //  std::cout<<"finish generate_possibility"<<std::endl;
 
    return results;
 }

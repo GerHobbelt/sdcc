@@ -587,13 +587,13 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
 
   if(ic->generated)
     return(0.0f);
-  std::cout<<"begin to check ic"<<std::endl;
+  //std::cout<<"begin to check ic"<<std::endl;
   if(!XAinst_ok(ia, node, I))
     return(std::numeric_limits<float>::infinity());
 
   if(!AXinst_ok(ia, node, I))
     return(std::numeric_limits<float>::infinity());
-  std::cout<<"ic is: "<<ic->op<< std::endl;
+  //std::cout<<"ic is: "<<ic->op<< std::endl;
 
   switch(ic->op)
     {
@@ -738,16 +738,16 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
 
   iCode *ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
 
-  std::cout<<"cfg created"<<std::endl;
+  //std::cout<<"cfg created"<<std::endl;
   ps_cfg_t root;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
   convert_cfg_to_spcfg(root);
 
-  std::cout<<"spcfg created"<<std::endl;
+  //std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
-  std::cout<<"get cost"<<std::endl;
+  //std::cout<<"get cost"<<std::endl;
 
    std::ofstream outputFile("optimalCost2.txt");
    if (outputFile.is_open()) {  // Check if the file was successfully opened

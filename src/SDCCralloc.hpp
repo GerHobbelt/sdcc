@@ -235,7 +235,7 @@ TREEDEC_TREEDEC_BAG_TRAITS(tree_dec_t, bag);
 
 // Cost function. Port-specific.
 template <class G_t, class I_t>
-static float instruction_cost_easy(const assignment &a, unsigned short int i, const G_t &G, const I_t &I);
+static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I);
 
 // For early removel of assignments that cannot be extended to valid assignments. Port-specific.
 template <class G_t, class I_t>
@@ -941,7 +941,7 @@ static void tree_dec_ralloc_introduce(T_t &T, typename boost::graph_traits<T_t>:
   // Summation of costs and early removal of assignments.
   for (ai = alist.begin(); ai != alist.end();)
     {
-      if ((ai->s += (ai->i_costs[i] = instruction_cost_easy(*ai, i, G, I))) == std::numeric_limits<float>::infinity())
+      if ((ai->s += (ai->i_costs[i] = instruction_cost(*ai, i, G, I))) == std::numeric_limits<float>::infinity())
         ai = alist.erase(ai);
       else
         ++ai;

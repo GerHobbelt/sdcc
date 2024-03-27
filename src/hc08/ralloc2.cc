@@ -564,6 +564,27 @@ static float instruction_cost(const assignment &a, unsigned short int i, const G
 
   wassert (TARGET_IS_HC08 || TARGET_IS_S08);
 
+  if(!inst_sane(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+#if 0
+  std::cout << "Calculating at cost at ic " << ic->key << " for: ";
+  for(unsigned int i = 0; i < boost::num_vertices(I); i++)
+  {
+  	std::cout << "(" << i << ", " << int(a.global[i]) << ") ";
+  }
+  std::cout << "\n";
+  std::cout.flush();
+#endif
+
+  if(ic->generated)
+    return(0.0f);
+
+  if(!XAinst_ok(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
+
+  if(!AXinst_ok(a, i, G, I))
+    return(std::numeric_limits<float>::infinity());
 
   switch(ic->op)
     {

@@ -132,11 +132,14 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
    std::vector<f> end=generate_possibility(b.end_v);
    for(auto i:begin){
       for(auto j:mid){
+         assignment_ps aa=a_map[std::pair<f,f>(i,j)];
+         if(aa.s == std::numeric_limits<float>::infinity()){
+            continue;
+         }
          for(auto k:end){
-            assignment_ps aa=a_map[std::pair<f,f>(i,j)];
             assignment_ps ab=b_map[std::pair<f,f>(j,k)];
             assignment_ps ac;
-            if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
+            if ( ab.s == std::numeric_limits<float>::infinity()){
                continue;
             }
             ac.s = aa.s + ab.s;

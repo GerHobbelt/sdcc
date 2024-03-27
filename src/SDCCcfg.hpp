@@ -125,7 +125,7 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   //for (v2 = cfg[end_node].dying.begin(); v2 != cfg[end_node].dying.end(); ++v2)
   //       ps_cfg.end_v.push_back(*v2);
   ps_cfg.begin_v=cfg[begin_node].alive;
-  cfg_living_t::iterator v;
+  cfg_alive_t::iterator v;
   for (v = cfg[end_node].alive.begin(); v != cfg[end_node].alive.end(); ++v){
     if (!cfg[end_node].dying.contains(*v)){
       ps_cfg.end_v.push_back(*v);

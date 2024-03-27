@@ -24,6 +24,7 @@
 -------------------------------------------------------------------------*/
 #include "SDCCicode.h"
 #include "SDCCBBlock.h"
+#include "SDCCralloc2.hpp"
 #ifndef SDCCRALLOC_H
 #define SDCCRALLOC_H 1
 

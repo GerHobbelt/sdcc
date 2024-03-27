@@ -76,6 +76,7 @@
         "*.def": "cpp",
         "cfg.h": "c",
         "ralloc.h": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "sdccralloc2.hpp": "c"
     }
 }

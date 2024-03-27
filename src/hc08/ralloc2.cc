@@ -686,6 +686,7 @@ iCode *hc08_ralloc2_cc(ebbIndex *ebbi)
   guessCounts (ic, ebbi);
 
   hc08_assignment_optimal = !tree_dec_ralloc(tree_decomposition, control_flow_graph, conflict_graph);
+  
 
   return(ic);
 }

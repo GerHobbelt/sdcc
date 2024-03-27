@@ -209,7 +209,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
 
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(a.end_v);
-   std::cout<<"finish generating<<std::endl;
+   std::cout<<"finish generating"<<std::endl;
    for(auto i:begin){
       for(auto j:end){
          assignment_ps aa;

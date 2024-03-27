@@ -218,19 +218,19 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
 
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(a.end_v);
-   std::cout<<"finish generating"<<std::endl;
+   //std::cout<<"finish generating"<<std::endl;
    for(auto i:begin){
       for(auto j:end){
-         std::cout<<"begin to get cost"<<std::endl;
+         //std::cout<<"begin to get cost"<<std::endl;
          assignment_ps aa=assignment_ps();
-         std::cout<<"finish initial assignment_ps"<<std::endl;
+         //std::cout<<"finish initial assignment_ps"<<std::endl;
          i_assignment_ps as=i_assignment_ps();
-          std::cout<<"finish initial assignment"<<std::endl;
+         // std::cout<<"finish initial assignment"<<std::endl;
          as.registers_begin = i;
          as.registers_end = j;
-         std::cout<<"try to get node"<<std::endl;
+         //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
-         std::cout<<"try to get cost"<<std::endl;
+         //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,((*(a.cfg))[a.begin]),I);
          aa.s = as.cost;
          aa.begin_i = as;
@@ -287,6 +287,8 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg,I_t &I){
    assignment_ps b;
    b.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
+      std::cout<<"i.second.s:"<<i.second.s<<std::endl;
+      std::cout<<"first assignment:"<<i.first.first<<std::endl;
       if(b.s > i.second.s){
          b = i.second;
       }

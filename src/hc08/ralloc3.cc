@@ -610,7 +610,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   float cost= get_ps_optimal_cst(root,conflict_graph);
   std::cout<<"get cost"<<std::endl;
 
-   std::ofstream outputFile("optimalCost.txt",ios::app);
+   std::ofstream outputFile("optimalCost2.txt");
    if (outputFile.is_open()) {  // Check if the file was successfully opened
     // Write some text into the file
     outputFile << "2.our's optimal cost: "<<cost<<"\n";  // Write a line of text to the file

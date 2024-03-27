@@ -212,10 +212,13 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    std::cout<<"finish generating"<<std::endl;
    for(auto i:begin){
       for(auto j:end){
+         std::cout<<"begin to get cost"<<std::endl;
          assignment_ps aa;
          i_assignment_ps as;
+          std::cout<<"finish initial assignment"<<std::endl;
          as.registers_begin = i;
          as.registers_end = j;
+         std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
          std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost(as,I);

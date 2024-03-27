@@ -572,7 +572,7 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
 
   wassert (TARGET_IS_HC08 || TARGET_IS_S08);
 
-  if(!inst_sane(a, i, G, I))
+  if(!inst_sane(ia, node, I))
     return(std::numeric_limits<float>::infinity());
 
 #if 0

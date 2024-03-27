@@ -367,10 +367,10 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
 }
 
 static void convert_cfg_to_spcfg(ps_cfg_t &pscfg){
-  ps_cfg_map.clear();
-  cfg_map.clear();
-  ps_cfg_count=0;
-  cfg_count=0;
+  //ps_cfg_map.clear();
+  //cfg_map.clear();
+  //ps_cfg_count=0;
+  //cfg_count=0;
   convert_cfg_to_spcfg_one_step(pscfg);
   if(pscfg.left!=-1 || pscfg.right!=-1){
     if (pscfg.left!=-1){

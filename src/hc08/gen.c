@@ -10738,11 +10738,8 @@ dryhc08iCode (iCode *ic)
 {
   regalloc_dry_run = true;
   regalloc_dry_run_cost = 0;
-  std::cout<<"init_aop_pass\n";
   init_aop_pass();
-  std::cout<<"genhc08iCode\n";
   genhc08iCode (ic);
-  std::cout<<"destroy_line_list\n";
   destroy_line_list ();
   /*freeTrace (&_G.trace.aops);*/
 

@@ -225,29 +225,34 @@ static void generate_spcfg(ps_cfg_t &ps_cfg, I_t &I){
 
    if (ps_cfg.assignments.size() == 0){
       if(ps_cfg.left==-1 || ps_cfg.right==-1){
+         std::cout<<"1"<<std::endl;
          initlize_assignment_ps_list(ps_cfg, I);
          return;
       }
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
+         std::cout<<"2"<<std::endl;
          generate_spcfg(ps_cfg_map[ps_cfg.left], I);
       }
       if (ps_cfg_map[ps_cfg.right].assignments.size() == 0){
+         std::cout<<"3"<<std::endl;
          generate_spcfg(ps_cfg_map[ps_cfg.right], I);
       }
       switch (ps_cfg.type){
          case 1:
+            std::cout<<"4"<<std::endl;
             ps_cfg.assignments = combine_assignment_ps_list_series(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right]);
             break;
          case 2:
+            std::cout<<"5"<<std::endl;
             ps_cfg.assignments = combine_assignment_ps_list_parallel(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right]);
             break;
          case 3:
+            std::cout<<"6"<<std::endl;
             ps_cfg.assignments = combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right]);
             break;
          default:
             break;
       }
-      return;
    }
 }
 

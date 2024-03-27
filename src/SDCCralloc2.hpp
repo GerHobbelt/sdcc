@@ -214,6 +214,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
       for(auto j:end){
          std::cout<<"begin to get cost"<<std::endl;
          assignment_ps aa=assignment_ps();
+         std::cout<<"finish initial assignment_ps"<<std::endl;
          i_assignment_ps as=i_assignment_ps();
           std::cout<<"finish initial assignment"<<std::endl;
          as.registers_begin = i;

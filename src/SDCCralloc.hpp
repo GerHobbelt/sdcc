@@ -1295,7 +1295,7 @@ static void dump_cfg(const cfg_t &cfg)
       for (v2 = cfg[i].dying.begin(); v2 != cfg[i].dying.end(); ++v2)
         os << *v2 << " ";
       os<<"stack: ";
-      std::set<unsigned int>::const_iterator v3;
+      std::vector<unsigned int>::const_iterator v3;
       for (v3 = cfg[i].stack_alive.begin(); v3 != cfg[i].stack_alive.end(); ++v3)
         os << *v3 << " ";
       name[i] = os.str();

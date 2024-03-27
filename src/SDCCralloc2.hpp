@@ -34,7 +34,7 @@ extern "C"
 }
 
 // Integer constant upper bound on port->num_regs
-#define MAX_NUM_REGS 3
+#define MAX_NUM_REGS 9
 
 
 //we need to see if we can get the cost of each instruction directly from this function

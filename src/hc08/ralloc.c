@@ -27,7 +27,6 @@
 #include "ralloc.h"
 #include "gen.h"
 #include "dbuf_string.h"
-#include "ralloc3.cc"
 
 /*-----------------------------------------------------------------*/
 /* At this point we start getting processor specific although      */

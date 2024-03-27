@@ -85,5 +85,6 @@ void hc08_dirtyReg (reg_info * reg, bool freereg);
 bitVect *hc08_rUmaskForOp (operand * op);
 
 iCode *hc08_ralloc2_cc(ebbIndex *ebbi);
+float hc08_ralloc3_cc(ebbIndex *ebbi);
 
 #endif

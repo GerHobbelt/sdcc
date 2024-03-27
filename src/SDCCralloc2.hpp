@@ -72,6 +72,7 @@ static void initial_after(cfg_t &cfg){
                vertex target=boost::target(*eout, cfg);
                cfg[*vi].after=unionVectors(cfg[*vi].after,cfg[target].alive);
             }
+            std::sort(cfg[*vi].after.begin(),cfg[*vi].after.end());
 
    }
 

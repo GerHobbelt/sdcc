@@ -798,6 +798,7 @@ iCode *hc08_ralloc2_cc(ebbIndex *ebbi)
   con_t conflict_graph;
 
   iCode *ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
+  initial_after(control_flow_graph);
 
   if(options.dump_graphs)
     dump_cfg(control_flow_graph);

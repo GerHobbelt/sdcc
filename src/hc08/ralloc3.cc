@@ -9,7 +9,7 @@ extern "C"
   #include "ralloc.h"
   #include "gen.h"
   float dryhc08iCode (iCode *ic);
-  bool hc08_assignment_optimal;
+  //bool hc08_assignment_optimal;
 }
 
 #define REG_A 0

@@ -57,6 +57,13 @@ struct assignment_ps{
    std::vector<i_assignment_ps> insts; //assignments for each instruction
    i_assignment_ps begin_i;
    i_assignment_ps end_i;
+
+   assignment_ps(){
+      s = std::numeric_limits<float>::infinity();
+      insts.clear();
+      begin_i = i_assignment_ps();
+      end_i = i_assignment_ps();
+   }
 };
 
 

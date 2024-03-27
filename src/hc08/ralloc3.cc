@@ -520,7 +520,7 @@ template <class I_t>
 static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,  cfg_node &node, const I_t &I,float c)
 {
   if(!o || !IS_SYMOP(o))
-    return;
+    return c;
   symbol *sym = OP_SYMBOL(o);
   operand_map_t::const_iterator oi, oi_end;
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)

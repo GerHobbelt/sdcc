@@ -448,7 +448,7 @@ static float instruction_cost(const i_assignment_ps &ia, const I_t &I)
 
   if(!AXinst_ok(ia, node, I))
     return(std::numeric_limits<float>::infinity());
-  std::cout<<"ic is ok"<<std::endl;
+  std::cout<<"ic is: "<<ic->op<< std::endl;
   switch(ic->op)
     {
     // Register assignment doesn't matter for these:

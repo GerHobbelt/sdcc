@@ -587,12 +587,13 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
 
   if(ic->generated)
     return(0.0f);
-
-  if(!XAinst_ok(a, i, G, I))
+  std::cout<<"begin to check ic"<<std::endl;
+  if(!XAinst_ok(ia, node, I))
     return(std::numeric_limits<float>::infinity());
 
-  if(!AXinst_ok(a, i, G, I))
+  if(!AXinst_ok(ia, node, I))
     return(std::numeric_limits<float>::infinity());
+  std::cout<<"ic is: "<<ic->op<< std::endl;
 
   switch(ic->op)
     {

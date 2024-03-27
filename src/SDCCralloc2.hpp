@@ -209,6 +209,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_begin = i;
          as.registers_end = j;
          as.node=&((*(a.cfg))[a.begin]);
+         std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost(as,I);
          aa.s = as.cost;
          aa.begin_i = as;

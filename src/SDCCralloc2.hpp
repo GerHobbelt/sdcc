@@ -343,7 +343,7 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg,I_t &I){
    assignment_ps b;
    b.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
-      std::cout<<"i.second.s:"<<i.second.s<<std::endl;
+      //std::cout<<"i.second.s:"<<i.second.s<<std::endl;
       std::cout << std::endl;
       if(b.s > i.second.s){
          b = i.second;

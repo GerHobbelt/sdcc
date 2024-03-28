@@ -562,9 +562,9 @@ static float instruction_cost(const assignment &a, unsigned short int i, const G
   iCode *ic = G[i].ic;
   float c=0;
 
-  if ic->generated
+  if (ic->generated)
     return(0.0f);
-    
+
   switch(ic->op)
     {
     // Register assignment doesn't matter for these:

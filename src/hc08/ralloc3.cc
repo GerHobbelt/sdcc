@@ -577,7 +577,7 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
   float c=0;
 
   wassert (TARGET_IS_HC08 || TARGET_IS_S08);
-  if ic->generated
+  if(ic->generated)
     return(0.0f);
     
   switch(ic->op)

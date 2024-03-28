@@ -290,6 +290,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
       }
    }
    std::cout<<"c.size()"<<c.size()<<std::endl;
+
    a.assignments = c;
 }
 
@@ -300,6 +301,7 @@ static void generate_spcfg(ps_cfg_t &ps_cfg, I_t &I){
       if(ps_cfg.left==-1 || ps_cfg.right==-1){
         // std::cout<<"1"<<std::endl;
          initlize_assignment_ps_list(ps_cfg, I);
+         std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
          return;
       }
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
@@ -314,14 +316,17 @@ static void generate_spcfg(ps_cfg_t &ps_cfg, I_t &I){
          case 1:
           //  std::cout<<"4"<<std::endl;
             ps_cfg.assignments = combine_assignment_ps_list_series(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right]);
+            std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          case 2:
           //  std::cout<<"5"<<std::endl;
             ps_cfg.assignments = combine_assignment_ps_list_parallel(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right]);
+            std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          case 3:
           //  std::cout<<"6"<<std::endl;
             ps_cfg.assignments = combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right]);
+            std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          default:
             break;

@@ -539,9 +539,10 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
           c=c+4;
         }
     }
+    std::cout<<std::endl;
     return c;
 }
-std::cout<<std::endl;
+
 template < class I_t>
 static float assign_operands_for_cost_easy(const i_assignment_ps &ia,  cfg_node &node, const I_t &I, float c)
 {

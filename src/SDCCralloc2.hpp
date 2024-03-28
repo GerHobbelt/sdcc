@@ -243,7 +243,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
             if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
                continue;
             }
-            ac.s = aa.s + ab.s;
+            ac.s = aa.s + ab.s-30;
             ac.begin_i = aa.begin_i;
             ac.end_i = aa.end_i;
             ac.insts.reserve(aa.insts.size() + ab.insts.size());

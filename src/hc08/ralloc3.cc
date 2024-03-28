@@ -540,6 +540,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
         }
     }
     std::cout<<std::endl;
+    std::coout<<"c is: "<<c<<std::endl;
     return c;
 }
 

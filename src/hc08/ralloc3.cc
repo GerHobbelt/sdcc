@@ -578,29 +578,6 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
 
   wassert (TARGET_IS_HC08 || TARGET_IS_S08);
 
-  if(!inst_sane(ia, node, I))
-    return(std::numeric_limits<float>::infinity());
-
-#if 0
-  std::cout << "Calculating at cost at ic " << ic->key << " for: ";
-  for(unsigned int i = 0; i < boost::num_vertices(I); i++)
-  {
-  	std::cout << "(" << i << ", " << int(a.global[i]) << ") ";
-  }
-  std::cout << "\n";
-  std::cout.flush();
-#endif
-
-  if(ic->generated)
-    return(0.0f);
-  //std::cout<<"begin to check ic"<<std::endl;
-  if(!XAinst_ok(ia, node, I))
-    return(std::numeric_limits<float>::infinity());
-
-  if(!AXinst_ok(ia, node, I))
-    return(std::numeric_limits<float>::infinity());
-  //std::cout<<"ic is: "<<ic->op<< std::endl;
-
   switch(ic->op)
     {
     // Register assignment doesn't matter for these:

@@ -574,7 +574,7 @@ template <class I_t>
 static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, const I_t &I)
 {
   iCode *ic = node.ic;
-  float c;
+  float c=0;
 
   wassert (TARGET_IS_HC08 || TARGET_IS_S08);
 

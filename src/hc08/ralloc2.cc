@@ -560,7 +560,7 @@ template <class G_t, class I_t>
 static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
-  float c;
+  float c=0;
 
   wassert (TARGET_IS_HC08 || TARGET_IS_S08);
 

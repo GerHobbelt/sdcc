@@ -289,6 +289,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          c[std::pair<f,f>(i,j)] = aa;
       }
    }
+   std::cout<<"c.size()"<<c.size()<<std::endl;
    a.assignments = c;
 }
 

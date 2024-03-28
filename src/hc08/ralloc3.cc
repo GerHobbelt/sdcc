@@ -523,12 +523,12 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
     return c;
   symbol *sym = OP_SYMBOL(o);
   operand_map_t::const_iterator oi, oi_end;
-  std::cout<<"o is: "<<OP_SYMBOL_CONST(o)->key<<std::endl;
-  std::cout<<"v includes: ";
+//  std::cout<<"o is: "<<OP_SYMBOL_CONST(o)->key<<std::endl;
+ // std::cout<<"v includes: ";
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
     {
       var_t v = oi->second;
-      std::cout<<v<<", ";
+     // std::cout<<v<<", ";
       if(getIndex(ia.registers_begin,v) >= 0)
         { 
           c=c+1;
@@ -539,8 +539,8 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
           c=c+4;
         }
     }
-    std::cout<<std::endl;
-    std::cout<<"c is: "<<c<<std::endl;
+  //  std::cout<<std::endl;
+   // std::cout<<"c is: "<<c<<std::endl;
     return c;
 }
 
@@ -556,8 +556,8 @@ static float assign_operands_for_cost_easy(const i_assignment_ps &ia,  cfg_node 
   else
     {
       c=assign_operand_for_cost_easy(IC_LEFT(ic), ia, node, I,c);
-      c=assign_operand_for_cost_easy(IC_RIGHT(ic), ia, node, I,c);
-      c=assign_operand_for_cost_easy(IC_RESULT(ic), ia, node, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RIGHT(ic), ia, node, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RESULT(ic), ia, node, I,c);
     }
     return c;
     //TOFIX: This is a hack to handle the case where the result of a SEND is used in the next instruction.

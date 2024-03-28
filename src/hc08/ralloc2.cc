@@ -548,8 +548,8 @@ static float assign_operands_for_cost_easy(const assignment &a, unsigned short i
   else
     {
       c=assign_operand_for_cost_easy(IC_LEFT(ic), a, i, G, I,c);
-      c=assign_operand_for_cost_easy(IC_RIGHT(ic), a, i, G, I,c);
-      c=assign_operand_for_cost_easy(IC_RESULT(ic), a, i, G, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RIGHT(ic), a, i, G, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RESULT(ic), a, i, G, I,c);
     }
   return c;
 }

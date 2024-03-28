@@ -1295,7 +1295,11 @@ static void dump_cfg(const cfg_t &cfg)
       os<< "after: ";
       for(v = cfg[i].after.begin(); v != cfg[i].after.end(); ++v)
         os << *v << " ";
+      os<<"stack_alive: ";
 
+      for (auto it = cfg[i].stack_alive.begin(); it != cfg[i].stack_alive.end(); it++) { 
+        os << *it << " ";
+    } 
       name[i] = os.str();
     }
 

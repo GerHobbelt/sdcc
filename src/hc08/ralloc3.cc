@@ -532,7 +532,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
         }
       else
         {
-          std::cout<<std::endl;
+          //std::cout<<std::endl;
           c=c+4;
         }
     }

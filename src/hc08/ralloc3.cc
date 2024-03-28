@@ -572,8 +572,8 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
 
   wassert (TARGET_IS_HC08 || TARGET_IS_S08);
 
-  //if(!inst_sane(ia, node, I))
-  //  return(std::numeric_limits<float>::infinity());
+  if(!inst_sane(ia, node, I))
+    return(std::numeric_limits<float>::infinity());
 
 #if 0
   std::cout << "Calculating at cost at ic " << ic->key << " for: ";
@@ -585,14 +585,14 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
   std::cout.flush();
 #endif
 
-  //if(ic->generated)
-  //  return(0.0f);
+  if(ic->generated)
+    return(0.0f);
   //std::cout<<"begin to check ic"<<std::endl;
-  //if(!XAinst_ok(ia, node, I))
-  //  return(std::numeric_limits<float>::infinity());
+  if(!XAinst_ok(ia, node, I))
+    return(std::numeric_limits<float>::infinity());
 
-  //if(!AXinst_ok(ia, node, I))
-  //  return(std::numeric_limits<float>::infinity());
+  if(!AXinst_ok(ia, node, I))
+    return(std::numeric_limits<float>::infinity());
   //std::cout<<"ic is: "<<ic->op<< std::endl;
 
   switch(ic->op)
@@ -702,11 +702,11 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
-  std::cout<<"I2 created"<<std::endl;
+ // std::cout<<"I2 created"<<std::endl;
 
   generate_spcfg(root,I2);
   
- std::cout<<"fi;; spcfg with assignments"<<std::endl;
+ //std::cout<<"fi;; spcfg with assignments"<<std::endl;
   const assignment_ps &winner = get_optimal(root,I2);
 
 #ifdef DEBUG_RALLOC_DEC

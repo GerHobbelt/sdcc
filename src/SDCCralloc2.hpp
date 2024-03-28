@@ -167,6 +167,8 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> mid=generate_possibility(a.end_v);
    std::vector<f> end=generate_possibility(b.end_v);
+   std::cout<<"begin size series:"<<begin.size()<<std::endl;
+   std::cout<<"mid size series:"<<mid.size()<<std::endl;
    for(auto i:begin){
       for(auto j:mid){
          assignment_ps aa=a_map[std::pair<f,f>(i,j)];
@@ -190,6 +192,7 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
          }
       }
    }
+   std::cout<<"combine_assignment_ps_list_series.size"<<c.size() <<std::endl;
    return c;
 }
 
@@ -199,6 +202,8 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
    assignment_ps_map b_map=b.assignments;
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(b.end_v);
+   std::cout<<"begin size parallel:"<<begin.size()<<std::endl;
+   std::cout<<"end size parallel:"<<end.size()<<std::endl;
    for(auto i:begin){
          for(auto j:end){
             assignment_ps aa=a_map[std::pair<f,f>(i,j)];
@@ -217,7 +222,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
                c[std::pair<f,f>(i,j)] = ac;
          }
       }
-   
+   std::cout<<"combine_assignment_ps_list_parallel.size"<<c.size() <<std::endl;
    return c;
    
 }
@@ -228,6 +233,8 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    assignment_ps_map b_map=b.assignments;
    std::vector<f> end=generate_possibility(a.begin_v);
    std::vector<f> begin=generate_possibility(a.end_v);
+    std::cout<<"begin size loop:"<<begin.size()<<std::endl;
+   std::cout<<"end size loop:"<<end.size()<<std::endl;
    for(auto i:begin){
       for(auto j:end){
             assignment_ps aa=a_map[std::pair<f,f>(j,i)];
@@ -246,6 +253,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
                c[std::pair<f,f>(i,j)] = ac;
          }
       }
+   std::cout<<"combine_assignment_ps_list_loop.size"<<c.size() <<std::endl;
    return c;
 }
 
@@ -258,6 +266,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
 
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(a.end_v);
+   std::cout<<"begin size:"<<begin.size()<<std::endl;
+   std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    for(auto i:begin){
       for(auto j:end){
@@ -328,9 +338,6 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg,I_t &I){
    b.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
       std::cout<<"i.second.s:"<<i.second.s<<std::endl;
-      std::cout<<"assignment:";
-      for (auto e: i.first.first)
-         std::cout << e << ' ';
       std::cout << std::endl;
       if(b.s > i.second.s){
          b = i.second;

@@ -513,7 +513,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
     {
       var_t v = oi->second;
      std::cout<<v<<", ";
-      if(v>ia.global_regs.size())
+      if(v>=ia.global_regs.size())
           {
             c=c+4;
           }

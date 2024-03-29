@@ -24,7 +24,7 @@ static void write_into_csv(float c, int i, int time){
   std::ofstream outputFile("optimalCost.csv", std::ios_base::app);
    if (outputFile.is_open()) {  // Check if the file was successfully opened
     // Write some text into the file
-    outputFile << std::string(dstFileName)<< ","<< c << "," << time << "," << i << "\n";  // Write a line of text to the file
+    outputFile << std::string(dstFileName)<< ","<< currFunc->rname<<","<< c << "," << time << "," << i << "\n";  // Write a line of text to the file
     // Close the file
     outputFile.close();  // Close the file after writing
 

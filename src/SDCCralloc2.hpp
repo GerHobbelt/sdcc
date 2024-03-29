@@ -324,7 +324,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //aa.begin_i = as;
          //aa.end_i = as;
          aa.global_regs.reserve(a.begin_v.size());
-         for(auto i in a.begin_v){
+         for(auto i : a.begin_v){
             aa.global_regs[i]=getIndex(as.registers_begin,i);
          }
      //    aa.insts.push_back(as);

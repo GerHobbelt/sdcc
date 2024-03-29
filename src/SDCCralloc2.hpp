@@ -61,6 +61,7 @@ static int getIndex(std::vector<short int> v, short int K)
     } 
 } 
 
+
 //we need to see if we can get the cost of each instruction directly from this function
 //I hope it is not hard, but I am not sure.
 //static float instruction_cost(i_assignment_ps &a);
@@ -325,7 +326,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
             as.global_regs[i]=getIndex(as.registers_begin,i);
          }
          //std::cout<<"try to get cost"<<std::endl;
-         as.cost = instruction_cost_easy(as,((*(a.cfg))[a.begin]),I);
+         as.cost = instruction_cost_easy(as,*(as.node),I);
          aa.s = as.cost;
          aa.begin_cost=as.cost;
          aa.end_cost=as.cost;

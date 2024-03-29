@@ -659,9 +659,9 @@ static void initial_basic_block(ps_cfg_t &ps_cfg, const I_t &I)
 {
    if (ps_cfg.assignments.size() == 0){
       if(ps_cfg.left==-1 || ps_cfg.right==-1){
-        // std::cout<<"1"<<std::endl;
+         std::cout<<"1"<<std::endl;
          initlize_assignment_ps_list(ps_cfg, I);
-      //   std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
+         std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
          return;
       }
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
@@ -692,7 +692,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
- // std::cout<<"I2 created"<<std::endl;
+  std::cout<<"I2 created"<<std::endl;
 
   initial_basic_block(root,I2);
   std::cout<<"initial basic block"<<std::endl;
@@ -754,10 +754,10 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
- // std::cout<<"root created"<<std::endl;
+  std::cout<<"root created"<<std::endl;
   convert_cfg_to_spcfg(root);
 
-  //std::cout<<"spcfg created"<<std::endl;
+  std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
   //std::cout<<"get cost"<<std::endl;
 

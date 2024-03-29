@@ -727,7 +727,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   std::cout.flush();
 #endif
 
-  write_into_csv(winner.s,1,duration.count());
+  write_into_csv(winner.s,1,duration.count()-duration_of_permutation);
 
   return(winner.s);
 }

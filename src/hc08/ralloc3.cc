@@ -502,16 +502,17 @@ static float instruction_cost(const i_assignment_ps &ia,cfg_node &node, const I_
 template <class I_t>
 static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,  cfg_node &node, const I_t &I,float c)
 {
+  std::cout<<"begin to check o"<<std::endl;
   if(!o || !IS_SYMOP(o))
     return c;
   symbol *sym = OP_SYMBOL(o);
   operand_map_t::const_iterator oi, oi_end;
 //  std::cout<<"o is: "<<OP_SYMBOL_CONST(o)->key<<std::endl;
- // std::cout<<"v includes: ";
+  std::cout<<"v includes: ";
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
     {
       var_t v = oi->second;
-    //  std::cout<<v<<", ";
+     std::cout<<v<<", ";
         
       if(ia.global_regs[v]>=0)
         { 
@@ -523,8 +524,8 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
           c=c+4;
         }
     }
-   // std::cout<<std::endl;
-  //  std::cout<<"c is: "<<c<<std::endl;
+    std::cout<<std::endl;
+    std::cout<<"c is: "<<c<<std::endl;
     return c;
 }
 
@@ -659,9 +660,9 @@ static void initial_basic_block(ps_cfg_t &ps_cfg, const I_t &I)
 {
    if (ps_cfg.assignments.size() == 0){
       if(ps_cfg.left==-1 || ps_cfg.right==-1){
-         std::cout<<"1"<<std::endl;
+        // std::cout<<"1"<<std::endl;
          initlize_assignment_ps_list(ps_cfg, I);
-         std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
+      //   std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
          return;
       }
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
@@ -692,10 +693,10 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
-  std::cout<<"I2 created"<<std::endl;
+ // std::cout<<"I2 created"<<std::endl;
 
   initial_basic_block(root,I2);
-  std::cout<<"initial basic block"<<std::endl;
+  //std::cout<<"initial basic block"<<std::endl;
   auto start = std::chrono::high_resolution_clock::now();
   generate_spcfg(root,I2);
   auto stop = std::chrono::high_resolution_clock::now();
@@ -754,10 +755,10 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
-  std::cout<<"root created"<<std::endl;
+  //std::cout<<"root created"<<std::endl;
   convert_cfg_to_spcfg(root);
 
-  std::cout<<"spcfg created"<<std::endl;
+ // std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
   //std::cout<<"get cost"<<std::endl;
 

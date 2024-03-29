@@ -206,9 +206,7 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
          for(auto k:end){
             assignment_ps ab=b_map[std::pair<f,f>(j,k)];
             assignment_ps ac;
-            if ( ab.s == std::numeric_limits<float>::infinity()){
-               continue;
-            }
+
             ac.s = aa.s + ab.s;
             ac.begin_cost=aa.begin_cost;
             ac.end_cost=ab.end_cost;
@@ -243,9 +241,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
             assignment_ps aa=a_map[std::pair<f,f>(i,j)];
             assignment_ps ab=b_map[std::pair<f,f>(i,j)];
             assignment_ps ac;
-            if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
-               continue;
-            }
+
             ac.s = aa.s + ab.s - aa.begin_cost - aa.end_cost;
             ac.begin_cost=aa.begin_cost;
             ac.end_cost=ab.end_cost;
@@ -281,9 +277,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
             assignment_ps aa=a_map[std::pair<f,f>(j,i)];
             assignment_ps ab=b_map[std::pair<f,f>(i,j)];
             assignment_ps ac;
-            if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
-               continue;
-            }
+
             ac.s = aa.s + ab.s-30;
             ac.begin_cost=ab.begin_cost;
             ac.end_cost=ab.end_cost;

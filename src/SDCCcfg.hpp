@@ -28,7 +28,7 @@ typedef std::vector<var_t> f;
 struct i_assignment_ps{
    f registers_begin;
    f registers_end;
-
+   f global_regs;
    cfg_node *node; //the corresponding node(with ic) in the cfg
    float cost; //cost of the assignment
 
@@ -59,16 +59,13 @@ struct i_assignment_ps{
 struct assignment_ps{
    float s; //cost
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
-   i_assignment_ps begin_i;
-   i_assignment_ps end_i;
+   f global_regs;
 
    assignment_ps(){
     //std::cout<<"assignment_ps constructor"<<std::endl;
       s = std::numeric_limits<float>::infinity();
       //insts.clear();
      // std::cout<<"assignment_ps constructor end"<<std::endl;
-      begin_i = i_assignment_ps();
-      end_i = i_assignment_ps();
    }
 };
 

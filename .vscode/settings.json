@@ -77,6 +77,8 @@
         "cfg.h": "c",
         "ralloc.h": "c",
         "common.h": "c",
-        "sdccralloc2.hpp": "c"
+        "sdccralloc2.hpp": "c",
+        "compare": "cpp",
+        "iterator": "cpp"
     }
 }

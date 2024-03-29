@@ -531,7 +531,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
     {
       var_t v = oi->second;
      // std::cout<<v<<", ";
-      if(getIndex(ia.registers_begin,v) >= 0)
+      if(ia.global_regs[v]>=0)
         { 
           c=c+1;
         }
@@ -737,7 +737,7 @@ std::ofstream outputFile("optimalCost2.txt");
    if (outputFile.is_open()) {  // Check if the file was successfully opened
     // Write some text into the file
     outputFile << "our's optimal cost: "<<winner.s<<"\n";  // Write a line of text to the file
-    outputFile<< "run time: "<<duration.count()-duration_of_per<<"\n";
+   // outputFile<< "run time: "<<duration.count()-duration_of_per<<"\n";
     outputFile<< "total run time: "<<duration.count()<<"\n";
     // Close the file
     outputFile.close();  // Close the file after writing

@@ -38,7 +38,8 @@ extern "C"
 // Integer constant upper bound on port->num_regs
 #define MAX_NUM_REGS 3
 
-int duration_of_per=0;
+int duration_of_permutation=0;
+
 
 //we need to see if we can get the cost of each instruction directly from this function
 //I hope it is not hard, but I am not sure.
@@ -167,13 +168,13 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
-   auto start = std::chrono::high_resolution_clock::now();
+//  auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> mid=generate_possibility(a.end_v);
    std::vector<f> end=generate_possibility(b.end_v);
-   auto stop = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-   duration_of_per=duration_of_per+duration.count();
+ //  auto stop = std::chrono::high_resolution_clock::now();
+//  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+ //  duration_of_per=duration_of_per+duration.count();
   // std::cout<<"begin size series:"<<begin.size()<<std::endl;
   // std::cout<<"mid size series:"<<mid.size()<<std::endl;
    for(auto i:begin){
@@ -189,13 +190,13 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
                continue;
             }
             ac.s = aa.s + ab.s;
-            ac.begin_i = aa.begin_i;
-            ac.end_i = ab.end_i;
             //ac.insts=aa,insts.reserve(aa.insts.size() + ab.insts.size());
             //ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
             //ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,k)].s > ac.s)
+            if(c[std::pair<f,f>(i,k)].s > ac.s){
+               ac.global_regs=aa.global_regs;
                c[std::pair<f,f>(i,k)] = ac;
+            }
          }
       }
    }
@@ -207,12 +208,12 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
-   auto start = std::chrono::high_resolution_clock::now();
+ //  auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(b.end_v);
-   auto stop = std::chrono::high_resolution_clock::now();
-   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-   duration_of_per=duration_of_per+duration.count();
+  // auto stop = std::chrono::high_resolution_clock::now();
+  // auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+  // duration_of_per=duration_of_per+duration.count();
   // std::cout<<"begin size parallel:"<<begin.size()<<std::endl;
  //  std::cout<<"end size parallel:"<<end.size()<<std::endl;
    for(auto i:begin){
@@ -224,13 +225,13 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
                continue;
             }
             ac.s = aa.s + ab.s - aa.begin_i.cost - aa.end_i.cost;
-            ac.begin_i = aa.begin_i;
-            ac.end_i = ab.end_i;
            // ac.insts.reserve(aa.insts.size() + ab.insts.size());
            // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
            // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,j)].s > ac.s)
+            if(c[std::pair<f,f>(i,j)].s > ac.s){
+               ac.global_regs=aa.global_regs;
                c[std::pair<f,f>(i,j)] = ac;
+            }
          }
       }
  //  std::cout<<"combine_assignment_ps_list_parallel.size"<<c.size() <<std::endl;
@@ -242,12 +243,12 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
-   auto start = std::chrono::high_resolution_clock::now();
+  // auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> end=generate_possibility(a.begin_v);
    std::vector<f> begin=generate_possibility(a.end_v);
-   auto stop = std::chrono::high_resolution_clock::now();
-   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-   duration_of_per=duration_of_per+duration.count();
+  // auto stop = std::chrono::high_resolution_clock::now();
+  // auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+  // duration_of_per=duration_of_per+duration.count();
  //   std::cout<<"begin size loop:"<<begin.size()<<std::endl;
  //  std::cout<<"end size loop:"<<end.size()<<std::endl;
    for(auto i:begin){
@@ -259,13 +260,15 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
                continue;
             }
             ac.s = aa.s + ab.s-30;
-            ac.begin_i = aa.begin_i;
-            ac.end_i = aa.end_i;
+           // ac.begin_i = aa.begin_i;
+           // ac.end_i = aa.end_i;
            // ac.insts.reserve(aa.insts.size() + ab.insts.size());
            // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
            // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,j)].s > ac.s)
+            if(c[std::pair<f,f>(i,j)].s > ac.s){
+               ac.global_regs=ab.global_regs;
                c[std::pair<f,f>(i,j)] = ac;
+            }
          }
       }
  //  std::cout<<"combine_assignment_ps_list_loop.size"<<c.size() <<std::endl;
@@ -298,8 +301,12 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,((*(a.cfg))[a.begin]),I);
          aa.s = as.cost;
-         aa.begin_i = as;
-         aa.end_i = as;
+         //aa.begin_i = as;
+         //aa.end_i = as;
+         aa.global_regs.reserve(a.begin_v.size());
+         for(auto i in a.begin_v){
+            aa.global_regs[i]=getIndex(as.registers_begin,i);
+         }
      //    aa.insts.push_back(as);
          c[std::pair<f,f>(i,j)] = aa;
       }

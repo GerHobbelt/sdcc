@@ -216,7 +216,7 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
             //ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
             //ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
             if(c[std::pair<f,f>(i,k)].s > ac.s){
-               ac.global_regs=aa.global_regs;
+            //   ac.global_regs=aa.global_regs;
                c[std::pair<f,f>(i,k)] = ac;
             }
          }
@@ -253,7 +253,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
            // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
            // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
             if(c[std::pair<f,f>(i,j)].s > ac.s){
-               ac.global_regs=aa.global_regs;
+             //  ac.global_regs=aa.global_regs;
                c[std::pair<f,f>(i,j)] = ac;
             }
          }
@@ -293,7 +293,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
            // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
            // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
             if(c[std::pair<f,f>(i,j)].s > ac.s){
-               ac.global_regs=ab.global_regs;
+               //ac.global_regs=ab.global_regs;
                c[std::pair<f,f>(i,j)] = ac;
             }
          }
@@ -328,6 +328,9 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_end = j;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
+         for(auto i : a.begin_v){
+            as.global_regs[i]=getIndex(as.registers_begin,i);
+         }
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,((*(a.cfg))[a.begin]),I);
          aa.s = as.cost;
@@ -335,10 +338,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          aa.end_cost=as.cost;
          //aa.begin_i = as;
          //aa.end_i = as;
-         aa.global_regs.reserve(a.begin_v.size());
-         for(auto i : a.begin_v){
-            aa.global_regs[i]=getIndex(as.registers_begin,i);
-         }
+         //aa.global_regs=as.global_regs;
+        
      //    aa.insts.push_back(as);
          c[std::pair<f,f>(i,j)] = aa;
       }

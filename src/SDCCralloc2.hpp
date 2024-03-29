@@ -164,7 +164,7 @@ static std::vector<f> generate_possibility(f variables){
         //cout<<endl;
        //  std::cout<<"begin generate_permutation"<<std::endl;
 
-        std::vector<f> p=generate_permutation(v);
+        //std::vector<f> p=generate_permutation(v);
       //  std :: cout<<"finish generate_permutation"<<std::endl;
         //cout<<"current p:"<<endl;
         //for(auto i:p){
@@ -174,8 +174,9 @@ static std::vector<f> generate_possibility(f variables){
         //  cout<<endl;
         //}
         //cout<<endl;
-        results.reserve(results.size() + distance(p.begin(),p.end()));
-        results.insert(results.end(),p.begin(),p.end());
+        //results.reserve(results.size() + distance(p.begin(),p.end()));
+        //results.insert(results.end(),p.begin(),p.end());
+        results.push_back(v);
       }
    }
  //  std::cout<<"finish generate_possibility"<<std::endl;

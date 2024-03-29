@@ -18,25 +18,6 @@ extern "C"
 #define REG_H 2
 
 
-static int getIndex(std::vector<short int> v, short int K) 
-{ 
-    auto it = find(v.begin(), v.end(), K); 
-  
-    // If element was found 
-    if (it != v.end())  
-    { 
-      
-        // calculating the index 
-        // of K 
-        int index = it - v.begin(); 
-        return index;
-    } 
-    else { 
-        // If the element is not 
-        // present in the vector 
-        return -1;
-    } 
-} 
 
 template <class I_t>
 static void add_operand_conflicts_in_node(const cfg_node &n, I_t &I)

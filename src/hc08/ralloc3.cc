@@ -511,7 +511,8 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
     {
       var_t v = oi->second;
-      std::cout<<v<<", ";
+    //  std::cout<<v<<", ";
+        
       if(ia.global_regs[v]>=0)
         { 
           c=c+1;
@@ -522,8 +523,8 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
           c=c+4;
         }
     }
-    std::cout<<std::endl;
-    std::cout<<"c is: "<<c<<std::endl;
+   // std::cout<<std::endl;
+  //  std::cout<<"c is: "<<c<<std::endl;
     return c;
 }
 
@@ -753,10 +754,10 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
-
+  std::cout<<"root created"<<std::endl;
   convert_cfg_to_spcfg(root);
 
-  //std::cout<<"spcfg created"<<std::endl;
+  std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
   //std::cout<<"get cost"<<std::endl;
 

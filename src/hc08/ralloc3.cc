@@ -3,7 +3,6 @@
 
 #include "SDCCralloc.hpp"
 #include "SDCCralloc2.hpp"
-#include <chrono>
 
 
 extern "C"
@@ -693,6 +692,7 @@ static void initial_basic_block(ps_cfg_t &ps_cfg, const I_t &I)
       }
 }}
 
+
 template <class I_t>
 static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
 {
@@ -737,7 +737,7 @@ std::ofstream outputFile("optimalCost2.txt");
    if (outputFile.is_open()) {  // Check if the file was successfully opened
     // Write some text into the file
     outputFile << "our's optimal cost: "<<winner.s<<"\n";  // Write a line of text to the file
-    outputFile<< "run time: "<<duration.count()<<"\n";
+    outputFile<< "run time: "<<duration.count()-duration_of_per<<"\n";
     // Close the file
     outputFile.close();  // Close the file after writing
 

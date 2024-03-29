@@ -27,6 +27,8 @@
 
 #include "common.h"
 #include "SDCCcfg.hpp"
+#include <chrono>
+
 
 extern "C"
 {
@@ -36,6 +38,7 @@ extern "C"
 // Integer constant upper bound on port->num_regs
 #define MAX_NUM_REGS 3
 
+int duration_of_per=0;
 
 //we need to see if we can get the cost of each instruction directly from this function
 //I hope it is not hard, but I am not sure.
@@ -164,9 +167,13 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
+   auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> mid=generate_possibility(a.end_v);
    std::vector<f> end=generate_possibility(b.end_v);
+   auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+   duration_of_per=duration_of_per+duration.count();
   // std::cout<<"begin size series:"<<begin.size()<<std::endl;
   // std::cout<<"mid size series:"<<mid.size()<<std::endl;
    for(auto i:begin){
@@ -200,8 +207,12 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
+   auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(b.end_v);
+   auto stop = std::chrono::high_resolution_clock::now();
+   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+   duration_of_per=duration_of_per+duration.count();
   // std::cout<<"begin size parallel:"<<begin.size()<<std::endl;
  //  std::cout<<"end size parallel:"<<end.size()<<std::endl;
    for(auto i:begin){
@@ -231,8 +242,12 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
+   auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> end=generate_possibility(a.begin_v);
    std::vector<f> begin=generate_possibility(a.end_v);
+   auto stop = std::chrono::high_resolution_clock::now();
+   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+   duration_of_per=duration_of_per+duration.count();
  //   std::cout<<"begin size loop:"<<begin.size()<<std::endl;
  //  std::cout<<"end size loop:"<<end.size()<<std::endl;
    for(auto i:begin){

@@ -346,11 +346,11 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
    if (ps_cfg.assignments.size() == 0){
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
        //  std::cout<<"2"<<std::endl;
-         generate_spcfg(ps_cfg_map[ps_cfg.left], I);
+         generate_spcfg(ps_cfg_map[ps_cfg.left]);
       }
       if (ps_cfg_map[ps_cfg.right].assignments.size() == 0){
        //  std::cout<<"3"<<std::endl;
-         generate_spcfg(ps_cfg_map[ps_cfg.right], I);
+         generate_spcfg(ps_cfg_map[ps_cfg.right]);
       }
       switch (ps_cfg.type){
          case 1:

@@ -3,6 +3,8 @@
 
 #include "SDCCralloc.hpp"
 #include "SDCCralloc2.hpp"
+#include <chrono>
+
 
 extern "C"
 {
@@ -15,6 +17,7 @@ extern "C"
 #define REG_A 0
 #define REG_X 1
 #define REG_H 2
+
 
 static int getIndex(std::vector<short int> v, short int K) 
 { 
@@ -689,8 +692,11 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
 
  // std::cout<<"I2 created"<<std::endl;
 
+  auto start = std::chrono::high_resolution_clock::now();
   generate_spcfg(root,I2);
-  
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<microseconds>(stop - start);
+
  //std::cout<<"fi;; spcfg with assignments"<<std::endl;
   const assignment_ps &winner = get_optimal(root,I2);
 
@@ -705,7 +711,18 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   std::cout.flush();
 #endif
 
+std::ofstream outputFile("optimalCost2.txt");
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << "our's optimal cost: "<<winner.s<<"\n";  // Write a line of text to the file
+    outputFile<< "run time: "<<duration.count()<<std::
+    // Close the file
+    outputFile.close();  // Close the file after writing
 
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
 
   return(winner.s);
 }
@@ -732,24 +749,13 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
+
   convert_cfg_to_spcfg(root);
 
   //std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
   //std::cout<<"get cost"<<std::endl;
 
-   std::ofstream outputFile("optimalCost2.txt");
-   if (outputFile.is_open()) {  // Check if the file was successfully opened
-    // Write some text into the file
-    outputFile << "2.our's optimal cost: "<<cost<<"\n";  // Write a line of text to the file
-   
-    // Close the file
-    outputFile.close();  // Close the file after writing
-
-    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
-  } else {
-    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
-  }
 
   return  cost;
 }

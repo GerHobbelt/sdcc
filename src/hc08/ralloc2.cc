@@ -25,6 +25,7 @@
 #define CH_SALLOC
 
 #include "SDCCralloc.hpp"
+#include <chrono>
 
 extern "C"
 {
@@ -702,8 +703,10 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   assignment ac;
   assignment_optimal = true;
+  auto start = std::chrono::high_resolution_clock::now();
   tree_dec_ralloc_nodes(T, find_root(T), G, I2, ac, &assignment_optimal);
-
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<microseconds>(stop - start);
   const assignment &winner = *(T[find_root(T)].assignments.begin());
 
 #ifdef DEBUG_RALLOC_DEC
@@ -751,8 +754,8 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
    std::ofstream outputFile("optimalCost.txt");
    if (outputFile.is_open()) {  // Check if the file was successfully opened
     // Write some text into the file
-    outputFile << "1.philip's optimal cost: "<< winner.s<<"\n";  // Write a line of text to the file
-   
+    outputFile << "philip's optimal cost: "<< winner.s<<"\n";  // Write a line of text to the file
+    outputFile << "Time taken: "<< duration.count()<<"\n";  // Write a line of text to the file
     // Close the file
     outputFile.close();  // Close the file after writing
 

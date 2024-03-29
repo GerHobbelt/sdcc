@@ -511,7 +511,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
     {
       var_t v = oi->second;
-     // std::cout<<v<<", ";
+      std::cout<<v<<", ";
       if(ia.global_regs[v]>=0)
         { 
           c=c+1;
@@ -522,7 +522,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
           c=c+4;
         }
     }
-  //  std::cout<<std::endl;
+    std::cout<<std::endl;
    // std::cout<<"c is: "<<c<<std::endl;
     return c;
 }

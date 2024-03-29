@@ -145,40 +145,26 @@ std::vector<f > subsets(f& A)
 
 static std::vector<f> generate_possibility(f variables){
   // std::cout<<"begin generate_possibility"<<std::endl;
+   if (variables.size()<=MAX_NUM_REGS){
+      std::vector<f> p=generate_permutation(variables);
+      if (variables.size()<MAX_NUM_REGS){
+         for(auto i:p){
+            for (int j=variables.size();j<MAX_NUM_REGS;j++){
+               i.push_back(-1);
+            }
+         }
+      }
+      return p;
+   }
    std::vector<f> results;
    std::vector<f> sub_set=subsets(variables);
    for(auto sub:sub_set){
-      if(sub.size()<=MAX_NUM_REGS){
-        f v;
-        for(int i=0; i<MAX_NUM_REGS;i++){
-          v.push_back(-1);
-        }
-        int len=sub.size();
-        for(int i=0;i<len;i++){
-          v[MAX_NUM_REGS-len+i]=sub[i];
-        }
-        //cout<<"current sub:"<<endl;
-        //for(auto i:v){
-        //  cout<<i<<" ";
-        //}
-        //cout<<endl;
-       //  std::cout<<"begin generate_permutation"<<std::endl;
-
-        std::vector<f> p=generate_permutation(v);
-      //  std :: cout<<"finish generate_permutation"<<std::endl;
-        //cout<<"current p:"<<endl;
-        //for(auto i:p){
-        //  for(auto j:i){
-        //    cout<<j<<" ";
-        //  }
-        //  cout<<endl;
-        //}
-        //cout<<endl;
+      if(sub.size()==MAX_NUM_REGS){
+        std::vector<f> p=generate_permutation(sub);
         results.reserve(results.size() + distance(p.begin(),p.end()));
         results.insert(results.end(),p.begin(),p.end());
       }
    }
- //  std::cout<<"finish generate_possibility"<<std::endl;
 
    return results;
 }
@@ -188,13 +174,13 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
-//  auto start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> mid=generate_possibility(a.end_v);
    std::vector<f> end=generate_possibility(b.end_v);
- //  auto stop = std::chrono::high_resolution_clock::now();
-//  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
- //  duration_of_permutation=duration_of_permutation+duration.count();
+   auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+   duration_of_permutation=duration_of_permutation+duration.count();
   // std::cout<<"begin size series:"<<begin.size()<<std::endl;
   // std::cout<<"mid size series:"<<mid.size()<<std::endl;
    for(auto i:begin){
@@ -228,14 +214,14 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
-//   auto start = std::chrono::high_resolution_clock::now();
+   auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> begin=generate_possibility(a.begin_v);
    std::vector<f> end=generate_possibility(b.end_v);
- //  auto stop = std::chrono::high_resolution_clock::now();
-  // auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-  // duration_of_permutation=duration_of_permutation+duration.count();
-  // std::cout<<"begin size parallel:"<<begin.size()<<std::endl;
- //  std::cout<<"end size parallel:"<<end.size()<<std::endl;
+   auto stop = std::chrono::high_resolution_clock::now();
+   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+   duration_of_permutation=duration_of_permutation+duration.count();
+   std::cout<<"begin size parallel:"<<begin.size()<<std::endl;
+   std::cout<<"end size parallel:"<<end.size()<<std::endl;
    for(auto i:begin){
          for(auto j:end){
             assignment_ps aa=a_map[std::pair<f,f>(i,j)];
@@ -264,12 +250,12 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
- //  auto start = std::chrono::high_resolution_clock::now();
+   auto start = std::chrono::high_resolution_clock::now();
    std::vector<f> begin=generate_possibility(b.begin_v);
    std::vector<f> end=generate_possibility(b.end_v);
- //  auto stop = std::chrono::high_resolution_clock::now();
- //  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-  // duration_of_permutation=duration_of_permutation+duration.count();
+   auto stop = std::chrono::high_resolution_clock::now();
+   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
+   duration_of_permutation=duration_of_permutation+duration.count();
  //   std::cout<<"begin size loop:"<<begin.size()<<std::endl;
  //  std::cout<<"end size loop:"<<end.size()<<std::endl;
    for(auto i:begin){

@@ -58,14 +58,14 @@ struct i_assignment_ps{
 //assignment for graph
 struct assignment_ps{
    float s; //cost
-   std::vector<i_assignment_ps> insts; //assignments for each instruction
+   //std::vector<i_assignment_ps> insts; //assignments for each instruction
    i_assignment_ps begin_i;
    i_assignment_ps end_i;
 
    assignment_ps(){
     //std::cout<<"assignment_ps constructor"<<std::endl;
       s = std::numeric_limits<float>::infinity();
-      insts.clear();
+      //insts.clear();
      // std::cout<<"assignment_ps constructor end"<<std::endl;
       begin_i = i_assignment_ps();
       end_i = i_assignment_ps();

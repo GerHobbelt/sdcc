@@ -184,9 +184,9 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
             ac.s = aa.s + ab.s;
             ac.begin_i = aa.begin_i;
             ac.end_i = ab.end_i;
-            ac.insts.reserve(aa.insts.size() + ab.insts.size());
-            ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
-            ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
+            //ac.insts=aa,insts.reserve(aa.insts.size() + ab.insts.size());
+            //ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
+            //ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
             if(c[std::pair<f,f>(i,k)].s > ac.s)
                c[std::pair<f,f>(i,k)] = ac;
          }
@@ -215,9 +215,9 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
             ac.s = aa.s + ab.s - aa.begin_i.cost - aa.end_i.cost;
             ac.begin_i = aa.begin_i;
             ac.end_i = ab.end_i;
-            ac.insts.reserve(aa.insts.size() + ab.insts.size());
-            ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
-            ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
+           // ac.insts.reserve(aa.insts.size() + ab.insts.size());
+           // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
+           // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
             if(c[std::pair<f,f>(i,j)].s > ac.s)
                c[std::pair<f,f>(i,j)] = ac;
          }
@@ -246,9 +246,9 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
             ac.s = aa.s + ab.s-30;
             ac.begin_i = aa.begin_i;
             ac.end_i = aa.end_i;
-            ac.insts.reserve(aa.insts.size() + ab.insts.size());
-            ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
-            ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
+           // ac.insts.reserve(aa.insts.size() + ab.insts.size());
+           // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
+           // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
             if(c[std::pair<f,f>(i,j)].s > ac.s)
                c[std::pair<f,f>(i,j)] = ac;
          }
@@ -285,7 +285,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          aa.s = as.cost;
          aa.begin_i = as;
          aa.end_i = as;
-         aa.insts.push_back(as);
+     //    aa.insts.push_back(as);
          c[std::pair<f,f>(i,j)] = aa;
       }
    }

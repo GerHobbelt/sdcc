@@ -714,8 +714,8 @@ std::ofstream outputFile("optimalCost2.txt");
    if (outputFile.is_open()) {  // Check if the file was successfully opened
     // Write some text into the file
     outputFile << "our's optimal cost: "<<winner.s<<"\n";  // Write a line of text to the file
-    outputFile<< "run time: "<<duration.count()-duration_of_permutation<<"\n";
-    outputFile<< "total run time: "<<duration.count()<<"\n";
+    outputFile<< "run time: "<<duration.count()<"\n";
+  //  outputFile<< "total run time: "<<duration.count()<<"\n";
     // Close the file
     outputFile.close();  // Close the file after writing
 

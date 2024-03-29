@@ -738,6 +738,7 @@ std::ofstream outputFile("optimalCost2.txt");
     // Write some text into the file
     outputFile << "our's optimal cost: "<<winner.s<<"\n";  // Write a line of text to the file
     outputFile<< "run time: "<<duration.count()-duration_of_per<<"\n";
+    outputFile<< "total run time: "<<duration.count()<<"\n";
     // Close the file
     outputFile.close();  // Close the file after writing
 

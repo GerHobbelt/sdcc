@@ -264,6 +264,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
 }
 
 static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b){
+   std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
    assignment_ps_map c;
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
@@ -297,7 +298,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
             }
          }
       }
- //  std::cout<<"combine_assignment_ps_list_loop.size"<<c.size() <<std::endl;
+   std::cout<<"combine_assignment_ps_list_loop.size"<<c.size() <<std::endl;
    return c;
 }
 

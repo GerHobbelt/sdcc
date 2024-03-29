@@ -674,7 +674,7 @@ static void extra_ic_generated(iCode *ic)
 }
 
 template <class I_t>
-static void initial_basic_block(ps_cfg_t &root, const I_t &I)
+static void initial_basic_block(ps_cfg_t &ps_cfg, const I_t &I)
 {
    if (ps_cfg.assignments.size() == 0){
       if(ps_cfg.left==-1 || ps_cfg.right==-1){

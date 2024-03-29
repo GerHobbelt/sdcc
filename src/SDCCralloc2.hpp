@@ -269,8 +269,8 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    assignment_ps_map a_map=a.assignments;
    assignment_ps_map b_map=b.assignments;
  //  auto start = std::chrono::high_resolution_clock::now();
-   std::vector<f> end=generate_possibility(a.begin_v);
-   std::vector<f> begin=generate_possibility(a.end_v);
+   std::vector<f> begin=generate_possibility(b.begin_v);
+   std::vector<f> end=generate_possibility(b.end_v);
  //  auto stop = std::chrono::high_resolution_clock::now();
  //  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
   // duration_of_permutation=duration_of_permutation+duration.count();
@@ -347,8 +347,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    a.assignments = c;
 }
 
-template <class I_t>
-static void generate_spcfg(ps_cfg_t &ps_cfg, I_t &I){
+static void generate_spcfg(ps_cfg_t &ps_cfg){
 
    if (ps_cfg.assignments.size() == 0){
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){

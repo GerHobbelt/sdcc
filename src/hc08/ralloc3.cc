@@ -502,22 +502,15 @@ static float instruction_cost(const i_assignment_ps &ia,cfg_node &node, const I_
 template <class I_t>
 static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,  cfg_node &node, const I_t &I,float c)
 {
-  std::cout<<"begin to check o"<<std::endl;
   if(!o || !IS_SYMOP(o))
     return c;
   symbol *sym = OP_SYMBOL(o);
   operand_map_t::const_iterator oi, oi_end;
 //  std::cout<<"o is: "<<OP_SYMBOL_CONST(o)->key<<std::endl;
-  std::cout<<"v includes: ";
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
     {
       var_t v = oi->second;
-     std::cout<<v<<", ";
-      if(v>=ia.global_regs.size())
-          {
-            c=c+4;
-          }
-     else if(ia.global_regs[v]>=0)
+   if(ia.global_regs[v]>=0)
         { 
           c=c+1;
         }
@@ -527,8 +520,6 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
           c=c+4;
         }
     }
-    std::cout<<std::endl;
-    std::cout<<"c is: "<<c<<std::endl;
     return c;
 }
 

@@ -39,6 +39,22 @@ extern "C"
 #define REG_X 1
 #define REG_H 2
 
+static void write_into_csv(float c, int i, int time){
+  std::ofstream outputFile("optimalCost.csv", std::ios_base::app);
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << std::string(dstFileName)<< ","<< c << "," << time << "," << i << "\n";  // Write a line of text to the file
+    // Close the file
+    outputFile.close();  // Close the file after writing
+
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
+
+
+}
+
 template <class I_t>
 static void add_operand_conflicts_in_node(const cfg_node &n, I_t &I)
 {
@@ -701,6 +717,7 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
+
   assignment ac;
   assignment_optimal = true;
   auto start = std::chrono::high_resolution_clock::now();
@@ -752,18 +769,8 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   for(unsigned int i = 0; i < boost::num_vertices(G); i++)
     set_surviving_regs(winner, i, G, I);
-   std::ofstream outputFile("optimalCost.txt");
-   if (outputFile.is_open()) {  // Check if the file was successfully opened
-    // Write some text into the file
-    outputFile << "philip's optimal cost: "<< winner.s<<"\n";  // Write a line of text to the file
-    outputFile << "Time taken: "<< duration.count()<<"\n";  // Write a line of text to the file
-    // Close the file
-    outputFile.close();  // Close the file after writing
-
-    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
-  } else {
-    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
-  }
+  
+  write_into_csv(winner.s, 0, duration.count());
 
 
   return(!assignment_optimal);

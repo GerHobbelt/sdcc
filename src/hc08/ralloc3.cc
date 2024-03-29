@@ -19,6 +19,23 @@ extern "C"
 
 
 
+
+static void write_into_csv(float c, int i, int time){
+  std::ofstream outputFile("optimalCost.csv", std::ios_base::app);
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << std::string(dstFileName)<< ","<< c << "," << time << "," << i << "\n";  // Write a line of text to the file
+    // Close the file
+    outputFile.close();  // Close the file after writing
+
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
+
+
+}
+
 template <class I_t>
 static void add_operand_conflicts_in_node(const cfg_node &n, I_t &I)
 {
@@ -710,19 +727,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   std::cout.flush();
 #endif
 
-std::ofstream outputFile("optimalCost2.txt");
-   if (outputFile.is_open()) {  // Check if the file was successfully opened
-    // Write some text into the file
-    outputFile << "our's optimal cost: "<<winner.s<<"\n";  // Write a line of text to the file
-    outputFile<< "run time: "<<duration.count()<<"\n";
-  //  outputFile<< "total run time: "<<duration.count()<<"\n";
-    // Close the file
-    outputFile.close();  // Close the file after writing
-
-    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
-  } else {
-    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
-  }
+  write_into_csv(winner.s,1,duration.count());
 
   return(winner.s);
 }

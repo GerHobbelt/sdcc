@@ -705,9 +705,10 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
   assignment_optimal = true;
   auto start = std::chrono::high_resolution_clock::now();
   tree_dec_ralloc_nodes(T, find_root(T), G, I2, ac, &assignment_optimal);
+  const assignment &winner = *(T[find_root(T)].assignments.begin());
+  
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-  const assignment &winner = *(T[find_root(T)].assignments.begin());
 
 #ifdef DEBUG_RALLOC_DEC
   std::cout << "Winner: ";

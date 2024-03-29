@@ -674,6 +674,26 @@ static void extra_ic_generated(iCode *ic)
 }
 
 template <class I_t>
+static void initial_basic_block(ps_cfg_t &root, const I_t &I)
+{
+   if (ps_cfg.assignments.size() == 0){
+      if(ps_cfg.left==-1 || ps_cfg.right==-1){
+        // std::cout<<"1"<<std::endl;
+         initlize_assignment_ps_list(ps_cfg, I);
+      //   std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
+         return;
+      }
+      if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
+       //  std::cout<<"2"<<std::endl;
+         initial_basic_block(ps_cfg_map[ps_cfg.left], I);
+      }
+      if (ps_cfg_map[ps_cfg.right].assignments.size() == 0){
+       //  std::cout<<"3"<<std::endl;
+         initial_basic_block(ps_cfg_map[ps_cfg.right], I);
+      }
+}}
+
+template <class I_t>
 static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
 {
   bool assignment_optimal;
@@ -691,6 +711,8 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
  // std::cout<<"I2 created"<<std::endl;
+
+  initial_basic_block(root,I2);
 
   auto start = std::chrono::high_resolution_clock::now();
   generate_spcfg(root,I2);

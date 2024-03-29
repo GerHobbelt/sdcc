@@ -41,6 +41,26 @@ extern "C"
 int duration_of_permutation=0;
 
 
+static int getIndex(std::vector<short int> v, short int K) 
+{ 
+    auto it = find(v.begin(), v.end(), K); 
+  
+    // If element was found 
+    if (it != v.end())  
+    { 
+      
+        // calculating the index 
+        // of K 
+        int index = it - v.begin(); 
+        return index;
+    } 
+    else { 
+        // If the element is not 
+        // present in the vector 
+        return -1;
+    } 
+} 
+
 //we need to see if we can get the cost of each instruction directly from this function
 //I hope it is not hard, but I am not sure.
 //static float instruction_cost(i_assignment_ps &a);

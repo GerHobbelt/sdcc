@@ -145,26 +145,40 @@ std::vector<f > subsets(f& A)
 
 static std::vector<f> generate_possibility(f variables){
   // std::cout<<"begin generate_possibility"<<std::endl;
-   if (variables.size()<=MAX_NUM_REGS){
-      std::vector<f> p=generate_permutation(variables);
-      if (variables.size()<MAX_NUM_REGS){
-         for(auto i:p){
-            for (int j=variables.size();j<MAX_NUM_REGS;j++){
-               i.push_back(-1);
-            }
-         }
-      }
-      return p;
-   }
    std::vector<f> results;
    std::vector<f> sub_set=subsets(variables);
    for(auto sub:sub_set){
-      if(sub.size()==MAX_NUM_REGS){
-        std::vector<f> p=generate_permutation(sub);
+      if(sub.size()<=MAX_NUM_REGS){
+        f v;
+        for(int i=0; i<MAX_NUM_REGS;i++){
+          v.push_back(-1);
+        }
+        int len=sub.size();
+        for(int i=0;i<len;i++){
+          v[MAX_NUM_REGS-len+i]=sub[i];
+        }
+        //cout<<"current sub:"<<endl;
+        //for(auto i:v){
+        //  cout<<i<<" ";
+        //}
+        //cout<<endl;
+       //  std::cout<<"begin generate_permutation"<<std::endl;
+
+        std::vector<f> p=generate_permutation(v);
+      //  std :: cout<<"finish generate_permutation"<<std::endl;
+        //cout<<"current p:"<<endl;
+        //for(auto i:p){
+        //  for(auto j:i){
+        //    cout<<j<<" ";
+        //  }
+        //  cout<<endl;
+        //}
+        //cout<<endl;
         results.reserve(results.size() + distance(p.begin(),p.end()));
         results.insert(results.end(),p.begin(),p.end());
       }
    }
+ //  std::cout<<"finish generate_possibility"<<std::endl;
 
    return results;
 }
@@ -256,7 +270,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    auto stop = std::chrono::high_resolution_clock::now();
    auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
    duration_of_permutation=duration_of_permutation+duration.count();
- //   std::cout<<"begin size loop:"<<begin.size()<<std::endl;
+ //  std::cout<<"begin size loop:"<<begin.size()<<std::endl;
  //  std::cout<<"end size loop:"<<end.size()<<std::endl;
    for(auto i:begin){
       for(auto j:end){

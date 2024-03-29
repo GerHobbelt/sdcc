@@ -325,7 +325,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_end = j;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
-         as.global_regs.reserve(a.begin_v.size();
+         as.global_regs.reserve(a.begin_v.size());
          for(auto i : a.begin_v){
             as.global_regs[i]=getIndex(as.registers_begin,i);
          }

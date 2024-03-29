@@ -210,6 +210,8 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
                continue;
             }
             ac.s = aa.s + ab.s;
+            ac.begin_cost=aa.begin_cost;
+            ac.end_cost=ab.end_cost;
             //ac.insts=aa,insts.reserve(aa.insts.size() + ab.insts.size());
             //ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
             //ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
@@ -244,7 +246,9 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
             if (aa.s == std::numeric_limits<float>::infinity() || ab.s == std::numeric_limits<float>::infinity()){
                continue;
             }
-            ac.s = aa.s + ab.s - aa.begin_i.cost - aa.end_i.cost;
+            ac.s = aa.s + ab.s - aa.begin_cost - aa.end_cost;
+            ac.begin_cost=aa.begin_cost;
+            ac.end_cost=ab.end_cost;
            // ac.insts.reserve(aa.insts.size() + ab.insts.size());
            // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
            // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
@@ -280,6 +284,8 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
                continue;
             }
             ac.s = aa.s + ab.s-30;
+            ac.begin_cost=ab.begin_cost;
+            ac.end_cost=ab.end_cost;
            // ac.begin_i = aa.begin_i;
            // ac.end_i = aa.end_i;
            // ac.insts.reserve(aa.insts.size() + ab.insts.size());
@@ -321,6 +327,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,((*(a.cfg))[a.begin]),I);
          aa.s = as.cost;
+         aa.begin_cost=as.cost;
+         aa.end_cost=as.cost;
          //aa.begin_i = as;
          //aa.end_i = as;
          aa.global_regs.reserve(a.begin_v.size());

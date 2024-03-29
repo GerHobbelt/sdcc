@@ -59,6 +59,8 @@ struct i_assignment_ps{
 struct assignment_ps{
    float s; //cost
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
+   float begin_cost;
+    float end_cost;
    f global_regs;
 
    assignment_ps(){

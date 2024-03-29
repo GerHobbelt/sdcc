@@ -332,9 +332,11 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //aa.begin_i = as;
          //aa.end_i = as;
          aa.global_regs.reserve(a.begin_v.size());
+         std::cout<<"begin create global_regs"<<std::endl;  
          for(auto i : a.begin_v){
             aa.global_regs[i]=getIndex(as.registers_begin,i);
          }
+         std::cout<<"finish create global_regs"<<std::endl;
      //    aa.insts.push_back(as);
          c[std::pair<f,f>(i,j)] = aa;
       }

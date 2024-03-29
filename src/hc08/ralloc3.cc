@@ -517,7 +517,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
           {
             c=c+4;
           }
-     else if(ia.global_regs[v]<0)
+     else if(ia.global_regs[v]>=0)
         { 
           c=c+1;
         }

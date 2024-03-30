@@ -43,6 +43,7 @@ extern "C"
 static f if_f_match(f f1,f f2){
   int s=std::min(f1.size(),f2.size());
    f f3;
+   f3.reserve(std::max(f1.size(),f2.size()));
    for(int i=0;i<s;i++){
       if(f1[i]==f2[i]){
         f3.push_back(f1[i]);
@@ -66,9 +67,6 @@ static f if_f_match(f f1,f f2){
       }
    
    }
-   std::cout<<"f1.size()"<<f1.size()<<std::endl;
-   std::cout<<"f2.size()"<<f2.size()<<std::endl;
-   std::cout<<"f3.size()"<<f3.size()<<std::endl;
    return f3;
 }
 
@@ -290,9 +288,6 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
    std::vector<f> begin_p=generate_possibility(a.begin_v);
-   if (a.begin_v.size()!=0){
-      std::cout<<"begin variable back: "<<a.begin_v.back()<<std::endl;
-   }
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    for(auto i:begin_p){

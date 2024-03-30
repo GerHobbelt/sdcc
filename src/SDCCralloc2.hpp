@@ -276,7 +276,7 @@ static float instruction_cost_easy(const i_assignment_ps &ia, cfg_node &node, co
 
 static f convert_to_global(std::vector<short int> v,std::vector<var_t> variables){
    f global_reg;
-   global_reg.reserve(variables.back()+1);
+   global_reg.resize(variables.back()+1);
    for(int i=0;i<variables.back()+1;i++){
       global_reg[i]=getIndex(v,(short)i);
    }

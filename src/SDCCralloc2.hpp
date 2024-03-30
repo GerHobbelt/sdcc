@@ -362,6 +362,5 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
   }
   std::cout << "\n";
   std::cout << "Cost: " << b.s << "\n";
-  std::cout.flush();
    return b;
 }

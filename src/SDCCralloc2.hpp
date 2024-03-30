@@ -43,16 +43,16 @@ extern "C"
 static bool if_f_match(f f1,f f2){
    std::set<short int> v_not_in_1;
    std::set<short int> v_not_in_2;
-   for(int i<MAX_NUM_REGS;i++){
+   for(int i=0;i<MAX_NUM_REGS;i++){
       if(f1[i]!=f2[i]){
          if(f1[i]!=-1){
-            if (v_not_in_1.find(f1[i]) == v_not_in_1.end()){
+            if (v_not_in_1.find(f1[i]) != v_not_in_1.end()){
                return false;
             }
             v_not_in_2.insert(f1[i]);
          }
          if(f2[i]!=-1){
-            if (v_not_in_2.find(f2[i]) == v_not_in_2.end()){
+            if (v_not_in_2.find(f2[i]) != v_not_in_2.end()){
                return false;
             }
             v_not_in_1.insert(f2[i]);
@@ -219,7 +219,7 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
    for(auto j:b.assignments){
       f beginT=j.first.first;
       f endT=j.first.second;
-      if !if_f_match(endS,beginT){
+      if (!if_f_match(endS,beginT)){
          continue;
       }
       assignment_ps ac;
@@ -249,7 +249,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
    assignment_ps ac;
    ac.s=i.second.s+b.assignments[std::pair<f,f>(beginS,endS)].s-i.second.end_cost-i.second.begin_cost;
    ac.begin_cost=i.second.begin_cost;
-   ac.end_cost=j.second.end_cost;
+   ac.end_cost=i.second.end_cost;
    c[std::pair<f,f>(beginS,endS)] = ac;
   }
    return c;
@@ -259,7 +259,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
 static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
    assignment_ps_map c;
-   for(auto i in b.assignments){
+   for(auto i : b.assignments){
       f beginS=i.first.first;
       f endS=i.first.second;
       if(a.assignments.find(std::pair<f,f>(endS,beginS))==a.assignments.end()){

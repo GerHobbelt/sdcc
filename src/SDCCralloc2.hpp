@@ -41,7 +41,7 @@ extern "C"
 //int duration_of_permutation=0;
 
 static f if_f_match(f f1,f f2){
-   int s=min(f1.size(),f2.size());
+   int s=std::min(f1.size(),f2.size());
    f f3;
    for(int i=0;i<s;i++){
       if(f1[i]==f2[i]){

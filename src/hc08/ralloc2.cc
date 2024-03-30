@@ -51,9 +51,22 @@ static void write_into_csv(float c, int i, int time){
   } else {
     std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
   }
-
-
 }
+
+static void write_into_csv( int i, int time){
+  std::ofstream outputFile("optimalc_time.csv", std::ios_base::app);
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << std::string(dstFileName)<<","<< time << "," << i << "\n";  // Write a line of text to the file
+    // Close the file
+    outputFile.close();  // Close the file after writing
+
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
+}
+
 
 template <class I_t>
 static void add_operand_conflicts_in_node(const cfg_node &n, I_t &I)

@@ -38,8 +38,31 @@ extern "C"
 // Integer constant upper bound on port->num_regs
 #define MAX_NUM_REGS 3
 
-int duration_of_permutation=0;
+//int duration_of_permutation=0;
 
+static bool if_f_match(f f1,f f2){
+   std::set<short int> v_not_in_1;
+   std::set<short int> v_not_in_2;
+   for(int i<MAX_NUM_REGS;i++){
+      if(f1[i]!=f2[i]){
+         if(f1[i]!=-1){
+            if (v_not_in_1.find(f1[i]) == v_not_in_1.end()){
+               return false;
+            }
+            v_not_in_2.insert(f1[i]);
+         }
+         if(f2[i]!=-1){
+            if (v_not_in_2.find(f2[i]) == v_not_in_2.end()){
+               return false;
+            }
+            v_not_in_1.insert(f2[i]);
+         }
+      }
+   }
+   return true;
+
+
+}
 
 static int getIndex(std::vector<short int> v, short int K) 
 { 
@@ -165,7 +188,7 @@ static std::vector<f> generate_possibility(f variables){
         //cout<<endl;
        //  std::cout<<"begin generate_permutation"<<std::endl;
 
-        //std::vector<f> p=generate_permutation(v);
+        std::vector<f> p=generate_permutation(v);
       //  std :: cout<<"finish generate_permutation"<<std::endl;
         //cout<<"current p:"<<endl;
         //for(auto i:p){
@@ -175,9 +198,9 @@ static std::vector<f> generate_possibility(f variables){
         //  cout<<endl;
         //}
         //cout<<endl;
-        //results.reserve(results.size() + distance(p.begin(),p.end()));
-        //results.insert(results.end(),p.begin(),p.end());
-        results.push_back(v);
+        results.reserve(results.size() + distance(p.begin(),p.end()));
+        results.insert(results.end(),p.begin(),p.end());
+        //results.push_back(v);
       }
    }
  //  std::cout<<"finish generate_possibility"<<std::endl;
@@ -185,78 +208,50 @@ static std::vector<f> generate_possibility(f variables){
    return results;
 }
 
+
+
 //this function is used to combine two assignment_ps_list while series merge
 static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
-   assignment_ps_map a_map=a.assignments;
-   assignment_ps_map b_map=b.assignments;
-  auto start = std::chrono::high_resolution_clock::now();
-   std::vector<f> begin=generate_possibility(a.begin_v);
-   std::vector<f> mid=generate_possibility(a.end_v);
-   std::vector<f> end=generate_possibility(b.end_v);
-   auto stop = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-   duration_of_permutation=duration_of_permutation+duration.count();
-  // std::cout<<"begin size series:"<<begin.size()<<std::endl;
-  // std::cout<<"mid size series:"<<mid.size()<<std::endl;
-   for(auto i:begin){
-      for(auto j:mid){
-         assignment_ps aa=a_map[std::pair<f,f>(i,j)];
-         if(aa.s == std::numeric_limits<float>::infinity()){
-            continue;
-         }
-         for(auto k:end){
-            assignment_ps ab=b_map[std::pair<f,f>(j,k)];
-            assignment_ps ac;
-
-            ac.s = aa.s + ab.s;
-            ac.begin_cost=aa.begin_cost;
-            ac.end_cost=ab.end_cost;
-            //ac.insts=aa,insts.reserve(aa.insts.size() + ab.insts.size());
-            //ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
-            //ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,k)].s > ac.s){
-            //   ac.global_regs=aa.global_regs;
-               c[std::pair<f,f>(i,k)] = ac;
-            }
-         }
+  for(auto i :a.assignments){
+   f beginS=i.first.first;
+   f endS=i.first.second;
+   for(auto j:b.assignments){
+      f beginT=j.first.first;
+      f endT=j.first.second;
+      if !if_f_match(endS,beginT){
+         continue;
       }
+      assignment_ps ac;
+      ac.s=i.second.s+j.second.s;
+      ac.begin_cost=i.second.begin_cost;
+      ac.end_cost=j.second.end_cost;
+       if(c[std::pair<f,f>(beginS,endT)].s > ac.s){
+            //   ac.global_regs=aa.global_regs;
+              c[std::pair<f,f>(beginS,endT)] = ac;
+      }
+
    }
+  }
    //std::cout<<"combine_assignment_ps_list_series.size"<<c.size() <<std::endl;
    return c;
 }
 
 static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
-   assignment_ps_map a_map=a.assignments;
-   assignment_ps_map b_map=b.assignments;
-   auto start = std::chrono::high_resolution_clock::now();
-   std::vector<f> begin=generate_possibility(a.begin_v);
-   std::vector<f> end=generate_possibility(b.end_v);
-   auto stop = std::chrono::high_resolution_clock::now();
-   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-   duration_of_permutation=duration_of_permutation+duration.count();
-   std::cout<<"begin size parallel:"<<begin.size()<<std::endl;
-   std::cout<<"end size parallel:"<<end.size()<<std::endl;
-   for(auto i:begin){
-         for(auto j:end){
-            assignment_ps aa=a_map[std::pair<f,f>(i,j)];
-            assignment_ps ab=b_map[std::pair<f,f>(i,j)];
-            assignment_ps ac;
 
-            ac.s = aa.s + ab.s - aa.begin_cost - aa.end_cost;
-            ac.begin_cost=aa.begin_cost;
-            ac.end_cost=ab.end_cost;
-           // ac.insts.reserve(aa.insts.size() + ab.insts.size());
-           // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
-           // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,j)].s > ac.s){
-             //  ac.global_regs=aa.global_regs;
-               c[std::pair<f,f>(i,j)] = ac;
-            }
-         }
-      }
- //  std::cout<<"combine_assignment_ps_list_parallel.size"<<c.size() <<std::endl;
+ for(auto i :a.assignments){
+   f beginS=i.first.first;
+   f endS=i.first.second;
+   if(b.assignments.find(std::pair<f,f>(beginS,endS))==b.assignments.end()){
+      continue;
+   }
+   assignment_ps ac;
+   ac.s=i.second.s+b.assignments[std::pair<f,f>(beginS,endS)].s-i.second.end_cost-i.second.begin_cost;
+   ac.begin_cost=i.second.begin_cost;
+   ac.end_cost=j.second.end_cost;
+   c[std::pair<f,f>(beginS,endS)] = ac;
+  }
    return c;
    
 }
@@ -264,37 +259,18 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
 static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
    assignment_ps_map c;
-   assignment_ps_map a_map=a.assignments;
-   assignment_ps_map b_map=b.assignments;
-   auto start = std::chrono::high_resolution_clock::now();
-   std::vector<f> begin=generate_possibility(b.begin_v);
-   std::vector<f> end=generate_possibility(b.end_v);
-   auto stop = std::chrono::high_resolution_clock::now();
-   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
-   duration_of_permutation=duration_of_permutation+duration.count();
- //  std::cout<<"begin size loop:"<<begin.size()<<std::endl;
- //  std::cout<<"end size loop:"<<end.size()<<std::endl;
-   for(auto i:begin){
-      for(auto j:end){
-            assignment_ps aa=a_map[std::pair<f,f>(j,i)];
-            assignment_ps ab=b_map[std::pair<f,f>(i,j)];
-            assignment_ps ac;
-
-            ac.s = aa.s + ab.s-30;
-            ac.begin_cost=ab.begin_cost;
-            ac.end_cost=ab.end_cost;
-           // ac.begin_i = aa.begin_i;
-           // ac.end_i = aa.end_i;
-           // ac.insts.reserve(aa.insts.size() + ab.insts.size());
-           // ac.insts.insert(ac.insts.end(),aa.insts.begin(),aa.insts.end());
-           // ac.insts.insert(ac.insts.end(),ab.insts.begin(),ab.insts.end());
-            if(c[std::pair<f,f>(i,j)].s > ac.s){
-               //ac.global_regs=ab.global_regs;
-               c[std::pair<f,f>(i,j)] = ac;
-            }
-         }
+   for(auto i in b.assignments){
+      f beginS=i.first.first;
+      f endS=i.first.second;
+      if(a.assignments.find(std::pair<f,f>(endS,beginS))==a.assignments.end()){
+         continue;
       }
-  // std::cout<<"combine_assignment_ps_list_loop.size"<<c.size() <<std::endl;
+      assignment_ps ac;
+      ac.s=i.second.s+a.assignments[std::pair<f,f>(endS,beginS)].s;
+      ac.begin_cost=i.second.begin_cost;
+      ac.end_cost=i.second.end_cost;
+      c[std::pair<f,f>(beginS,endS)] = ac;
+   }
    return c;
 }
 
@@ -311,7 +287,6 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    for(auto i:begin){
-      for(auto j:end){
          //std::cout<<"begin to get cost"<<std::endl;
          assignment_ps aa=assignment_ps();
          //std::cout<<"finish initial assignment_ps"<<std::endl;
@@ -333,10 +308,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //aa.begin_i = as;
          //aa.end_i = as;
          //aa.global_regs=as.global_regs;
-        
-     //    aa.insts.push_back(as);
-         c[std::pair<f,f>(i,j)] = aa;
-      }
+         c[std::pair<f,f>(i,i)] = aa;
    }
   // std::cout<<"c.size()"<<c.size()<<std::endl;
 

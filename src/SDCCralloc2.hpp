@@ -263,6 +263,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
       c[newf] = ac;
    }
    }
+   }
    return c;
 }
 

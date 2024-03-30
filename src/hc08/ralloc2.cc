@@ -714,8 +714,8 @@ static void extra_ic_generated(iCode *ic)
 }
 
 
-std::chrono::steady_clock::time_point start;
-std::chrono::steady_clock::time_point end;
+std::chrono::system_clock::time_point start;
+std::chrono::system_clock::time_point end;
 
 template <class T_t, class G_t, class I_t>
 static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)

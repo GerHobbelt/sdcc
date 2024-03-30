@@ -687,7 +687,7 @@ static void initial_basic_block(ps_cfg_t &ps_cfg, const I_t &I)
       if(ps_cfg.left==-1 || ps_cfg.right==-1){
         // std::cout<<"1"<<std::endl;
          initlize_assignment_ps_list(ps_cfg, I);
-      //   std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
+         std::cout<<"ps_cfg.assignments.size():"<<ps_cfg.assignments.size()<<std::endl;
          return;
       }
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){

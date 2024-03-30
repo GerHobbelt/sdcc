@@ -51,7 +51,7 @@ static f if_f_match(f f1,f f2){
       }else if (f2[i]==-1){
          f3.push_back(f1[i]);
       }else{
-         return NULL;
+         return std::vector<short int>();
       }
    }
    if (f1.size()>f2.size()){
@@ -205,7 +205,7 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
   for(auto i :a.assignments){
    for(auto j:b.assignments){
       f new_reg=if_f_match(i.first,j.first);
-      if(new_reg==NULL){
+      if(new_reg.size()==0){
          continue;
       }
       assignment_ps ac;
@@ -228,7 +228,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
  for(auto i :a.assignments){
    for(auto j:b.assignments){
       f new_reg=if_f_match(i.first,j.first);
-      if(new_reg==NULL){
+      if(new_reg.size()==0){
          continue;
       }
       assignment_ps ac;
@@ -250,7 +250,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    for(auto i : b.assignments){
      for (auto j:a.assignments){
       f new_reg=if_f_match(i.first,j.first);
-      if(new_reg==NULL){
+      if(new_reg.size()==0){
          continue;
       }
       assignment_ps ac;

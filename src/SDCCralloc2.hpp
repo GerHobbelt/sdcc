@@ -297,6 +297,14 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
                as.global_regs[j]=getIndex(i,j);
             }
          }
+         std::cout << "our c: ";
+            for(unsigned int i = 0; i < as.global_regs.size(); i++)
+            {
+  	std::cout << "(" << i << ", " << int(as.global_regs[i]) << ") ";
+  }
+  std::cout << "\n";
+
+
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);
          aa.s = as.cost;

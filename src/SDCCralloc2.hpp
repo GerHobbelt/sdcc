@@ -278,11 +278,11 @@ template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
-   std::vector<f> begin=generate_possibility(a.begin_v);
+   std::vector<f> begin_p=generate_possibility(a.begin_v);
    std::cout<<"begin size:"<<begin.size()<<std::endl;
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
-   for(auto i:begin){
+   for(auto i:begin_p){
          //std::cout<<"begin to get cost"<<std::endl;
          assignment_ps aa=assignment_ps();
          //std::cout<<"finish initial assignment_ps"<<std::endl;
@@ -291,19 +291,13 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_begin = i;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
+
          if (a.begin_v.size()!=0){
-            as.global_regs.reserve(*(a.begin_v.end()-1)+1);
-            for(int j=0;j<=*(a.begin_v.end()-1);j++){
+            as.global_regs.reserve(int(a.begin_v.back())+1);
+            for(int j=0;j<=a.begin_v.back();j++){
                as.global_regs[j]=getIndex(i,j);
             }
          }
-         std::cout << "our c: ";
-            for(unsigned int i = 0; i < as.global_regs.size(); i++)
-            {
-  	std::cout << "(" << i << ", " << int(as.global_regs[i]) << ") ";
-  }
-  std::cout << "\n";
-
 
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);

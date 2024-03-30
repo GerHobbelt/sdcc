@@ -292,7 +292,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
       
          as.global_regs.reserve(n);
          for(int j=0;j<n;j++){
-            as.global_regs[i]=getIndex(j,i);
+            as.global_regs[i]=getIndex(i,j);
          }
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);

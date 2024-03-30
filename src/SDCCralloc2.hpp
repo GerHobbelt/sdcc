@@ -210,6 +210,14 @@ static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t 
       }
       assignment_ps ac;
       ac.s=i.second.s+j.second.s;
+      std::cout<<"new_reg"<<std::endl;
+      for(auto i:new_reg){
+         std::cout<<i<<" ";
+      }
+      std::cout<<std::endl;
+      std::cout<<"ac.s"<<ac.s<<std::endl;
+      std::cout<<"c[new_reg].s"<<c[new_reg].s<<std::endl;
+
        if(c[new_reg].s > ac.s){
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=j.second.end_cost;
@@ -346,14 +354,6 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
    assignment_ps b;
    b.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
-      std::cout<<"i register: ";
-      for (auto j : i.first){
-         std::cout<<j<<" ";
-      }
-      std::cout<<std::endl;
-      std::cout<<"i.second.s:"<<i.second.s<<std::endl;
-      std::cout << std::endl;
-
       if(b.s > i.second.s){
          b = i.second;
       }

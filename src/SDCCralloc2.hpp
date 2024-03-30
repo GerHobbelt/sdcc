@@ -332,7 +332,7 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
             break;
          case 3:
          //   std::cout<<"6"<<std::endl;
-            ps_cfg.assignments = combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.right], ps_cfg_map[ps_cfg.left]);
+            ps_cfg.assignments = combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.right], ps_cfg_map[ps_cfg.l]);
          //  std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          default:
@@ -341,16 +341,24 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
    }
 }
 
-static std::pair<const f, assignment_ps>  get_optimal(ps_cfg_t &ps_cfg){
+static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
    assignment_ps_map a = ps_cfg.assignments;
-   std::pair<const f, assignment_ps> b;
-   b.second.s = std::numeric_limits<float>::infinity();
+   assignment_ps b;
+   b.s = std::numeric_limits<float>::infinity();
+   f c;
    for(auto i:a){
       //std::cout<<"i.second.s:"<<i.second.s<<std::endl;
       //std::cout << std::endl;
-      if(b.second.s > i.second.s){
-         b = i;
+      if(b.s > i.second.s){
+         b = i.second;
+         c=i.first;
       }
    }
+
+   std::cout<<"our's winner's assignment: ";
+   for(unsigned int v = 0; v < boost::num_vertices(I); v++){
+    std::cout<<c[v]<<" ";
+   }
+    std::cout<<"\n";
    return b;
 }

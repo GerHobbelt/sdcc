@@ -274,7 +274,6 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
 template <class I_t>
 static float instruction_cost_easy(const i_assignment_ps &ia, cfg_node &node, const I_t &I);
 
-template <class I_t>
 static f convert_to_global(std::vector<short int> v,std::vector<var_t> variables){
    f global_reg;
    global_reg.reserve(variables.back()+1);

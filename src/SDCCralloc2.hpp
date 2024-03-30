@@ -290,7 +290,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.node=&((*(a.cfg))[a.begin]);
          if (a.begin_v.size()!=0){
             for(int j=0;j<=*(a.begin_v.end()-1);j++){
-               as.global_regs[j].push_back(getIndex(i,j));
+               as.global_regs.push_back(getIndex(i,j));
             }
          }
          //std::cout<<"try to get cost"<<std::endl;

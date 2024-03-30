@@ -66,6 +66,7 @@ static f if_f_match(f f1,f f2){
       }
    
    }
+   std::cout<<"f3.size()"<<f3.size()<<std::endl;
    return f3;
 }
 
@@ -261,8 +262,8 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
       if(c[newf].s > ac.s){
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=i.second.end_cost;
-      c[newf] = ac;
-   }
+         c[newf] = ac;
+      }
    }
    }
    return c;
@@ -355,7 +356,7 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
       }
    }
 
-  std::cout << "our Winner: "<<c.size() << " ";
+  std::cout << "our Winner: ";
   for(unsigned int i = 0; i < c.size(); i++)
   {
   	std::cout << "(" << i << ", " << int(c[i]) << ") ";

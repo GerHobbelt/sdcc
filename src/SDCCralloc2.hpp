@@ -181,23 +181,9 @@ static std::vector<f> generate_possibility(f variables){
         for(int i=0;i<len;i++){
           v[MAX_NUM_REGS-len+i]=sub[i];
         }
-        //cout<<"current sub:"<<endl;
-        //for(auto i:v){
-        //  cout<<i<<" ";
-        //}
-        //cout<<endl;
-       //  std::cout<<"begin generate_permutation"<<std::endl;
 
         std::vector<f> p=generate_permutation(v);
-      //  std :: cout<<"finish generate_permutation"<<std::endl;
-        //cout<<"current p:"<<endl;
-        //for(auto i:p){
-        //  for(auto j:i){
-        //    cout<<j<<" ";
-        //  }
-        //  cout<<endl;
-        //}
-        //cout<<endl;
+
         results.reserve(results.size() + distance(p.begin(),p.end()));
         results.insert(results.end(),p.begin(),p.end());
         //results.push_back(v);
@@ -243,11 +229,12 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
  for(auto i :a.assignments){
    f beginS=i.first.first;
    f endS=i.first.second;
-   if(b.assignments.find(std::pair<f,f>(beginS,endS))==b.assignments.end()){
-      continue;
-   }
+     assignment_ps ab=b.assignments[std::pair<f,f>(beginS,endS)];
+      if(ab.s==std::numeric_limits<float>::infinity()){
+         continue;
+      }
    assignment_ps ac;
-   ac.s=i.second.s+b.assignments[std::pair<f,f>(beginS,endS)].s-i.second.end_cost-i.second.begin_cost;
+   ac.s=i.second.s+ab.s-ab.end_cost-ab.begin_cost;
    ac.begin_cost=i.second.begin_cost;
    ac.end_cost=i.second.end_cost;
    c[std::pair<f,f>(beginS,endS)] = ac;
@@ -262,11 +249,12 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
    for(auto i : b.assignments){
       f beginS=i.first.first;
       f endS=i.first.second;
-      if(a.assignments.find(std::pair<f,f>(endS,beginS))==a.assignments.end()){
+      assignment_ps ab=a.assignments[std::pair<f,f>(endS,beginS)];
+      if(ab.s==std::numeric_limits<float>::infinity()){
          continue;
       }
       assignment_ps ac;
-      ac.s=i.second.s+a.assignments[std::pair<f,f>(endS,beginS)].s;
+      ac.s=i.second.s+ab.s;
       ac.begin_cost=i.second.begin_cost;
       ac.end_cost=i.second.end_cost;
       c[std::pair<f,f>(beginS,endS)] = ac;

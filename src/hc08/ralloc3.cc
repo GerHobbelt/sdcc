@@ -105,7 +105,7 @@ static bool operand_in_reg(const operand *o, reg_t r, const i_assignment_ps &ia,
 
   operand_map_t::const_iterator oi, oi_end;
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
-    if(oi->second == ia.registers_begin[r] || oi->second == ia.registers_end[r])
+    if(oi->second == ia.registers_begin[r] || oi->second == ia.registers_begin[r])
       return(true);
 
   return(false);
@@ -210,9 +210,9 @@ static bool XAinst_ok( const i_assignment_ps &ia ,const cfg_node &node, const I_
 
   const cfg_dying_t &dying = node.dying;
 
-  bool dying_A = result_in_A || dying.find(ia.registers_end[REG_A]) != dying.end() || dying.find(ia.registers_begin[REG_A]) != dying.end();
-  bool dying_H = result_in_H || dying.find(ia.registers_end[REG_H]) != dying.end() || dying.find(ia.registers_begin[REG_H]) != dying.end();
-  bool dying_X = result_in_X || dying.find(ia.registers_end[REG_X]) != dying.end() || dying.find(ia.registers_begin[REG_X]) != dying.end();
+  bool dying_A = result_in_A || dying.find(ia.registers_begin[REG_A]) != dying.end() || dying.find(ia.registers_begin[REG_A]) != dying.end();
+  bool dying_H = result_in_H || dying.find(ia.registers_begin[REG_H]) != dying.end() || dying.find(ia.registers_begin[REG_H]) != dying.end();
+  bool dying_X = result_in_X || dying.find(ia.registers_begin[REG_X]) != dying.end() || dying.find(ia.registers_begin[REG_X]) != dying.end();
 
   bool result_only_XA = (result_in_X || unused_X || dying_X) && (result_in_A || unused_A || dying_A);
 
@@ -279,8 +279,8 @@ static bool AXinst_ok(const i_assignment_ps &ia, const cfg_node &node, const I_t
     ic->op == SWAP)
     return(true);
 
-  bool unused_A = (ia.registers_end[REG_A] < 0);
-  bool unused_X = (ia.registers_end[REG_A] < 0);
+  bool unused_A = (ia.registers_begin[REG_A] < 0);
+  bool unused_X = (ia.registers_begin[REG_A] < 0);
 
   if (unused_A || unused_X)
     return(true);
@@ -758,7 +758,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   con_t conflict_graph;
 
   iCode *ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
-  initial_after(control_flow_graph);
+  //initial_after(control_flow_graph);
 
   if(options.dump_graphs)
     dump_cfg(control_flow_graph);

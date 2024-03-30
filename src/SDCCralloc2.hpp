@@ -288,9 +288,11 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_begin = i;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
-         as.global_regs.reserve(a.begin_v.size());
-         for(auto i : a.begin_v){
-            as.global_regs[i]=getIndex(as.registers_begin,i);
+         if (a.begin.size()!=0){
+            as.global_regs.reserve(*(a.begin_v.end()-1)+1);
+            for(int j=0;j<=*(a.begin_v.end()-1);j++){
+               as.global_regs[j]=findIndex(i,j);
+            }
          }
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);

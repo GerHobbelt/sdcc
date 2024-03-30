@@ -280,7 +280,6 @@ static f convert_to_global(std::vector<short int> v,std::vector<var_t> variables
    for(int i=0;i<variables.back()+1;i++){
       global_reg[i]=getIndex(v,(short)i);
    }
-  std::cout<<"global_reg.size()"<<global_reg.size()<<std::endl;
    return global_reg;
 
 }
@@ -291,6 +290,11 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
    std::vector<f> begin_p=generate_possibility(a.begin_v);
+   std::cout<<"begin variable: ";
+   for(auto i:a.begin_v){
+      std::cout<<i<<" ";
+   }
+   std::cout<<std::endl;
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    for(auto i:begin_p){

@@ -332,7 +332,7 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
             break;
          case 3:
          //   std::cout<<"6"<<std::endl;
-            ps_cfg.assignments = combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.right], ps_cfg_map[ps_cfg.l]);
+            ps_cfg.assignments = combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right]);
          //  std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          default:

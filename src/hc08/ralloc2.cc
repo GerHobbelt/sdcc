@@ -713,6 +713,10 @@ static void extra_ic_generated(iCode *ic)
     }
 }
 
+
+std::chrono::steady_clock::time_point start;
+std::chrono::steady_clock::time_point end;
+
 template <class T_t, class G_t, class I_t>
 static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 {
@@ -733,12 +737,9 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   assignment ac;
   assignment_optimal = true;
-  auto start = std::chrono::high_resolution_clock::now();
   tree_dec_ralloc_nodes(T, find_root(T), G, I2, ac, &assignment_optimal);
   const assignment &winner = *(T[find_root(T)].assignments.begin());
   
-  auto stop = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
 
 #ifdef DEBUG_RALLOC_DEC
   std::cout << "Winner: ";
@@ -782,7 +783,8 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   for(unsigned int i = 0; i < boost::num_vertices(G); i++)
     set_surviving_regs(winner, i, G, I);
-  
+  end = std::chrono::high_resolution_clock::now();
+  auto duration= std::chrono::duration_cast<std::chrono::microseconds>(end - start);
   write_into_csv(winner.s, 0, duration.count());
 
 
@@ -805,7 +807,7 @@ iCode *hc08_ralloc2_cc(ebbIndex *ebbi)
 
   if(options.dump_graphs)
     dump_con(conflict_graph);
-
+  start = std::chrono::high_resolution_clock::now();
   tree_dec_t tree_decomposition;
 
   get_nice_tree_decomposition(tree_decomposition, control_flow_graph);

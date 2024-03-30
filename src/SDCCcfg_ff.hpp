@@ -62,7 +62,7 @@ struct assignment_ps{
 };
 
 
-typedef std::map<f,assignment_ps> assignment_ps_map;
+typedef std::map<std::pair<f,f>,assignment_ps> assignment_ps_map;
 
 
 

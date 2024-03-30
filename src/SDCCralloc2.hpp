@@ -283,7 +283,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
    std::vector<f> begin=generate_possibility(a.begin_v);
-   int n=0;
+   int n=1;
    if(a.begin_v.size()!=0){
       n=*(a.begin_v.end()-1);
    }

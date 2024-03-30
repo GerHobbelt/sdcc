@@ -242,6 +242,7 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
       c[newf] = ac;
    }
   }
+ }
    return c;
    
 }

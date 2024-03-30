@@ -341,15 +341,15 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
    }
 }
 
-static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
+static std::pair<const f, assignment_ps>  get_optimal(ps_cfg_t &ps_cfg){
    assignment_ps_map a = ps_cfg.assignments;
-   assignment_ps b;
-   b.s = std::numeric_limits<float>::infinity();
+   std::pair<const f, assignment_ps> b;
+   b.second.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
       //std::cout<<"i.second.s:"<<i.second.s<<std::endl;
       //std::cout << std::endl;
-      if(b.s > i.second.s){
-         b = i.second;
+      if(b.second.s > i.second.s){
+         b = i;
       }
    }
    return b;

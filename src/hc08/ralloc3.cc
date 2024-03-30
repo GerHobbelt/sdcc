@@ -727,7 +727,15 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
 
  //std::cout<<"fi;; spcfg with assignments"<<std::endl;
-  const assignment_ps &winner = get_optimal(root);
+  const std::pair<const f, assignment_ps> winner = get_optimal(root);
+
+
+   std::cout<<"our winner's assignment: ";
+   for(unsigned int v = 0; v < boost::num_vertices(I); v++){
+    std::cout<<winner.first[v]<<" ";
+   }
+    std::cout<<"\n";
+
 
 #ifdef DEBUG_RALLOC_DEC
   std::cout << "Winner: ";
@@ -740,9 +748,9 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   std::cout.flush();
 #endif
 
- write_into_csv(winner.s,1,duration.count());
+ write_into_csv(winner.second.s,1,duration.count());
 
-  return(winner.s);
+  return(winner.second.s);
 }
 
 float hc08_ralloc3_cc(ebbIndex *ebbi)

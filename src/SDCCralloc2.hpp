@@ -66,6 +66,8 @@ static f if_f_match(f f1,f f2){
       }
    
    }
+   std::cout<<"f1.size()"<<f1.size()<<std::endl;
+   std::cout<<"f2.size()"<<f2.size()<<std::endl;
    std::cout<<"f3.size()"<<f3.size()<<std::endl;
    return f3;
 }

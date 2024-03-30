@@ -40,30 +40,26 @@ extern "C"
 
 //int duration_of_permutation=0;
 
-static f if_f_match(f f1,f f2){
-   int s=std::min(f1.size(),f2.size());
-   f f3;
-   for(int i=0;i<s;i++){
-      if(f1[i]==f2[i]){
-         f3.push_back(f1[i]);
-      }else if(f1[i]==-1){
-         f3.push_back(f2[i]);
-      }else if (f2[i]==-1){
-         f3.push_back(f1[i]);
-      }else{
-         return std::vector<short int>();
+static bool if_f_match(f f1,f f2){
+   std::set<short int> v_not_in_1;
+   std::set<short int> v_not_in_2;
+   for(int i=0;i<MAX_NUM_REGS;i++){
+      if(f1[i]!=f2[i]){
+         if(f1[i]!=-1){
+            if (v_not_in_1.find(f1[i]) != v_not_in_1.end()){
+               return false;
+            }
+            v_not_in_2.insert(f1[i]);
+         }
+         if(f2[i]!=-1){
+            if (v_not_in_2.find(f2[i]) != v_not_in_2.end()){
+               return false;
+            }
+            v_not_in_1.insert(f2[i]);
+         }
       }
    }
-   if (f1.size()>f2.size()){
-      for(int i=s;i<f1.size();i++){
-         f3.push_back(f1[i]);
-      }
-   }else{
-      for(int i=s;i<f2.size();i++){
-         f3.push_back(f2[i]);
-      }
-   }
-   return f3;
+   return true;
 }
 
 
@@ -202,28 +198,22 @@ static std::vector<f> generate_possibility(f variables){
 //this function is used to combine two assignment_ps_list while series merge
 static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
-   std::cout<<"a.size"<<a.assignments.size() <<std::endl;
-   std::cout<<"b.size"<<b.assignments.size() <<std::endl;
   for(auto i :a.assignments){
+   f beginS=i.first.first;
+   f endS=i.first.second;
    for(auto j:b.assignments){
-      f new_reg=if_f_match(i.first,j.first);
-      if(new_reg.size()==0){
+      f beginT=j.first.first;
+      f endT=j.first.second;
+      if (!if_f_match(endS,beginT)){
          continue;
       }
       assignment_ps ac;
       ac.s=i.second.s+j.second.s;
-      std::cout<<"new_reg"<<std::endl;
-      for(auto i:new_reg){
-         std::cout<<i<<" ";
-      }
-      std::cout<<std::endl;
-      std::cout<<"ac.s"<<ac.s<<std::endl;
-      std::cout<<"c[new_reg].s"<<c[new_reg].s<<std::endl;
-
-       if(c[new_reg].s > ac.s){
-         ac.begin_cost=i.second.begin_cost;
-         ac.end_cost=j.second.end_cost;
-         c[new_reg] = ac;
+      ac.begin_cost=i.second.begin_cost;
+      ac.end_cost=j.second.end_cost;
+       if(c[std::pair<f,f>(beginS,endT)].s > ac.s){
+            //   ac.global_regs=aa.global_regs;
+              c[std::pair<f,f>(beginS,endT)] = ac;
       }
 
    }
@@ -236,19 +226,17 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
    assignment_ps_map c;
 
  for(auto i :a.assignments){
-   for(auto j:b.assignments){
-      f new_reg=if_f_match(i.first,j.first);
-      if(new_reg.size()==0){
+   f beginS=i.first.first;
+   f endS=i.first.second;
+     assignment_ps ab=b.assignments[std::pair<f,f>(beginS,endS)];
+      if(ab.s==std::numeric_limits<float>::infinity()){
          continue;
       }
-      assignment_ps ac;
-      ac.s=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
-      if(c[new_reg].s > i.second.s){
-         ac.begin_cost=i.second.begin_cost;
-         ac.end_cost=i.second.end_cost;
-         c[new_reg] = ac;
-      }
-   }
+   assignment_ps ac;
+   ac.s=i.second.s+ab.s-ab.end_cost-ab.begin_cost;
+   ac.begin_cost=i.second.begin_cost;
+   ac.end_cost=i.second.end_cost;
+   c[std::pair<f,f>(beginS,endS)] = ac;
   }
    return c;
    
@@ -258,19 +246,17 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
    assignment_ps_map c;
    for(auto i : b.assignments){
-     for (auto j:a.assignments){
-      f new_reg=if_f_match(i.first,j.first);
-      if(new_reg.size()==0){
+      f beginS=i.first.first;
+      f endS=i.first.second;
+      assignment_ps ab=a.assignments[std::pair<f,f>(endS,beginS)];
+      if(ab.s==std::numeric_limits<float>::infinity()){
          continue;
       }
       assignment_ps ac;
-       ac.s=i.second.s+j.second.s;
-      if(c[new_reg].s > i.second.s){
-         ac.begin_cost=i.second.begin_cost;
-         ac.end_cost=i.second.end_cost;
-         c[new_reg] = ac;
-      }
-     }
+      ac.s=i.second.s+ab.s;
+      ac.begin_cost=i.second.begin_cost;
+      ac.end_cost=i.second.end_cost;
+      c[std::pair<f,f>(beginS,endS)] = ac;
    }
    return c;
 }
@@ -283,10 +269,6 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
    std::vector<f> begin=generate_possibility(a.begin_v);
-   int n=1;
-   if(a.begin_v.size()!=0){
-      n=*(a.begin_v.end()-1);
-   }
    //std::cout<<"begin size:"<<begin.size()<<std::endl;
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
@@ -299,10 +281,9 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_begin = i;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
-      
-         as.global_regs.reserve(n);
-         for(int j=0;j<n;j++){
-            as.global_regs[j]=getIndex(i,j);
+         as.global_regs.reserve(a.begin_v.size());
+         for(auto i : a.begin_v){
+            as.global_regs[i]=getIndex(as.registers_begin,i);
          }
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);
@@ -311,7 +292,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          aa.end_cost=as.cost;
          //aa.begin_i = as;
          //aa.end_i = as;
-         c[as.global_regs] = aa;
+         aa.global_regs=as.global_regs;
+         c[std::pair<f,f>(i,i)] = aa;
    }
   // std::cout<<"c.size()"<<c.size()<<std::endl;
 
@@ -351,11 +333,14 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
    }
 }
 
-static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
+template <class I_t>
+static assignment_ps get_optimal(ps_cfg_t &ps_cfg,I_t &I){
    assignment_ps_map a = ps_cfg.assignments;
    assignment_ps b;
    b.s = std::numeric_limits<float>::infinity();
    for(auto i:a){
+      //std::cout<<"i.second.s:"<<i.second.s<<std::endl;
+      //std::cout << std::endl;
       if(b.s > i.second.s){
          b = i.second;
       }

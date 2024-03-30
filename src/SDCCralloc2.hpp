@@ -232,8 +232,8 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
          continue;
       }
       assignment_ps ac;
+      ac.s=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
       if(c[new_reg].s > i.second.s){
-         ac.s=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=i.second.end_cost;
          c[new_reg] = ac;
@@ -254,8 +254,8 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
          continue;
       }
       assignment_ps ac;
+       ac.s=i.second.s+j.second.s;
       if(c[new_reg].s > i.second.s){
-         ac.s=i.second.s+j.second.s;
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=i.second.end_cost;
          c[new_reg] = ac;

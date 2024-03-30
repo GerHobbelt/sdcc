@@ -292,7 +292,6 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          aa.end_cost=as.cost;
          //aa.begin_i = as;
          //aa.end_i = as;
-         aa.global_regs=as.global_regs;
          c[std::pair<f,f>(i,i)] = aa;
    }
   // std::cout<<"c.size()"<<c.size()<<std::endl;

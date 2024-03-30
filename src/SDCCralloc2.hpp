@@ -202,6 +202,8 @@ static std::vector<f> generate_possibility(f variables){
 //this function is used to combine two assignment_ps_list while series merge
 static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
+   std::cout<<"a.size"<<a.assignments.size() <<std::endl;
+   std::cout<<"b.size"<<b.assignments.size() <<std::endl;
   for(auto i :a.assignments){
    for(auto j:b.assignments){
       f new_reg=if_f_match(i.first,j.first);

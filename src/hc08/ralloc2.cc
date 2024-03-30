@@ -740,7 +740,7 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
   tree_dec_ralloc_nodes(T, find_root(T), G, I2, ac, &assignment_optimal);
   const assignment &winner = *(T[find_root(T)].assignments.begin());
   
- end = std::chrono::high_resolution_clock::now();
+  end = std::chrono::high_resolution_clock::now();
   auto duration= std::chrono::duration_cast<std::chrono::microseconds>(end - start); 
 #ifdef DEBUG_RALLOC_DEC
   std::cout << "Winner: ";
@@ -759,14 +759,6 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
       std::cerr << "ERROR: No Assignments at root\n";
       exit(-1);
     }
-
-    std::cout<<"philip's winner's assignment: ";
-   for(unsigned int v = 0; v < boost::num_vertices(I); v++){
-    std::cout<<winner.global[v]<<" ";
-   }
-    std::cout<<"\n";
-
-
 
   for(unsigned int v = 0; v < boost::num_vertices(I); v++)
     {

@@ -14,6 +14,8 @@
 // create_cfg(), convert_cfg_to_spcfg() and generate_spcfg() in that order
 
 
+//TODO: change the global_reg to map
+
 #include <boost/version.hpp>
 #if BOOST_VERSION == 106000
    #include <boost/type_traits/ice.hpp>
@@ -47,12 +49,17 @@ static f if_f_match(f f1,f f2){
    for(int i=0;i<s;i++){
       if(f1[i]==f2[i]){
          f3.push_back(f1[i]);
+      }else if (f1[i]==-3){
+         f3.push_back(f2[i]);
+       }else if (f2[i]==-3){
+            f3.push_back(f1[i]);
       }else{
-         f f4=std::vector<short int>();
+         f f4;
          f4.push_back(-2);
          return f4;
       }
    }
+
    if(f1.size()>f2.size()){
       for(int i=s;i<f1.size();i++){
          f3.push_back(f1[i]);
@@ -270,9 +277,12 @@ static float instruction_cost_easy(const i_assignment_ps &ia, cfg_node &node, co
 
 static f convert_to_global(std::vector<short int> v,std::vector<var_t> variables){
    f global_reg;
-   global_reg.resize(variables.back()+1);
+   global_reg.reserve(variables.back()+1);
    for(int i=0;i<variables.back()+1;i++){
-      global_reg[i]=getIndex(v,(short)i);
+      global_reg.push_back(-3);
+   }
+   for(auto i:variables){
+      global_reg[i]=getIndex(v,i);
    }
    return global_reg;
 

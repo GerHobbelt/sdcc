@@ -273,6 +273,10 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
    std::vector<f> begin=generate_possibility(a.begin_v);
+   int n=0;
+   if(a.begin_v.size()!=0){
+      n=*(a.begin_v.end()-1);
+   }
    //std::cout<<"begin size:"<<begin.size()<<std::endl;
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
@@ -285,9 +289,10 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_begin = i;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
-         as.global_regs.reserve(a.begin_v.size());
-         for(auto i : a.begin_v){
-            as.global_regs[i]=getIndex(as.registers_begin,i);
+      
+         as.global_regs.reserve(n);
+         for(int j=0;j<n;j++){
+            as.global_regs[i]=getIndex(j,i);
          }
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);

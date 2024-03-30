@@ -37,6 +37,7 @@ struct i_assignment_ps{
       for(int i=0; i<MAX_NUM_REGS; i++){
          registers_begin.push_back(-1);
       }
+        global_regs.clear();
      // std::cout<<"i_assignment_ps constructor end"<<std::endl;
       node = NULL;
       cost = std::numeric_limits<float>::infinity();

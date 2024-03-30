@@ -257,7 +257,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
          continue;
       }
       assignment_ps ac;
-      ac.s=i.second.s+j.second.s;
+      ac.s=i.second.s+j.second.s-30;
       if(c[newf].s > ac.s){
       ac.begin_cost=i.second.begin_cost;
       ac.end_cost=i.second.end_cost;

@@ -282,7 +282,6 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
    std::vector<f> begin=generate_possibility(a.begin_v);
-   std::vector<f> end=generate_possibility(a.end_v);
    //std::cout<<"begin size:"<<begin.size()<<std::endl;
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
@@ -293,7 +292,6 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          i_assignment_ps as=i_assignment_ps();
          // std::cout<<"finish initial assignment"<<std::endl;
          as.registers_begin = i;
-         as.registers_end = j;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
          as.global_regs.reserve(a.begin_v.size());

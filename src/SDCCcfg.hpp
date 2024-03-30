@@ -27,7 +27,6 @@ typedef std::vector<var_t> f;
 //assignment for one instuction
 struct i_assignment_ps{
    f registers_begin;
-   f registers_end;
    f global_regs;
    cfg_node *node; //the corresponding node(with ic) in the cfg
    float cost; //cost of the assignment
@@ -35,24 +34,14 @@ struct i_assignment_ps{
    i_assignment_ps(){
    // std::cout<<"i_assignment_ps constructor"<<std::endl;
       registers_begin.clear();
-      registers_end.clear();
       for(int i=0; i<MAX_NUM_REGS; i++){
          registers_begin.push_back(-1);
-         registers_end.push_back(-1);
       }
      // std::cout<<"i_assignment_ps constructor end"<<std::endl;
       node = NULL;
       cost = std::numeric_limits<float>::infinity();
    }
 
-   bool equal(i_assignment_ps *a){
-      for(int i=0; i<MAX_NUM_REGS; i++){
-         if(registers_end[i] != a->registers_end[i] || registers_begin[i] != a->registers_begin[i]){
-            return false;
-         }
-      }
-      return true;
-   }
 };
 
 //assignment for graph

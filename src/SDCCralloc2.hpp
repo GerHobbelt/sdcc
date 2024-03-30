@@ -290,7 +290,9 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
    std::vector<f> begin_p=generate_possibility(a.begin_v);
-   std::cout<<"begin variable last: "<<a.begin_v.back()<<std::endl;
+   if (a.begin_v.size()!=0){
+      std::cout<<"begin variable back: "<<a.begin_v.back()<<std::endl;
+   }
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    for(auto i:begin_p){

@@ -356,7 +356,7 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
    }
 
    std::cout<<"our's winner's assignment: ";
-   for(unsigned int v = 0; v < boost::num_vertices(I); v++){
+   for(unsigned int v = 0; v < c.size(); v++){
     std::cout<<c[v]<<" ";
    }
     std::cout<<"\n";

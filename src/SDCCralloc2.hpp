@@ -251,7 +251,7 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
    assignment_ps_map c;
    for(auto i : b.assignments){
-    for(auto j:a.assignments){
+    for(auto j: a.assignments){
       f newf=if_f_match(i.first,j.first);
       if (newf.size()==1 && newf[0]==-2){
          continue;
@@ -259,9 +259,9 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
       assignment_ps ac;
       ac.s=i.second.s+j.second.s-30;
       if(c[newf].s > ac.s){
-      ac.begin_cost=i.second.begin_cost;
-      ac.end_cost=i.second.end_cost;
-      c[newf] = ac;
+         ac.begin_cost=i.second.begin_cost;
+         ac.end_cost=i.second.end_cost;
+         c[newf] = ac;
    }
    }
    }
@@ -289,9 +289,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
          if (a.begin_v.size()!=0){
-            as.global_regs.reserve(*(a.begin_v.end()-1)+1);
             for(int j=0;j<=*(a.begin_v.end()-1);j++){
-               as.global_regs[j]=getIndex(i,j);
+               as.global_regs[j].push_back(getIndex(i,j));
             }
          }
          //std::cout<<"try to get cost"<<std::endl;

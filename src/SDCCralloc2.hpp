@@ -291,7 +291,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          if (a.begin_v.size()!=0){
             as.global_regs.reserve(*(a.begin_v.end()-1)+1);
             for(int j=0;j<=*(a.begin_v.end()-1);j++){
-               as.global_regs[j]=findIndex(i,j);
+               as.global_regs[j]=getIndex(i,j);
             }
          }
          //std::cout<<"try to get cost"<<std::endl;

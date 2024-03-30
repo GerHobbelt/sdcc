@@ -40,29 +40,32 @@ extern "C"
 
 //int duration_of_permutation=0;
 
-static bool if_f_match(f f1,f f2){
-   std::set<short int> v_not_in_1;
-   std::set<short int> v_not_in_2;
-   for(int i=0;i<MAX_NUM_REGS;i++){
-      if(f1[i]!=f2[i]){
-         if(f1[i]!=-1){
-            if (v_not_in_1.find(f1[i]) != v_not_in_1.end()){
-               return false;
-            }
-            v_not_in_2.insert(f1[i]);
-         }
-         if(f2[i]!=-1){
-            if (v_not_in_2.find(f2[i]) != v_not_in_2.end()){
-               return false;
-            }
-            v_not_in_1.insert(f2[i]);
-         }
+static f if_f_match(f f1,f f2){
+   int s=min(f1.size(),f2.size());
+   f f3;
+   for(int i=0;i<s;i++){
+      if(f1[i]==f2[i]){
+         f3.push_back(f1[i]);
+      }else if(f1[i]==-1){
+         f3.push_back(f2[i]);
+      }else if (f2[i]==-1){
+         f3.push_back(f1[i]);
+      }else{
+         return NULL;
       }
    }
-   return true;
-
-
+   if (f1.size()>f2.size()){
+      for(int i=s;i<f1.size();i++){
+         f3.push_back(f1[i]);
+      }
+   }else{
+      for(int i=s;i<f2.size();i++){
+         f3.push_back(f2[i]);
+      }
+   }
+   return f3;
 }
+
 
 static int getIndex(std::vector<short int> v, short int K) 
 { 
@@ -200,21 +203,17 @@ static std::vector<f> generate_possibility(f variables){
 static assignment_ps_map combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b){
    assignment_ps_map c;
   for(auto i :a.assignments){
-   f beginS=i.first.first;
-   f endS=i.first.second;
    for(auto j:b.assignments){
-      f beginT=j.first.first;
-      f endT=j.first.second;
-      if (!if_f_match(endS,beginT)){
+      f new_reg=if_f_match(i.first,j.first);
+      if(new_reg==NULL){
          continue;
       }
       assignment_ps ac;
       ac.s=i.second.s+j.second.s;
-      ac.begin_cost=i.second.begin_cost;
-      ac.end_cost=j.second.end_cost;
-       if(c[std::pair<f,f>(beginS,endT)].s > ac.s){
-            //   ac.global_regs=aa.global_regs;
-              c[std::pair<f,f>(beginS,endT)] = ac;
+       if(c[new_reg].s > ac.s){
+         ac.begin_cost=i.second.begin_cost;
+         ac.end_cost=j.second.end_cost;
+         c[new_reg] = ac;
       }
 
    }
@@ -227,17 +226,19 @@ static assignment_ps_map combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_
    assignment_ps_map c;
 
  for(auto i :a.assignments){
-   f beginS=i.first.first;
-   f endS=i.first.second;
-     assignment_ps ab=b.assignments[std::pair<f,f>(beginS,endS)];
-      if(ab.s==std::numeric_limits<float>::infinity()){
+   for(auto j:b.assignments){
+      f new_reg=if_f_match(i.first,j.first);
+      if(new_reg==NULL){
          continue;
       }
-   assignment_ps ac;
-   ac.s=i.second.s+ab.s-ab.end_cost-ab.begin_cost;
-   ac.begin_cost=i.second.begin_cost;
-   ac.end_cost=i.second.end_cost;
-   c[std::pair<f,f>(beginS,endS)] = ac;
+      assignment_ps ac;
+      if(c[new_reg].s > i.second.s){
+         ac.s=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
+         ac.begin_cost=i.second.begin_cost;
+         ac.end_cost=i.second.end_cost;
+         c[new_reg] = ac;
+      }
+   }
   }
    return c;
    
@@ -247,17 +248,19 @@ static assignment_ps_map combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b)
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
    assignment_ps_map c;
    for(auto i : b.assignments){
-      f beginS=i.first.first;
-      f endS=i.first.second;
-      assignment_ps ab=a.assignments[std::pair<f,f>(endS,beginS)];
-      if(ab.s==std::numeric_limits<float>::infinity()){
+     for (auto j:a.assignments){
+      f new_reg=if_f_match(i.first,j.first);
+      if(new_reg==NULL){
          continue;
       }
       assignment_ps ac;
-      ac.s=i.second.s+ab.s;
-      ac.begin_cost=i.second.begin_cost;
-      ac.end_cost=i.second.end_cost;
-      c[std::pair<f,f>(beginS,endS)] = ac;
+      if(c[new_reg].s > i.second.s){
+         ac.s=i.second.s+j.second.s;
+         ac.begin_cost=i.second.begin_cost;
+         ac.end_cost=i.second.end_cost;
+         c[new_reg] = ac;
+      }
+     }
    }
    return c;
 }
@@ -293,8 +296,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          aa.end_cost=as.cost;
          //aa.begin_i = as;
          //aa.end_i = as;
-         //aa.global_regs=as.global_regs;
-         c[std::pair<f,f>(i,i)] = aa;
+         c[as.global_regs] = aa;
    }
   // std::cout<<"c.size()"<<c.size()<<std::endl;
 

@@ -49,7 +49,7 @@ struct assignment_ps{
    float s; //cost
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
    float begin_cost;
-    float end_cost;
+   float end_cost;
   // f global_regs;
 
    assignment_ps(){
@@ -61,7 +61,7 @@ struct assignment_ps{
 };
 
 
-typedef std::map<std::pair<f,f>,assignment_ps> assignment_ps_map;
+typedef std::map<f,assignment_ps> assignment_ps_map;
 
 
 

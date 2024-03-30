@@ -275,6 +275,19 @@ template <class I_t>
 static float instruction_cost_easy(const i_assignment_ps &ia, cfg_node &node, const I_t &I);
 
 template <class I_t>
+static f convert_to_global(std::vector<short int> v,std::vector<var_t> variables){
+   f global_reg;
+   global_reg.reserve(variables.back()+1);
+   for(int i=0;i<variables.back()+1;i++){
+      global_reg[i]=getIndex(v,(short)i);
+   }
+  
+   return global_reg;
+
+}
+
+
+template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    assignment_ps_map c;
 
@@ -291,14 +304,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_begin = i;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
-
-         if (a.begin_v.size()!=0){
-            as.global_regs.reserve(int(a.begin_v.back())+1);
-            for(int j=0;j<=a.begin_v.back();j++){
-               as.global_regs[j]=getIndex(i,j);
-            }
-         }
-
+         as.global_regs=convert_to_global(i,a.begin_v);
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);
          aa.s = as.cost;
@@ -308,8 +314,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //aa.end_i = as;
          c[as.global_regs] = aa;
    }
-   std::cout<<"c.size()"<<c.size()<<std::endl;
-
+   
    a.assignments = c;
 }
 

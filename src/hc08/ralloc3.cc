@@ -728,7 +728,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
 
  //std::cout<<"fi;; spcfg with assignments"<<std::endl;
-  const assignment_ps &winner = get_optimal(root,I2);
+  const assignment_ps &winner = get_optimal(root);
 
 #ifdef DEBUG_RALLOC_DEC
   std::cout << "Winner: ";

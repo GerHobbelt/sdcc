@@ -302,7 +302,9 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          as.registers_begin = i;
          //std::cout<<"try to get node"<<std::endl;
          as.node=&((*(a.cfg))[a.begin]);
-         as.global_regs=convert_to_global(i,a.begin_v);
+         if (a.begin_v.size()!=0){
+             as.global_regs=convert_to_global(i,a.begin_v);
+         }
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);
          aa.s = as.cost;

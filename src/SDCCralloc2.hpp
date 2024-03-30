@@ -355,12 +355,13 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
       }
    }
 
-  std::cout << "our Winner: ";
+  std::cout << "our Winner: "<<c.size() << " ";
   for(unsigned int i = 0; i < c.size(); i++)
   {
   	std::cout << "(" << i << ", " << int(c[i]) << ") ";
   }
   std::cout << "\n";
   std::cout << "Cost: " << b.s << "\n";
+   
    return b;
 }

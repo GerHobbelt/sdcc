@@ -718,9 +718,10 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
  // std::cout<<"I2 created"<<std::endl;
- auto start = std::chrono::high_resolution_clock::now();
   initial_basic_block(root,I2);
   //std::cout<<"initial basic block"<<std::endl;
+  auto start = std::chrono::high_resolution_clock::now();
+
   generate_spcfg(root);
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);

@@ -42,6 +42,30 @@ struct i_assignment_ps{
       this->variables = variables;
    }
 
+   operator<(const i_assignment_ps &rhs) const{
+      if (global_regs.size() < rhs.global_regs.size()){
+         return true;
+      }else if (global_regs.size() > rhs.global_regs.size()){
+         return false;
+      }else{
+         for (int i=0; i<global_regs.size(); i++){
+            if (global_regs[i] < rhs.global_regs[i]){
+               return true;
+            }else if (global_regs[i] > rhs.global_regs[i]){
+               return false;
+            }
+         }
+         for (int i=0; i<variables.size(); i++){
+            if (variables[i] < rhs.variables[i]){
+               return true;
+            }else if (variables[i] > rhs.variables[i]){
+               return false;
+            }
+         }
+         return false;
+      }
+   }
+
    
 };
 

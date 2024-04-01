@@ -313,11 +313,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //aa.end_i = as;
          a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I))));
    }
-      std::cout<<"begin assignment_ps_list"<<std::endl;
-         for(int j=0;j<n;j++){
-            std::cout<<"("<<j<<","<<(a.assignments.begin()->first)[j]<<")";
-         }
-         std::cout<<std::endl;
+   
       
    
 }

@@ -292,7 +292,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    for(auto i:begin_p){
          //std::cout<<"begin to get cost"<<std::endl;
          //std::cout<<"finish initial assignment_ps"<<std::endl;
-         f global=generate_p_w(a.begin_v);
+         f global;
          // std::cout<<"finish initial assignment"<<std::endl;
          convert_to_global(i,a.begin_v,global,n);
          

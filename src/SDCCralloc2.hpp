@@ -285,7 +285,7 @@ template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
   
    int n= boost::num_vertices(I);
-   std::vector<f> begin_p=generate_possibility(a.begin_v);
+   std::vector<f> begin_p=generate_p_w(a.begin_v);
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    cfg_node node=((*(a.cfg))[a.begin]);
@@ -294,7 +294,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"finish initial assignment_ps"<<std::endl;
          f global=generate_p_w(a.begin_v);
          // std::cout<<"finish initial assignment"<<std::endl;
-         //convert_to_global(i,a.begin_v,global,n);
+         convert_to_global(i,a.begin_v,global,n);
          
          //std::cout<<"try to get cost"<<std::endl;
          //aa.begin_i = as;

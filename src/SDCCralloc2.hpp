@@ -192,8 +192,8 @@ static std::vector<f> generate_possibility(f variables){
 
 
 //this function is used to combine two assignment_ps_list while series merge
-static void combine_assignment_ps_list_series(assignment_ps &a, assignment_ps &b, assignment_ps_map &c){
-   assignment_ps::iterator it_i,it_j;
+static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
+   assignment_ps_map::iterator it_i,it_j;
   for(it_i=a.begin();it_i!=a.end();++it_i){
    for(it_j=b.begin();it_j!=b.end();++it_j){
       f newf;
@@ -211,9 +211,9 @@ static void combine_assignment_ps_list_series(assignment_ps &a, assignment_ps &b
    //std::cout<<"combine_assignment_ps_list_series.size"<<c.size() <<std::endl;
 }
 
-static void combine_assignment_ps_list_parallel(assignment_ps &a, assignment_ps &b, assignment_ps_map &c){
+static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
 
-  assignment_ps::iterator it_i,it_j;
+  assignment_ps_map::iterator it_i,it_j;
   for(it_i=a.begin();it_i!=a.end();++it_i){
    for(it_j=b.begin();it_j!=b.end();++it_j){
       f newf;
@@ -230,9 +230,9 @@ static void combine_assignment_ps_list_parallel(assignment_ps &a, assignment_ps 
    
 }
 
-static void combine_assignment_ps_list_loop(assignment_ps &a, assignment_ps &b, assignment_ps_map &c){
+static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
-    assignment_ps::iterator it_i,it_j;
+    assignment_ps_map::iterator it_i,it_j;
   for(it_i=a.begin();it_i!=b.end();++it_i){
    for(it_j=b.begin();it_j!=a.end();++it_j){
       f newf;

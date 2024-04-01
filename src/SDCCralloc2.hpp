@@ -377,7 +377,7 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
       //std::cout << std::endl;
       if(b.s > i.second.s){
          b = i.second;
-         c=i.first;
+         c= i.first.global_regs;
       }
    }
 

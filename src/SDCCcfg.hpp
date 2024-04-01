@@ -45,6 +45,12 @@ struct assignment_ps{
       begin_cost = cost;
       end_cost = cost;
    }
+
+   assignment_ps(float cost, float begin, float end){
+      s = cost;
+      begin_cost = begin;
+      end_cost = end;
+   }
 };
 
 typedef std::map<f,assignment_ps> assignment_ps_map;

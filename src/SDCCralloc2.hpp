@@ -237,7 +237,7 @@ static void combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b, assignment_p
          continue;
       }
       float s=i.second.s+j.second.s;
-      if(c.find( newf ) == c.end() || s > ac.s){
+      if(c.find( newf ) == c.end() || c[newf].s > s){
          c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
       }
    }

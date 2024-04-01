@@ -22,34 +22,9 @@ typedef boost::graph_traits<cfg_t>::vertex_descriptor vertex;
 typedef std::vector<var_t> f;
 
 #define MAX_NUM_REGS 3
-typedef std::map<f,assignment_ps> assignment_ps_map;
 
 //assignment for one instuction
-struct i_assignment_ps{
-   f registers_begin;
-   f global_regs;
-   cfg_node *node; //the corresponding node(with ic) in the cfg
-   float cost; //cost of the assignment
 
-   i_assignment_ps(){
-   // std::cout<<"i_assignment_ps constructor"<<std::endl;
-      registers_begin.clear();
-      for(int i=0; i<MAX_NUM_REGS; i++){
-         registers_begin.push_back(-1);
-      }
-        global_regs.clear();
-     // std::cout<<"i_assignment_ps constructor end"<<std::endl;
-      node = NULL;
-      cost = std::numeric_limits<float>::infinity();
-   }
-
-  i_assignment_ps(f regs,cfg_node *node){
-      registers_begin = regs;
-      this->node = node;
-      this->cost = cost;
-   }
-   
-};
 
 //assignment for graph
 struct assignment_ps{
@@ -72,6 +47,7 @@ struct assignment_ps{
    }
 };
 
+typedef std::map<f,assignment_ps> assignment_ps_map;
 
 
 

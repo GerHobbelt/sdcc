@@ -57,7 +57,6 @@ struct assignment_ps{
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
    float begin_cost;
     float end_cost;
-   f global_regs;
 
    assignment_ps(){
     //std::cout<<"assignment_ps constructor"<<std::endl;
@@ -66,7 +65,7 @@ struct assignment_ps{
      // std::cout<<"assignment_ps constructor end"<<std::endl;
    }
 
-   assignment_ps(float cost, f global_regs){
+   assignment_ps(float cost){
       s = cost;
       begin_cost = cost;
       end_cost = cost;
@@ -75,7 +74,6 @@ struct assignment_ps{
 };
 
 
-typedef std::map<f,assignment_ps> assignment_ps_map;
 
 
 

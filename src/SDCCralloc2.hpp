@@ -181,11 +181,12 @@ static std::vector<f> generate_possibility(f variables){
    for(auto sub:sub_set){
       if(sub.size()<=MAX_NUM_REGS){
         f v;
-        for(int i=0; i<MAX_NUM_REGS;i++){
+        for(int i=0; i<MAX_NUM_REGS;++i){
           v.push_back(-1);
         }
+        std::sort(sub.begin(),sub.end());
         int len=sub.size();
-        for(int i=0;i<len;i++){
+        for(int i=0;i<len;++i){
           v[MAX_NUM_REGS-len+i]=sub[i];
         }
 

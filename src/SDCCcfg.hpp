@@ -69,7 +69,6 @@ struct assignment_ps{
       s = cost;
       begin_cost = cost;
       end_cost = cost;
-      this->global_regs = global_regs;
    }
 };
 

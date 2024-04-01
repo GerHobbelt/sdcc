@@ -743,13 +743,13 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
   end = std::chrono::high_resolution_clock::now();
   auto duration= std::chrono::duration_cast<std::chrono::microseconds>(end - start); 
   
-  std::cout << "Philip Winner: ";
-  for(unsigned int i = 0; i < boost::num_vertices(I); i++)
-  {
-  	std::cout << "(" << i << ", " << int(winner.global[i]) << ") ";
-  }
-  std::cout << "\n";
-  std::cout << "Cost: " << winner.s << "\n";
+//  std::cout << "Philip Winner: ";
+//  for(unsigned int i = 0; i < boost::num_vertices(I); i++)
+ // {
+ // 	std::cout << "(" << i << ", " << int(winner.global[i]) << ") ";
+ // }
+ // std::cout << "\n";
+  //std::cout << "Cost: " << winner.s << "\n";
 
   // Todo: Make this an assertion
   if(winner.global.size() != boost::num_vertices(I))
@@ -782,7 +782,7 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   for(unsigned int i = 0; i < boost::num_vertices(G); i++)
     set_surviving_regs(winner, i, G, I);
-  write_into_csv(winner.s, 0, duration.count());
+//  write_into_csv(winner.s, 0, duration.count());
 
 
   return(!assignment_optimal);

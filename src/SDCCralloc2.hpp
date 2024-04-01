@@ -316,7 +316,7 @@ static std::vector<f> generate_p_w(f variables, int n){
    f current;
    v.resize(MAX_NUM_REGS,-1);
    results.push_back(v);
-   if(permutation_map.find(current)!=permutation_map.end()){
+   if(permutation_map.find(current)==permutation_map.end()){
       std::vector<f> globs;
       for(auto i:results){
          f global;
@@ -339,7 +339,7 @@ static std::vector<f> generate_p_w(f variables, int n){
       }
    }
    results.insert(results.end(),new_results.begin(),new_results.end());
-   if(permutation_map.find(current)!=permutation_map.end()){
+   if(permutation_map.find(current)==permutation_map.end()){
       std::vector<f> globs;
       for(auto i:results){
          f global;

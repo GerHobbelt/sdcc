@@ -285,7 +285,7 @@ static void convert_to_global(std::vector<short int> v,std::vector<var_t> variab
    global.resize(n,-3);
    int end=variables.size();
    for(int i=0;i<end;++i){
-      global[i]=getIndex(v,variables[i]);
+      global[variable[i]]=getIndex(v,variables[i]);
    }}
 
 
@@ -294,10 +294,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
      std::vector<f> begin_p=generate_possibility(a.begin_v);
      int n;
       //print begin v
-      for (auto i:a.begin_v){
-         std::cout<<i<<" ";
-      }
-      std::cout<<std::endl;
+     
       n=boost::num_vertices(I);
      
    //std::cout<<"end size:"<<end.size()<<std::endl;

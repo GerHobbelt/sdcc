@@ -32,6 +32,7 @@ struct assignment_ps{
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
    float begin_cost;
     float end_cost;
+    f variables;
 
    assignment_ps(){
     //std::cout<<"assignment_ps constructor"<<std::endl;
@@ -40,20 +41,24 @@ struct assignment_ps{
      // std::cout<<"assignment_ps constructor end"<<std::endl;
    }
 
-   assignment_ps(float cost){
+   assignment_ps(float cost,f variables){
       s = cost;
       begin_cost = cost;
       end_cost = cost;
+      this->variables = variables;
    }
 
-   assignment_ps(float cost, float begin, float end){
+   assignment_ps(float cost, float begin, float end, f variables){
       s = cost;
       begin_cost = begin;
       end_cost = end;
+      this->variables = variables;
    }
 };
 
 typedef std::map<f,assignment_ps> assignment_ps_map;
+
+std::map<f,std::vector<f>> permutation_map;
 
 
 

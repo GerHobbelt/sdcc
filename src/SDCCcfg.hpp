@@ -21,51 +21,33 @@ typedef int merge_type;
 typedef boost::graph_traits<cfg_t>::vertex_descriptor vertex;
 typedef std::vector<var_t> f;
 
-#define MAX_NUM_REGS port->num_regs
+#define MAX_NUM_REGS 3
 
 
 //assignment for one instuction
 struct i_assignment_ps{
+   f registers_begin;
    f global_regs;
-   f variables;
+   cfg_node *node; //the corresponding node(with ic) in the cfg
+   float cost; //cost of the assignment
 
    i_assignment_ps(){
    // std::cout<<"i_assignment_ps constructor"<<std::endl;
-
-      global_regs.clear();
-      variables.clear();
-     // std::cout<<"i_assignment_ps constructor end"<<std::endl;
-   }
-
-   i_assignment_ps(f global_regs, f variables){
-      this->global_regs = global_regs;
-      this->variables = variables;
-   }
-
-   operator<(const i_assignment_ps &rhs) const{
-      if (global_regs.size() < rhs.global_regs.size()){
-         return true;
-      }else if (global_regs.size() > rhs.global_regs.size()){
-         return false;
-      }else{
-         for (int i=0; i<global_regs.size(); i++){
-            if (global_regs[i] < rhs.global_regs[i]){
-               return true;
-            }else if (global_regs[i] > rhs.global_regs[i]){
-               return false;
-            }
-         }
-         for (int i=0; i<variables.size(); i++){
-            if (variables[i] < rhs.variables[i]){
-               return true;
-            }else if (variables[i] > rhs.variables[i]){
-               return false;
-            }
-         }
-         return false;
+      registers_begin.clear();
+      for(int i=0; i<MAX_NUM_REGS; i++){
+         registers_begin.push_back(-1);
       }
+        global_regs.clear();
+     // std::cout<<"i_assignment_ps constructor end"<<std::endl;
+      node = NULL;
+      cost = std::numeric_limits<float>::infinity();
    }
 
+  i_assignment_ps(f regs,cfg_node *node){
+      registers_begin = regs;
+      this->node = node;
+      this->cost = cost;
+   }
    
 };
 
@@ -75,7 +57,7 @@ struct assignment_ps{
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
    float begin_cost;
     float end_cost;
-  // f global_regs;
+   f global_regs;
 
    assignment_ps(){
     //std::cout<<"assignment_ps constructor"<<std::endl;
@@ -84,22 +66,16 @@ struct assignment_ps{
      // std::cout<<"assignment_ps constructor end"<<std::endl;
    }
 
-   assignment_ps(float cost){
+   assignment_ps(float cost, f global_regs){
       s = cost;
       begin_cost = cost;
       end_cost = cost;
-    //  this->global_regs = global_regs;
-   }
-   assignment_ps(float cost, float begin_cost, float end_cost){
-      s = cost;
-      this->begin_cost = begin_cost;
-      this->end_cost = end_cost;
-    //  this->global_regs = global_regs;
+      this->global_regs = global_regs;
    }
 };
 
 
-typedef std::map<i_assignment_ps,assignment_ps> assignment_ps_map;
+typedef std::map<f,assignment_ps> assignment_ps_map;
 
 
 

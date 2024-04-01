@@ -275,7 +275,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    std::vector<f> begin_p=generate_possibility(a.begin_v);
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
-   cfg_node_t node=&((*(a.cfg))[a.begin]);
+   cfg_node node=&((*(a.cfg))[a.begin]);
    for(auto i:begin_p){
          //std::cout<<"begin to get cost"<<std::endl;
          //std::cout<<"finish initial assignment_ps"<<std::endl;

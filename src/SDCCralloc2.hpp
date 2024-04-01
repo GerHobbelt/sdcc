@@ -43,14 +43,17 @@ extern "C"
 //int duration_of_permutation=0;
 
 static void if_f_match(f f1,f f2, f &f3){
-   f3=f1;
    int n=f3.size();
+   f3.reserve(n);
    for(int i=0;i<n;++i){
-      if(f3[i]==-3){
+      if(f1[i]==-3||f1[i]==f2[i]){
          f3[i]=f2[i];
-      }else if (f3[i]!=f2[i]){
+      }else if (f2[i]==-3){
+         f3[i]=f1[i];
+      }else{
          f3[0]=-2;
          return;
+      
       }
    }
 }
@@ -212,8 +215,8 @@ static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment
  for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(newf[0]==-2);
-      if (newf.size()!=0 && newf.back()==-2){
+      if_f_match(i.first ,j.first,newf);
+      if (newf[0]==-2){
          continue;
       }
       float s=i.second.s-i.second.end_cost-i.second.begin_cost+j.second.s;
@@ -230,7 +233,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
   for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(i.first ,j.first,newf);
+      if_f_match(i.first ,j.first,newf);;
      if (newf[0]==-2){
          continue;
       }

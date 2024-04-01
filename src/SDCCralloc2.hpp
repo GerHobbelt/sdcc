@@ -293,7 +293,7 @@ template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
      std::vector<f> begin_p=generate_possibility(a.begin_v);
      int n;
-     if (a.begin_v.size() > MAX0_NUM_REGS){
+     if (a.begin_v.size() > 0){
       n=a.begin_v.back();
      }else{
       n=boost::num_vertices(I);

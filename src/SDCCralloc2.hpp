@@ -293,11 +293,13 @@ template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
      std::vector<f> begin_p=generate_possibility(a.begin_v);
      int n;
-     if (a.begin_v.size() > 0){
-      n=a.begin_v.back();
-     }else{
+      //print begin v
+      for (auto i:a.begin_v){
+         std::cout<<i<<" ";
+      }
+      std::cout<<std::endl;
       n=boost::num_vertices(I);
-     }
+     
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    cfg_node node=((*(a.cfg))[a.begin]);

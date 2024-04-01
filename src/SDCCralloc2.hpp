@@ -42,10 +42,9 @@ extern "C"
 
 //int duration_of_permutation=0;
 
-static void if_f_match(f f1,f f2, f &f3){
+static void if_f_match(f &f1,f &f2, f &f3){
    int n=f1.size();
    f3.reserve(n);
-   f3.reserve(std::max(f1.size(),f2.size()));
    for(int i=0;i<n;++i){
       if(f1[i]==f2[i]|| f2[i]==-3){
          f3.emplace_back(f1[i]);
@@ -193,17 +192,16 @@ static std::vector<f> generate_possibility(f variables){
 
 //this function is used to combine two assignment_ps_list while series merge
 static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
-   assignment_ps_map::iterator it_i,it_j;
-  for(it_i=a.begin();it_i!=a.end();++it_i){
-   for(it_j=b.begin();it_j!=b.end();++it_j){
+  for(auto &i:a){
+   for(auto &j:b){
       f newf;
-      if_f_match(it_i->first ,it_j->first,newf);
+      if_f_match(i.first ,j.first,newf);
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      float s=it_i->second.s+it_j->second.s;
+      float s=i.second.s+j.second.s;
        if(c.find( newf ) == c.end() || c[newf].s > s){
-         c[newf] = assignment_ps(s,it_i->second.begin_cost,it_j->second.end_cost);
+         c[newf] = assignment_ps(s,i.second.begin_cost,j.second.end_cost);
       }
 
    }
@@ -213,15 +211,14 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
 
 static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
 
-  assignment_ps_map::iterator it_i,it_j;
-  for(it_i=a.begin();it_i!=a.end();++it_i){
-   for(it_j=b.begin();it_j!=b.end();++it_j){
+ for(auto &i:a){
+   for(auto &j:b){
       f newf;
-      if_f_match(it_i->first ,it_j->first,newf);
+      if_f_match(i.first ,j.first,newf);
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      float s=it_i->second.s+it_j->second.s-it_i->second.end_cost-it_i->second.begin_cost;
+      float s=i.second.s-i.second.end_cost-i.second.begin_cost+j.second.s;
       if(c.find( newf ) == c.end() || c[newf].s > s){
       c[newf] = assignment_ps(s,it_i->second.begin_cost,it_i->second.end_cost);
    }
@@ -232,17 +229,16 @@ static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment
 
 static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
-    assignment_ps_map::iterator it_i,it_j;
-  for(it_i=a.begin();it_i!=b.end();++it_i){
-   for(it_j=b.begin();it_j!=a.end();++it_j){
+  for(auto &i:a){
+   for(auto &j:b){
       f newf;
-      if_f_match(it_i->first ,it_j->first,newf);
+      if_f_match(i.first ,j.first,newf);
      if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      float s=it_i->second.s+it_j->second.s;
+      float s=i.second.s+j.second.s;
       if(c.find( newf ) == c.end() || c[newf].s > s){
-         c[newf] = assignment_ps(s,it_i->second.begin_cost,it_i->second.end_cost);
+         c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
       }
    }
    }

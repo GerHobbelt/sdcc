@@ -299,8 +299,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //aa.end_i = as;
          a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I))));
    }
-   if(a.begin_v.find(13)!=a.begin.end()){
-      //print the first global in a.assignments
+
       std::cout<<"begin assignment_ps_list"<<std::endl;
       for(auto i:a.assignments.begin()->first){
          for(int j=0;j<n;j++){
@@ -308,7 +307,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          }
          std::cout<<std::endl;
       }
-   }
+   
 }
 
 static void generate_spcfg(ps_cfg_t &ps_cfg){

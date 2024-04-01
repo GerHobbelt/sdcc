@@ -21,7 +21,7 @@ typedef int merge_type;
 typedef boost::graph_traits<cfg_t>::vertex_descriptor vertex;
 typedef std::vector<var_t> f;
 
-#define MAX_NUM_REGS 3
+#define MAX_NUM_REGS port->num_regs
 
 
 //assignment for one instuction

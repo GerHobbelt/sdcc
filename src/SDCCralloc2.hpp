@@ -147,7 +147,19 @@ static std::vector<f> generate_permutation(f variables){
    std::vector<f> results;
    results.push_back(variables);
    while (std::next_permutation(variables.begin(), variables.end())){
-      results.push_back(variables);
+      bool if_e=true;
+      int last_min=-1;
+      for(int i=0;i<MAX_NUM_REGS;++i){
+         if(variables[i]!=-1){
+            if(variables[i]<last_min){
+               if_e=false;
+               break;}else{
+               last_min=variables[i];
+               }
+         }
+      }
+      if (if_e){
+      results.push_back(variables);}
    }
    
    return results;

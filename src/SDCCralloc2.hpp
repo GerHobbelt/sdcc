@@ -109,8 +109,8 @@ static int getIndex(std::vector<short int> v, short int K)
 //I hope it is not hard, but I am not sure.
 //static float instruction_cost(i_assignment_ps &a);
 
-static std::vector<var_t> unionVectors(std::vector<var_t>& vec1, 
-                         std::vector<var_t>& vec2) 
+static std::vector<var_t> unionVectors(f vec1, 
+                         f vec2) 
 { 
     std::vector<var_t> ans; 
     // Declare the set to store the unique elements 

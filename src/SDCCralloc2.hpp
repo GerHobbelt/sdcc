@@ -43,7 +43,7 @@ extern "C"
 //int duration_of_permutation=0;
 
 static void if_f_match(f f1,f f2, f &f3){
-   int n=f3.size();
+   int n=f1.size();
    f3.reserve(n);
    for(int i=0;i<n;++i){
       if(f1[i]==-3||f1[i]==f2[i]){

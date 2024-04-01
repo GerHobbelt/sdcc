@@ -48,11 +48,11 @@ static void if_f_match(f f1,f f2, f &f3){
    f3.reserve(std::max(f1.size(),f2.size()));
    for(int i=0;i<n;++i){
       if(f1[i]==f2[i]|| f2[i]==-3){
-         f3.push_back(f1[i]);
+         f3.emplace_back(f1[i]);
       }else if (f1[i]==-3){
-         f3.push_back(f2[i]);
+         f3.emplace_back(f2[i]);
       }else{
-         f3.push_back(-2);
+         f3.emplace_back(-2);
       }
    }
 }
@@ -200,7 +200,7 @@ static void combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b, assignment
          continue;
       }
       ac.s=i.second.s+j.second.s;
-       if(c[newf].s > ac.s){
+       if(!c.contains(newf) || c[newf].s > ac.s){
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=j.second.end_cost;
          c[newf] = ac;
@@ -222,7 +222,7 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignme
       }
       assignment_ps ac;
       ac.s=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
-      if(c[newf].s > ac.s){
+      if(!c.contains(newf) || c[newf].s > ac.s){
       ac.begin_cost=i.second.begin_cost;
       ac.end_cost=i.second.end_cost;
       c[newf] = ac;
@@ -243,7 +243,7 @@ static void combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b, assignment_p
       }
       assignment_ps ac;
       ac.s=i.second.s+j.second.s;
-      if(c[newf].s > ac.s){
+      if(!c.contains(newf) || c[newf].s > ac.s){
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=i.second.end_cost;
          c[newf] = ac;

@@ -218,7 +218,7 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignme
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      float s=i.second.s+j.second.s;=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
+      float s=i.second.s+j.second.s-i.second.end_cost-i.second.begin_cost;
       if(c.find( newf ) == c.end() || c[newf].s > s){
       c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
    }

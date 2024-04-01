@@ -43,6 +43,10 @@ struct i_assignment_ps{
       cost = std::numeric_limits<float>::infinity();
    }
 
+  i_assignment_ps(f regs,cfg_node *node){
+      registers_begin = regs;
+      this->node = node;
+   }
    
 };
 
@@ -59,6 +63,13 @@ struct assignment_ps{
       s = std::numeric_limits<float>::infinity();
       //insts.clear();
      // std::cout<<"assignment_ps constructor end"<<std::endl;
+   }
+
+   assignment_ps(float cost){
+      s = cost;
+      begin_cost = cost;
+      end_cost = cost;
+    //  this->global_regs = global_regs;
    }
 };
 

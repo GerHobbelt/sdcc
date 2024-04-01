@@ -306,7 +306,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"finish initial assignment_ps"<<std::endl;
          f global;
          // std::cout<<"finish initial assignment"<<std::endl;
-         convert_to_global(i,a.begin_v,global);
+         convert_to_global(i,a.begin_v,global,n);
          
          //std::cout<<"try to get cost"<<std::endl;
          //aa.begin_i = as;

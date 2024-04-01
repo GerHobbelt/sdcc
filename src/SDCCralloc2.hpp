@@ -192,8 +192,8 @@ static std::vector<f> generate_possibility(f variables){
 
 //this function is used to combine two assignment_ps_list while series merge
 static void combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b, assignment_ps_map &c){
-  for(auto i :a.assignments){
-   for(auto j:b.assignments){
+  for(auto &i :a.assignments){
+   for(auto &j:b.assignments){
       f newf;
       if_f_match(i.first,j.first,newf);
       if (newf.size()!=0 && newf.back()==-2){
@@ -211,8 +211,8 @@ static void combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b, assignment
 
 static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignment_ps_map &c){
 
- for(auto i :a.assignments){
-   for(auto j:b.assignments){
+ for(auto &i :a.assignments){
+   for(auto &j:b.assignments){
       f newf;
       if_f_match(i.first,j.first,newf);
       if (newf.size()!=0 && newf.back()==-2){
@@ -229,8 +229,8 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignme
 
 static void combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b, assignment_ps_map &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
-   for(auto i : b.assignments){
-    for(auto j: a.assignments){
+   for(auto &i : b.assignments){
+    for(auto &j: a.assignments){
       f newf;
       if_f_match(i.first,j.first,newf);
      if (newf.size()!=0 && newf.back()==-2){
@@ -267,9 +267,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"finish initial assignment_ps"<<std::endl;
          i_assignment_ps as=i_assignment_ps(i,&((*(a.cfg))[a.begin]));
          // std::cout<<"finish initial assignment"<<std::endl;
-         if (a.begin_v.size()!=0){
-             convert_to_global(i,a.begin_v,as.global_regs,n);
-         }
+         convert_to_global(i,a.begin_v,as.global_regs,n);
+         
          //std::cout<<"try to get cost"<<std::endl;
          as.cost = instruction_cost_easy(as,*(as.node),I);
          //aa.begin_i = as;

@@ -43,8 +43,9 @@ extern "C"
 //int duration_of_permutation=0;
 
 static void if_f_match(f f1,f f2, f &f3){
-   int n=f1.size();
-   f3.resize(n);
+   int n=std::min(f1.size(),f2.size());
+   int s=std::max(f1.size(),f2.size());
+   f3.resize(s);
    for(int i=0;i<n;++i){
       if(f1[i]==-3||f1[i]==f2[i]){
          f3[i]=f2[i];
@@ -54,6 +55,15 @@ static void if_f_match(f f1,f f2, f &f3){
          f3[0]=-2;
          return;
       
+      }
+   }
+   if(f1.size()>f2.size()){
+      for(int i=n;i<f1.size();++i){
+         f3[i]=f1[i];
+      }
+   }else if(f1.size()<f2.size()){
+      for(int i=n;i<f2.size();++i){
+         f3[i]=f2[i];
       }
    }
 }
@@ -281,9 +291,13 @@ static void convert_to_global(std::vector<short int> v,std::vector<var_t> variab
 
 template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
-  
-   int n= boost::num_vertices(I);
-   std::vector<f> begin_p=generate_possibility(a.begin_v);
+     std::vector<f> begin_p=generate_possibility(a.begin_v);
+     int n;
+     if (a.begin_v.size() > MAX0_NUM_REGS){
+      n=a.begin_v.back();
+     }else{
+      n=boost::num_vertices(I);
+     }
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    cfg_node node=((*(a.cfg))[a.begin]);
@@ -292,7 +306,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"finish initial assignment_ps"<<std::endl;
          f global;
          // std::cout<<"finish initial assignment"<<std::endl;
-         convert_to_global(i,a.begin_v,global,n);
+         convert_to_global(i,a.begin_v,global);
          
          //std::cout<<"try to get cost"<<std::endl;
          //aa.begin_i = as;

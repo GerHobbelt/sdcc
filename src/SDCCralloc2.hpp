@@ -200,7 +200,7 @@ static void combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b, assignment
          continue;
       }
       ac.s=i.second.s+j.second.s;
-       if(!c.contains(newf) || c[newf].s > ac.s){
+       if(c.find( newf ) == c.end() || c[newf].s > ac.s){
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=j.second.end_cost;
          c[newf] = ac;
@@ -222,7 +222,7 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignme
       }
       assignment_ps ac;
       ac.s=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
-      if(!c.contains(newf) || c[newf].s > ac.s){
+      if(c.find( newf ) == c.end() || c[newf].s > ac.s){
       ac.begin_cost=i.second.begin_cost;
       ac.end_cost=i.second.end_cost;
       c[newf] = ac;
@@ -243,7 +243,7 @@ static void combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b, assignment_p
       }
       assignment_ps ac;
       ac.s=i.second.s+j.second.s;
-      if(!c.contains(newf) || c[newf].s > ac.s){
+      if(c.find( newf ) == c.end() || c[newf].s > ac.s){
          ac.begin_cost=i.second.begin_cost;
          ac.end_cost=i.second.end_cost;
          c[newf] = ac;
@@ -256,10 +256,10 @@ template <class I_t>
 static float instruction_cost_easy(const i_assignment_ps &ia, cfg_node &node, const I_t &I);
 
 static void convert_to_global(std::vector<short int> v,std::vector<var_t> variables, f &global, int n){ 
-   global_reg.resize(n,-3);
+   global.resize(n,-3);
    int end=variables.size();
    for(int i=0;i<end;++i){
-      global_reg[i]=getIndex(v,variables[i]);
+      global[i]=getIndex(v,variables[i]);
    }}
 
 

@@ -286,7 +286,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //std::cout<<"try to get cost"<<std::endl;
          //aa.begin_i = as;
          //aa.end_i = as;
-         a.assignments.emplace(std::make_pair(as.global_regs, assignment_ps(instruction_cost_easy(global,node,I))));
+         a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I))));
    }
 }
 

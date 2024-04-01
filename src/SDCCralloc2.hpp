@@ -43,9 +43,9 @@ extern "C"
 //int duration_of_permutation=0;
 
 static void if_f_match(f f1,f f2, f &f3){
-   int n=std::min(f1.size(),f2.size());
-   int s=std::max(f1.size(),f2.size());
-   f3.resize(s);
+   int n=f1.size();
+  
+   f3.resize(n);
    for(int i=0;i<n;++i){
       if(f1[i]==-3||f1[i]==f2[i]){
          f3[i]=f2[i];
@@ -55,15 +55,6 @@ static void if_f_match(f f1,f f2, f &f3){
          f3[0]=-2;
          return;
       
-      }
-   }
-   if(f1.size()>f2.size()){
-      for(int i=n;i<f1.size();++i){
-         f3[i]=f1[i];
-      }
-   }else if(f1.size()<f2.size()){
-      for(int i=n;i<f2.size();++i){
-         f3[i]=f2[i];
       }
    }
 }

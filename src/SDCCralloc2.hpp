@@ -201,7 +201,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      float s=i.second.s+j.second.s;
+      float s=it_i->second.s+it_j->second.s;
        if(c.find( newf ) == c.end() || c[newf].s > s){
          c[newf] = assignment_ps(s,i.second.begin_cost,j.second.end_cost);
       }
@@ -221,7 +221,7 @@ static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      float s=i.second.s+j.second.s-i.second.end_cost-i.second.begin_cost;
+      float s=it_i->second.s+it_j->second.s-it_i->second.end_cost-it_i->second.begin_cost;
       if(c.find( newf ) == c.end() || c[newf].s > s){
       c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
    }
@@ -240,7 +240,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
      if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      float s=i.second.s+j.second.s;
+      float s=it_i->second.s+it_j->second.s;
       if(c.find( newf ) == c.end() || c[newf].s > s){
          c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
       }

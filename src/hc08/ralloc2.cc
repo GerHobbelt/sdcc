@@ -453,7 +453,7 @@ static bool inst_sane(const assignment &a, unsigned short int i, const G_t &G, c
 
 // Cost function.
 template <class G_t, class I_t>
-static float instruction_cost_1(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
   float c;
@@ -587,7 +587,7 @@ static float assign_operands_for_cost_easy(const assignment &a, unsigned short i
 
 // Easy Cost function.
 template <class G_t, class I_t>
-static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+static float instruction_cost_1(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
   float c=0;

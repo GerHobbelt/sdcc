@@ -208,12 +208,17 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
      return;
    }
    f v=unionVectors(va,vb);
+   std::vector<f> gs; 
+   bool newv= (permutation_map.find(v)==permutation_map.end());   
   for(auto &i:a){
    for(auto &j:b){
       f newf;
       if_f_match(i.first ,j.first,newf);
       if (newf[0]==-2){
          continue;
+      }
+       if(newv){
+         gs.push_back(newf);
       }
       float s=i.second.s+j.second.s;
        if(c.find( newf ) == c.end() || c[newf].s > s){
@@ -222,6 +227,9 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
 
    }
   }
+  if(newv){
+  permutation_map[v]=gs;
+ }
    //std::cout<<"combine_assignment_ps_list_series.size"<<c.size() <<std::endl;
 }
 
@@ -232,9 +240,10 @@ f va=a.begin()->second.variables;
      float s=a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost;
      c[i]=assignment_ps(s,a[i].begin_cost,a[i].end_cost,va);
      return;
-   }
+   }}
    f v=unionVectors(va,vb);
-
+   std::vector<f> gs; 
+   bool newv= (permutation_map.find(v)==permutation_map.end());    
 
  for(auto &i:a){
    for(auto &j:b){
@@ -243,11 +252,17 @@ f va=a.begin()->second.variables;
       if (newf[0]==-2){
          continue;
       }
+      if(newv){
+         gs.push_back(newf);
+      }
       float s=i.second.s-i.second.end_cost-i.second.begin_cost+j.second.s;
       if(c.find( newf ) == c.end() || c[newf].s > s){
       c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
    }
   }
+ }
+ if(newv){
+  permutation_map[v]=gs;
  }
    
 }
@@ -260,8 +275,10 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
      float s=a[i].s+b[i].s;
      c[i]=assignment_ps(s,b[i].begin_cost,b[i].end_cost,va);
      return;
-   }
+   }}
 f v=unionVectors(va,vb);
+std::vector<f> gs; 
+   bool newv= (permutation_map.find(v)==permutation_map.end());   
   for(auto &i:b){
    for(auto &j:a){
       f newf;
@@ -269,12 +286,18 @@ f v=unionVectors(va,vb);
      if (newf[0]==-2){
          continue;
       }
+       if(newv){
+         gs.push_back(newf);
+      }
       float s=i.second.s+j.second.s;
       if(c.find( newf ) == c.end() || c[newf].s > s){
          c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost,v);
       }
    }
    }
+   if(newv){
+  permutation_map[v]=gs;
+ }
 }
 
 template <class I_t>

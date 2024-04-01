@@ -220,7 +220,7 @@ static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment
       }
       float s=i.second.s-i.second.end_cost-i.second.begin_cost+j.second.s;
       if(c.find( newf ) == c.end() || c[newf].s > s){
-      c[newf] = assignment_ps(s,it_i->second.begin_cost,it_i->second.end_cost);
+      c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
    }
   }
  }

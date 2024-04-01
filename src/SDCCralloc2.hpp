@@ -44,9 +44,9 @@ extern "C"
 
 static void if_f_match(f f1,f f2, f &f3){
    f3=f1;
-   int n=f1.size();
+   int n=f3.size();
    for(int i=0;i<n;++i){
-      if(f1[i]==-3){
+      if(f3[i]==-3){
          f3[i]=f2[i];
       }else if (f3[i]!=f2[i]){
          f3[0]=-2;

@@ -53,6 +53,7 @@ static void if_f_match(f f1,f f2, f &f3){
          f3.emplace_back(f2[i]);
       }else{
          f3.emplace_back(-2);
+         return;
       }
    }
 }

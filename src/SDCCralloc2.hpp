@@ -272,15 +272,15 @@ if(a.begin()->first.variables==b.begin()->first.variables){
 static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
   if(a.begin()->first.variables==b.begin()->first.variables){
-      for(auto &i:a){
-         float s=i.second.s+b[i.first].s;
+      for(auto &i:b){
+         float s=i.second.s+a[i.first].s;
         c[i.first] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
       }
    }else{
   for(auto &i:b){
    for(auto &j:a){
       f newf;
-      if_f_match(i.first ,j.first,newf);;
+      if_f_match(i.first.global_regs ,j.first.global_regs,newf);;
      if (newf[0]==-2){
          continue;
       }

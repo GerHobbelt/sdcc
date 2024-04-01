@@ -71,6 +71,12 @@ struct assignment_ps{
       end_cost = cost;
     //  this->global_regs = global_regs;
    }
+   assignment_ps(float cost, float begin_cost, float end_cost){
+      s = cost;
+      this->begin_cost = begin_cost;
+      this->end_cost = end_cost;
+    //  this->global_regs = global_regs;
+   }
 };
 
 

@@ -199,11 +199,9 @@ static void combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b, assignment
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      ac.s=i.second.s+j.second.s;
-       if(c.find( newf ) == c.end() || c[newf].s > ac.s){
-         ac.begin_cost=i.second.begin_cost;
-         ac.end_cost=j.second.end_cost;
-         c[newf] = ac;
+      float s=i.second.s+j.second.s;
+       if(c.find( newf ) == c.end() || c[newf].s > s){
+         c[newf] = assignment_ps(s,i.second.begin_cost,j.second.end_cost);
       }
 
    }
@@ -220,12 +218,9 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignme
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      assignment_ps ac;
-      ac.s=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
-      if(c.find( newf ) == c.end() || c[newf].s > ac.s){
-      ac.begin_cost=i.second.begin_cost;
-      ac.end_cost=i.second.end_cost;
-      c[newf] = ac;
+      float s=i.second.s+j.second.s;=i.second.s+j.second.s-i.second.end_cost-j.second.begin_cost;
+      if(c.find( newf ) == c.end() || c[newf].s > s){
+      c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
    }
   }
  }
@@ -241,12 +236,9 @@ static void combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b, assignment_p
      if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
-      assignment_ps ac;
-      ac.s=i.second.s+j.second.s;
-      if(c.find( newf ) == c.end() || c[newf].s > ac.s){
-         ac.begin_cost=i.second.begin_cost;
-         ac.end_cost=i.second.end_cost;
-         c[newf] = ac;
+      float s=i.second.s+j.second.s;
+      if(c.find( newf ) == c.end() || s > ac.s){
+         c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
       }
    }
    }

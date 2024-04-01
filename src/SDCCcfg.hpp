@@ -26,17 +26,13 @@ typedef std::vector<var_t> f;
 
 //assignment for one instuction
 struct i_assignment_ps{
-   f registers_begin;
    f global_regs;
    cfg_node *node; //the corresponding node(with ic) in the cfg
    float cost; //cost of the assignment
 
    i_assignment_ps(){
    // std::cout<<"i_assignment_ps constructor"<<std::endl;
-      registers_begin.clear();
-      for(int i=0; i<MAX_NUM_REGS; i++){
-         registers_begin.push_back(-1);
-      }
+
         global_regs.clear();
      // std::cout<<"i_assignment_ps constructor end"<<std::endl;
       node = NULL;
@@ -44,7 +40,6 @@ struct i_assignment_ps{
    }
 
   i_assignment_ps(f regs,cfg_node *node){
-      registers_begin = regs;
       this->node = node;
    }
    

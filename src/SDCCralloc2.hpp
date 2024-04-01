@@ -195,7 +195,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
   for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(*(i.first) ,*(j.first),newf);
+      if_f_match(&(i.first) ,&(j.first),newf);
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
@@ -214,7 +214,7 @@ static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment
  for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(*(i.first) ,*(j.first),newf);
+      if_f_match(&(i.first) ,&(j.first),newf);
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
@@ -232,7 +232,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
   for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(*(i.first) ,*(j.first),newf);
+      if_f_match(&(i.first) ,&(j.first),newf);
      if (newf.size()!=0 && newf.back()==-2){
          continue;
       }

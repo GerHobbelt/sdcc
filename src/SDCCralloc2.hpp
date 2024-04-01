@@ -230,8 +230,8 @@ static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment
 
 static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
-  for(auto &i:a){
-   for(auto &j:b){
+  for(auto &i:b){
+   for(auto &j:a){
       f newf;
       if_f_match(i.first ,j.first,newf);;
      if (newf[0]==-2){

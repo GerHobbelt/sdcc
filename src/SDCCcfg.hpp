@@ -27,14 +27,19 @@ typedef std::vector<var_t> f;
 //assignment for one instuction
 struct i_assignment_ps{
    f global_regs;
-   float cost; //cost of the assignment
+   f variables;
 
    i_assignment_ps(){
    // std::cout<<"i_assignment_ps constructor"<<std::endl;
 
       global_regs.clear();
+      variables.clear();
      // std::cout<<"i_assignment_ps constructor end"<<std::endl;
-      cost = std::numeric_limits<float>::infinity();
+   }
+
+   i_assignment_ps(f global_regs, f variables){
+      this->global_regs = global_regs;
+      this->variables = variables;
    }
 
    
@@ -70,7 +75,7 @@ struct assignment_ps{
 };
 
 
-typedef std::map<f,assignment_ps> assignment_ps_map;
+typedef std::map<i_assignment_ps,assignment_ps> assignment_ps_map;
 
 
 

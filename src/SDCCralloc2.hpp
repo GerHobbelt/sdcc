@@ -58,6 +58,8 @@ static void if_f_match(f f1,f f2, f &f3){
    }
 }
 
+std::map<f,std::vector<f>> permutation_map;
+
 static std::vector<f> generate_p_w(f variables){
    std::vector<f> results;
    f v;
@@ -218,43 +220,63 @@ static std::vector<f> generate_possibility(f variables){
 
 //this function is used to combine two assignment_ps_list while series merge
 static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
+   if(a.begin()->first.variables==b.begin()->first.variables){
+      for(auto &i:a){
+         float s=i.second.s+b[i.first].s;
+         c[i.first] = assignment_ps(s,i.second.begin_cost,b[i.first].end_cost);
+      }
+   }else{
   for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(i.first ,j.first,newf);
+      if_f_match(i.first.global_regs ,j.first.global_regs,newf);
       if (newf[0]==-2){
          continue;
       }
       float s=i.second.s+j.second.s;
-       if(c.find( newf ) == c.end() || c[newf].s > s){
-         c[newf] = assignment_ps(s,i.second.begin_cost,j.second.end_cost);
+      i_assignment_ps newi=i_assignment_ps(newf,unionVectors(i.first.variables,j.first.variables));
+       if(c.find( newi ) == c.end() || c[newi].s > s){
+         c[newi] = assignment_ps(s,i.second.begin_cost,j.second.end_cost);
       }
 
    }
   }
    //std::cout<<"combine_assignment_ps_list_series.size"<<c.size() <<std::endl;
 }
+}
 
 static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
-
+if(a.begin()->first.variables==b.begin()->first.variables){
+      for(auto &i:a){
+         float s=i.second.s+b[i.first].s-i.second.begin_cost-i.second.end_cost;
+        c[i.first] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
+      }
+   }else{
  for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(i.first ,j.first,newf);
+      if_f_match(i.first.global_regs ,j.first.global_regs,newf);
       if (newf[0]==-2){
          continue;
       }
       float s=i.second.s-i.second.end_cost-i.second.begin_cost+j.second.s;
-      if(c.find( newf ) == c.end() || c[newf].s > s){
-      c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
+      i_assignment_ps newi=i_assignment_ps(newf,unionVectors(i.first.variables,j.first.variables));
+      if(c.find(newi  ) == c.end() || c[newi].s > s){
+      c[newi] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
    }
   }
  }
    
-}
+}}
 
 static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
+  if(a.begin()->first.variables==b.begin()->first.variables){
+      for(auto &i:a){
+         float s=i.second.s+j.second.s;
+        c[i.first] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
+      }
+   }else{
   for(auto &i:b){
    for(auto &j:a){
       f newf;
@@ -263,13 +285,15 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
          continue;
       }
       float s=i.second.s+j.second.s;
-      if(c.find( newf ) == c.end() || c[newf].s > s){
-         c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
+            i_assignment_ps newi=i_assignment_ps(newf,unionVectors(i.first.variables,j.first.variables));
+
+      if(c.find( newi ) == c.end() || c[newi].s > s){
+         c[newi] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
       }
    }
    }
 }
-
+}
 template <class I_t>
 static float instruction_cost_easy(const f & global, cfg_node &node, const I_t &I);
 
@@ -285,7 +309,13 @@ template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
   
    int n= boost::num_vertices(I);
-   std::vector<f> begin_p=generate_p_w(a.begin_v);
+   std::vector<f> begin_p;
+   if (permutation_map.find(a.begin_v)==permutation_map.end()){
+       begin_p=generate_p_w(a.begin_v);
+       permutation_map[a.begin_v]=begin_p;
+   }else{
+      begin_p=permutation_map[a.begin_v];
+   }
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    cfg_node node=((*(a.cfg))[a.begin]);
@@ -295,11 +325,12 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          f global;
          // std::cout<<"finish initial assignment"<<std::endl;
          convert_to_global(i,a.begin_v,global,n);
-         
+         float cost=instruction_cost_easy(global,node,I);
+   
          //std::cout<<"try to get cost"<<std::endl;
          //aa.begin_i = as;
          //aa.end_i = as;
-         a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I))));
+         a.assignments.emplace(std::make_pair(i_assignment_ps(a.begin_v,global), assignment_ps(cost)));
    }
 }
 

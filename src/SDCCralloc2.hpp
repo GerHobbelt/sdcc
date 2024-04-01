@@ -64,7 +64,7 @@ static std::vector<f> generate_p_w(f variables){
    v.resize(MAX_NUM_REGS,-1);
    results.push_back(v);
    for(auto i:variables){
-      f new_results;
+      std::vector<f> new_results;
       for(auto j:results){
          for(int k=0;k<MAX_NUM_REGS;++k){
             if(j[k]==-1){

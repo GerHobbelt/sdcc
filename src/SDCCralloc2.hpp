@@ -258,7 +258,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
 }
 
 template <class I_t>
-static float instruction_cost_easy(const i_assignment_ps &ia, cfg_node &node, const I_t &I);
+static float instruction_cost_easy(const f & global, cfg_node &node, const I_t &I);
 
 static void convert_to_global(std::vector<short int> v,std::vector<var_t> variables, f &global, int n){ 
    global.resize(n,-3);
@@ -278,12 +278,12 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    for(auto i:begin_p){
          //std::cout<<"begin to get cost"<<std::endl;
          //std::cout<<"finish initial assignment_ps"<<std::endl;
-         i_assignment_ps as=i_assignment_ps(&((*(a.cfg))[a.begin]));
+         f global;
          // std::cout<<"finish initial assignment"<<std::endl;
-         convert_to_global(i,a.begin_v,as.global_regs,n);
+         convert_to_global(i,a.begin_v,global,n);
          
          //std::cout<<"try to get cost"<<std::endl;
-         as.cost = instruction_cost_easy(as,*(as.node),I);
+         as.cost = instruction_cost_easy(global,&((*(a.cfg))[a.begin]),I);
          //aa.begin_i = as;
          //aa.end_i = as;
          a.assignments.emplace(std::make_pair(as.global_regs, assignment_ps(as.cost)));

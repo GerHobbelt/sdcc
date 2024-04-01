@@ -27,21 +27,17 @@ typedef std::vector<var_t> f;
 //assignment for one instuction
 struct i_assignment_ps{
    f global_regs;
-   cfg_node *node; //the corresponding node(with ic) in the cfg
    float cost; //cost of the assignment
 
    i_assignment_ps(){
    // std::cout<<"i_assignment_ps constructor"<<std::endl;
 
-        global_regs.clear();
+      global_regs.clear();
      // std::cout<<"i_assignment_ps constructor end"<<std::endl;
       node = NULL;
       cost = std::numeric_limits<float>::infinity();
    }
 
-  i_assignment_ps(f regs,cfg_node *node){
-      this->node = node;
-   }
    
 };
 

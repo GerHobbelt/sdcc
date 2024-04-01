@@ -52,7 +52,7 @@ static void write_into_csv( int i, int time){
 
 
 template <class I_t>
-static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,  cfg_node &node, const I_t &I,float c)
+static float assign_operand_for_cost_easy(operand *o, const f global,  cfg_node &node, const I_t &I,float c)
 {
   if(!o || !IS_SYMOP(o))
     return c;
@@ -62,7 +62,7 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
   for(boost::tie(oi, oi_end) = node.operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
     {
       var_t v = oi->second;
-   if(ia.global_regs[v]>=0)
+   if(global[v]>=0)
         { 
           c=c+1;
         }
@@ -76,19 +76,19 @@ static float assign_operand_for_cost_easy(operand *o, const i_assignment_ps &ia,
 }
 
 template < class I_t>
-static float assign_operands_for_cost_easy(const i_assignment_ps &ia,  cfg_node &node, const I_t &I, float c)
+static float assign_operands_for_cost_easy(const f &global,  cfg_node &node, const I_t &I, float c)
 {
   const iCode *ic = node.ic;
   
   if(ic->op == IFX)
-    c=assign_operand_for_cost_easy(IC_COND(ic), ia, node,I,c);
+    c=assign_operand_for_cost_easy(IC_COND(ic), global, node,I,c);
   else if(ic->op == JUMPTABLE)
-    c=assign_operand_for_cost_easy(IC_JTCOND(ic), ia, node, I,c);
+    c=assign_operand_for_cost_easy(IC_JTCOND(ic), global, node, I,c);
   else
     {
-      c=assign_operand_for_cost_easy(IC_LEFT(ic), ia, node, I,c);
-      c=c+assign_operand_for_cost_easy(IC_RIGHT(ic), ia, node, I,c);
-      c=c+assign_operand_for_cost_easy(IC_RESULT(ic), ia, node, I,c);
+      c=assign_operand_for_cost_easy(IC_LEFT(ic), global, node, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RIGHT(ic), global, node, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RESULT(ic), global, node, I,c);
     }
     return c;
     //TOFIX: This is a hack to handle the case where the result of a SEND is used in the next instruction.
@@ -102,7 +102,7 @@ static float assign_operands_for_cost_easy(const i_assignment_ps &ia,  cfg_node 
 
 // Easy Cost function.
 template <class I_t>
-static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, const I_t &I)
+static float instruction_cost_easy(const f &global,cfg_node &node, const I_t &I)
 {
   iCode *ic = node.ic;
   float c=0;
@@ -161,7 +161,7 @@ static float instruction_cost_easy(const i_assignment_ps &ia,cfg_node &node, con
     case CRITICAL:
     case ENDCRITICAL:
     case SWAP:
-      c=assign_operands_for_cost_easy(ia,node, I,c); 
+      c=assign_operands_for_cost_easy(global,node, I,c); 
       return(c);
     default:
       return(0.0f);

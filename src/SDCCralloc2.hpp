@@ -192,11 +192,12 @@ static std::vector<f> generate_possibility(f variables){
 
 
 //this function is used to combine two assignment_ps_list while series merge
-static void combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b, assignment_ps_map &c){
-  for(auto &i :a.assignments){
-   for(auto &j:b.assignments){
+static void combine_assignment_ps_list_series(assignment_ps &a, assignment_ps &b, assignment_ps_map &c){
+   assignment_ps::iterator it_i,it_j;
+  for(it_i=a.begin();it_i!=a.end();++it_i){
+   for(it_j=b.begin();it_j!=b.end();++it_j){
       f newf;
-      if_f_match(i.first,j.first,newf);
+      if_f_match(it_i->first ,it_j->first,newf);
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
@@ -210,12 +211,13 @@ static void combine_assignment_ps_list_series(ps_cfg_t a, ps_cfg_t b, assignment
    //std::cout<<"combine_assignment_ps_list_series.size"<<c.size() <<std::endl;
 }
 
-static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignment_ps_map &c){
+static void combine_assignment_ps_list_parallel(assignment_ps &a, assignment_ps &b, assignment_ps_map &c){
 
- for(auto &i :a.assignments){
-   for(auto &j:b.assignments){
+  assignment_ps::iterator it_i,it_j;
+  for(it_i=a.begin();it_i!=a.end();++it_i){
+   for(it_j=b.begin();it_j!=b.end();++it_j){
       f newf;
-      if_f_match(i.first,j.first,newf);
+      if_f_match(it_i->first ,it_j->first,newf);
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
@@ -228,12 +230,13 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t a, ps_cfg_t b, assignme
    
 }
 
-static void combine_assignment_ps_list_loop(ps_cfg_t a, ps_cfg_t b, assignment_ps_map &c){
+static void combine_assignment_ps_list_loop(assignment_ps &a, assignment_ps &b, assignment_ps_map &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
-   for(auto &i : b.assignments){
-    for(auto &j: a.assignments){
+    assignment_ps::iterator it_i,it_j;
+  for(it_i=a.begin();it_i!=b.end();++it_i){
+   for(it_j=b.begin();it_j!=a.end();++it_j){
       f newf;
-      if_f_match(i.first,j.first,newf);
+      if_f_match(it_i->first ,it_j->first,newf);
      if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
@@ -292,17 +295,17 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
       switch (ps_cfg.type){
          case 1:
          //  std::cout<<"4"<<std::endl;
-            combine_assignment_ps_list_series(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right],ps_cfg.assignments);
+            combine_assignment_ps_list_series(ps_cfg_map[ps_cfg.left].assignments, ps_cfg_map[ps_cfg.right].assignments,ps_cfg.assignments);
          //  std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          case 2:
          //   std::cout<<"5"<<std::endl;
-            combine_assignment_ps_list_parallel(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right],ps_cfg.assignments);
+            combine_assignment_ps_list_parallel(ps_cfg_map[ps_cfg.left].assignments, ps_cfg_map[ps_cfg.right].assignments,ps_cfg.assignments);
         //   std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          case 3:
          //   std::cout<<"6"<<std::endl;
-            combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.left], ps_cfg_map[ps_cfg.right],ps_cfg.assignments);
+            combine_assignment_ps_list_loop(ps_cfg_map[ps_cfg.left].assignments, ps_cfg_map[ps_cfg.right].assignments,ps_cfg.assignments);
          //  std::cout<<"current optimal:"<<get_optimal(ps_cfg,I).s<<std::endl;
             break;
          default:

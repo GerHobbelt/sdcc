@@ -285,7 +285,7 @@ static void convert_to_global(std::vector<short int> v,std::vector<var_t> variab
    global.resize(n,-3);
    int end=variables.size();
    for(int i=0;i<end;++i){
-      global[variable[i]]=getIndex(v,variables[i]);
+      global[variables[i]]=getIndex(v,variables[i]);
    }}
 
 

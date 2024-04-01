@@ -453,7 +453,7 @@ static bool inst_sane(const assignment &a, unsigned short int i, const G_t &G, c
 
 // Cost function.
 template <class G_t, class I_t>
-static float instruction_cost_1(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
   float c;
@@ -587,7 +587,7 @@ static float assign_operands_for_cost_easy(const assignment &a, unsigned short i
 
 // Easy Cost function.
 template <class G_t, class I_t>
-static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+static float instruction_cost_1(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
   float c=0;
@@ -743,13 +743,13 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
   end = std::chrono::high_resolution_clock::now();
   auto duration= std::chrono::duration_cast<std::chrono::microseconds>(end - start); 
   
-  std::cout << "Philip Winner: ";
-  for(unsigned int i = 0; i < boost::num_vertices(I); i++)
-  {
-  	std::cout << "(" << i << ", " << int(winner.global[i]) << ") ";
-  }
-  std::cout << "\n";
-  std::cout << "Cost: " << winner.s << "\n";
+  //std::cout << "Philip Winner: ";
+ // for(unsigned int i = 0; i < boost::num_vertices(I); i++)
+ // {
+ // 	std::cout << "(" << i << ", " << int(winner.global[i]) << ") ";
+ // }
+  //std::cout << "\n";
+ // std::cout << "Cost: " << winner.s << "\n";
 
   // Todo: Make this an assertion
   if(winner.global.size() != boost::num_vertices(I))
@@ -782,7 +782,7 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   for(unsigned int i = 0; i < boost::num_vertices(G); i++)
     set_surviving_regs(winner, i, G, I);
-  write_into_csv(winner.s, 0, duration.count());
+ // write_into_csv(winner.s, 0, duration.count());
 
 
   return(!assignment_optimal);

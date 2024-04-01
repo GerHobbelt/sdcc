@@ -58,6 +58,29 @@ static void if_f_match(f f1,f f2, f &f3){
    }
 }
 
+static std::vector<f> generate_p_w(f variables){
+   std::vector<f> results;
+   f v;
+   v.resize(MAX_NUM_REGS,-1);
+   results.push_back(v);
+   for(auto i:variables){
+      f new_results;
+      for(auto j:results){
+         for(int k=0;k<MAX_NUM_REGS;++k){
+            if(j[k]==-1){
+               f newf=j;
+               newf[k]=i;
+               new_results.push_back(newf);
+            }
+
+      }
+   }
+   results.insert(results.end(),new_results.begin(),new_results.end());
+   
+      
+}
+   return results;
+}
 
 static int getIndex(std::vector<short int> v, short int K) 
 { 
@@ -269,9 +292,9 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    for(auto i:begin_p){
          //std::cout<<"begin to get cost"<<std::endl;
          //std::cout<<"finish initial assignment_ps"<<std::endl;
-         f global;
+         f global=generate_p_w(a.begin_v);
          // std::cout<<"finish initial assignment"<<std::endl;
-         convert_to_global(i,a.begin_v,global,n);
+         //convert_to_global(i,a.begin_v,global,n);
          
          //std::cout<<"try to get cost"<<std::endl;
          //aa.begin_i = as;

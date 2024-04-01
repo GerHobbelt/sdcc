@@ -453,7 +453,7 @@ static bool inst_sane(const assignment &a, unsigned short int i, const G_t &G, c
 
 // Cost function.
 template <class G_t, class I_t>
-static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+static float instruction_cost_1(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
   float c;
@@ -587,7 +587,7 @@ static float assign_operands_for_cost_easy(const assignment &a, unsigned short i
 
 // Easy Cost function.
 template <class G_t, class I_t>
-static float instruction_cost_1(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
   float c=0;
@@ -782,7 +782,7 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   for(unsigned int i = 0; i < boost::num_vertices(G); i++)
     set_surviving_regs(winner, i, G, I);
- // write_into_csv(winner.s, 0, duration.count());
+  write_into_csv(winner.s, 0, duration.count());
 
 
   return(!assignment_optimal);

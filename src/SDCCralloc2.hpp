@@ -287,10 +287,10 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    //std::cout<<"end size:"<<end.size()<<std::endl;
    //std::cout<<"finish generating"<<std::endl;
    cfg_node node=((*(a.cfg))[a.begin]);
+   f global;
    for(auto i:begin_p){
          //std::cout<<"begin to get cost"<<std::endl;
          //std::cout<<"finish initial assignment_ps"<<std::endl;
-         f global;
          // std::cout<<"finish initial assignment"<<std::endl;
          convert_to_global(i,a.begin_v,global,n);
          
@@ -299,9 +299,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          //aa.end_i = as;
          a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I))));
    }
-
       std::cout<<"begin assignment_ps_list"<<std::endl;
-      for(auto i:a.assignments.begin()->first){
+      for(auto i:global){
          for(int j=0;j<n;j++){
             std::cout<<"("<<j<<","<<i[j]<<")";
          }

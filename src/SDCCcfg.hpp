@@ -22,7 +22,7 @@ typedef boost::graph_traits<cfg_t>::vertex_descriptor vertex;
 typedef std::vector<var_t> f;
 
 #define MAX_NUM_REGS 3
-
+typedef std::map<f,assignment_ps> assignment_ps_map;
 
 //assignment for one instuction
 struct i_assignment_ps{

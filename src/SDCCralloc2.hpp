@@ -273,7 +273,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
   if(a.begin()->first.variables==b.begin()->first.variables){
       for(auto &i:a){
-         float s=i.second.s+j.second.s;
+         float s=i.second.s+b[i.second].s;
         c[i.first] = assignment_ps(s,i.second.begin_cost,i.second.end_cost);
       }
    }else{

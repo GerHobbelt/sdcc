@@ -38,20 +38,17 @@ extern "C"
 }
 
 // Integer constant upper bound on port->num_regs
-#define MAX_NUM_REGS 3
+#define MAX_NUM_REGS port->num_regs
 
 //int duration_of_permutation=0;
 
 static void if_f_match(f f1,f f2, f &f3){
-   int n=f1.size();
-   f3.reserve(n);
+   f3.emplace(f1);
    for(int i=0;i<n;++i){
-      if(f1[i]==f2[i]|| f2[i]==-3){
-         f3.emplace_back(f1[i]);
-      }else if (f1[i]==-3){
-         f3.emplace_back(f2[i]);
-      }else{
-         f3.emplace_back(-2);
+      if(f1[i]==-3){
+         f3[i]=f2[i];
+      }else if (f3[i]!=f2[i]){
+         f3[0]=-2;
          return;
       }
    }
@@ -196,7 +193,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    for(auto &j:b){
       f newf;
       if_f_match(i.first ,j.first,newf);
-      if (newf.size()!=0 && newf.back()==-2){
+      if (newf[0]==-2){
          continue;
       }
       float s=i.second.s+j.second.s;
@@ -214,7 +211,7 @@ static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment
  for(auto &i:a){
    for(auto &j:b){
       f newf;
-      if_f_match(i.first ,j.first,newf);
+      if_f_match(newf[0]==-2);
       if (newf.size()!=0 && newf.back()==-2){
          continue;
       }
@@ -233,7 +230,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    for(auto &j:b){
       f newf;
       if_f_match(i.first ,j.first,newf);
-     if (newf.size()!=0 && newf.back()==-2){
+     if (newf[0]==-2){
          continue;
       }
       float s=i.second.s+j.second.s;

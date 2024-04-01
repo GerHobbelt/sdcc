@@ -34,7 +34,6 @@ struct i_assignment_ps{
 
       global_regs.clear();
      // std::cout<<"i_assignment_ps constructor end"<<std::endl;
-      node = NULL;
       cost = std::numeric_limits<float>::infinity();
    }
 

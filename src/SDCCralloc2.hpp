@@ -250,16 +250,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    f vb=b.begin()->second.variables;
    if (va==vb){for (auto i:permutation_map[va]){
      float s=a[i].s+b[i].s;
-     if(s==std::numeric_limits<float>::infinity()){
-       std::cout<<"s is infinity"<<std::endl;
-       std::cout<<"a[i].s:"<<a[i].s<<std::endl;
-         std::cout<<"b[i].s:"<<b[i].s<<std::endl;
-         std::cout<<"i:";
-         for(auto j:i){
-            std::cout<<j<<" ";
-         }
-         std::cout<<std::endl;
-     }
+     
      c[i]=assignment_ps(s,a[i].begin_cost,b[i].end_cost,va);
    }
 
@@ -270,6 +261,16 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       f gva=get_partial_global(i,va);
       f gvb=get_partial_global(i,vb);
       float s=a[gva].s+b[gvb].s;
+      if(s==std::numeric_limits<float>::infinity()){
+       std::cout<<"s is infinity"<<std::endl;
+       std::cout<<"a[i].s:"<<a[gva].s.s<<std::endl;
+         std::cout<<"b[i].s:"<b[gvb].s<<std::endl;
+         std::cout<<"i:";
+         for(auto j:i){
+            std::cout<<j<<" ";
+         }
+         std::cout<<std::endl;
+     }
       
       c[i]=assignment_ps(s,a[gva].begin_cost,b[gvb].end_cost,v);
    }

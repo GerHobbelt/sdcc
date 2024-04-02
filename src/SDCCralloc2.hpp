@@ -213,11 +213,6 @@ static void generate_possibility(f variables,int n){
  //  std::vector<f> results;
    std::vector<f> sub_set=subsets(variables);
    for(auto sub:sub_set){
-      std::cout<<"sub:"<<std::endl;
-      for(auto i:sub){
-         std::cout<<i<<" ";
-      }
-      std::cout<<std::endl;
       std::vector<f> globs;
       if(sub.size()<=MAX_NUM_REGS){
         f v;
@@ -252,20 +247,6 @@ static void generate_possibility(f variables,int n){
       
    }
  //  std::cout<<"finish generate_possibility"<<std::endl;
-   f v={0,1,2,3,4,5};
-   f g={0,1,-1,-1,2,-1};
-   bool find=false;
-   for(auto i:permutation_map[v]){
-      if(i==g){
-         find=true;
-      }
-   }
-   if(find){
-      std::cout<<"find v"<<std::endl;
-   }else{
-      std::cout<<"not find v"<<std::endl;
-   }
-   //return results;
 }
 
 static f get_partial_global(f global, f variables){
@@ -287,13 +268,6 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
      float s=a[i].s+b[i].s;
      
      c[i]=assignment_ps(s,a[i].begin_cost,b[i].end_cost,va);
-      f v={0,1,-1,-1,2,-1};
-       if(i==v){
-         std::cout<<"s:"<<s<<std::endl;
-         std::cout<<"a[i].s:"<<a[i].s<<std::endl;
-         std::cout<<"b[i].s:"<<b[i].s<<std::endl;
-
-       }
    }
 
    return;
@@ -305,13 +279,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       float s=a[gva].s+b[gvb].s;
       
       c[i]=assignment_ps(s,a[gva].begin_cost,b[gvb].end_cost,v);
-       f v={0,1,-1,-1,2,-1};
-       if(i==v){
-         std::cout<<"s:"<<s<<std::endl;
-         std::cout<<"a[gva].s:"<<a[gva].s<<std::endl;
-         std::cout<<"b[gvb].s:"<<b[gvb].s<<std::endl;
 
-       }
    }
 }
 
@@ -341,13 +309,6 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    if (va==vb){for (auto i:permutation_map[va]){
      float s=a[i].s+b[i].s;
      c[i]=assignment_ps(s,b[i].begin_cost,b[i].end_cost,va);
-      f v={0,1,-1,-1,2,-1};
-       if(i==v){
-         std::cout<<"s:"<<s<<std::endl;
-         std::cout<<"a[i].s:"<<a[i].s<<std::endl;
-         std::cout<<"b[i].s:"<<b[i].s<<std::endl;
-
-       }
    }     
    return;
 }
@@ -357,13 +318,6 @@ for(auto i:permutation_map[v]){
       f gvb=get_partial_global(i,vb);
       float s=a[gva].s+b[gvb].s;
       c[i]=assignment_ps(s,b[gvb].begin_cost,b[gvb].end_cost,v);
-       f v={0,1,-1,-1,2,-1};
-       if(i==v){
-         std::cout<<"s:"<<s<<std::endl;
-         std::cout<<"a[gva].s:"<<a[gva].s<<std::endl;
-         std::cout<<"b[gvb].s:"<<b[gvb].s<<std::endl;
-
-       }
    }
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
 }

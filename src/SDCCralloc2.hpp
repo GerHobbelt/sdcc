@@ -260,9 +260,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       f gva=get_partial_global(i,va);
       f gvb=get_partial_global(i,vb);
       float s=a[gva].s+b[gvb].s;
-      if(c.find(i)==c.end()||c[i].s>s){
       c[i]=assignment_ps(s,a[gva].begin_cost,b[gvb].end_cost,v);
-      }
    }
 }
 
@@ -279,9 +277,8 @@ f vb=b.begin()->second.variables;
       f gva=get_partial_global(i,va);
       f gvb=get_partial_global(i,vb);
       float s=a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost;
-      if(c.find(i)==c.end()||c[i].s>s){
       c[i]=assignment_ps(s,a[gva].begin_cost,a[gva].end_cost,v);
-   }}
+   }
    
 }
 
@@ -299,9 +296,8 @@ for(auto i:permutation_map[v]){
       f gva=get_partial_global(i,va);
       f gvb=get_partial_global(i,vb);
       float s=a[gva].s+b[gvb].s;
-      if(c.find(i)==c.end()||c[i].s>s){
       c[i]=assignment_ps(s,b[gvb].begin_cost,b[gvb].end_cost,v);
-   }}
+   }
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
 }
 

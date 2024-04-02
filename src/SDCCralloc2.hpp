@@ -172,7 +172,7 @@ static std::vector<f> generate_permutation(f variables){
 }
  
 static bool compare(f a, f b){
-   if a.size()>b.size(){
+   if (a.size()>b.size()){
       return true;
    }else if(a.size()<b.size()){
       return false;

@@ -287,6 +287,8 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
          }
       }
    }
+   std::cout<<c.size()<<std::endl;
+
 }
 
 static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
@@ -307,7 +309,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    assignment_ps first_b=b.begin()->second;
    f va=first_b.begin_v;
    f vb=first_b.end_v;
-   f v_n=first_a.variables;
+   f v_n=first_b.variables;
    if (v_n==first_b.variables){
    for (auto i:a){ 
      c.emplace(std::make_pair(i.first,assignment_ps(i.second.s+b[i.first].s,b[i.first].begin_cost,b[i.first].end_cost,va,vb,v_n)));

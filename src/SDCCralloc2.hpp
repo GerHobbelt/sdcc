@@ -387,10 +387,10 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
 
 
 static void generate_spcfg(ps_cfg_t &ps_cfg){
-   if (ps_cfg.make_series){
-      series_addition(ps_cfg);
-      return;
-   }
+ // if (ps_cfg.make_series){
+  //    series_addition(ps_cfg);
+   //   return;
+   //}
 
    if (ps_cfg.assignments.size() == 0){
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){

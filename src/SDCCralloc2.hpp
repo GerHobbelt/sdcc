@@ -177,6 +177,7 @@ std::vector<f > subsets(f& A)
     std::vector<f > res;
     int index = 0;
     calcSubset(A, res, subset, index);
+    std::sort(res.begin(),res.end(),res.size());
     return res;
 }
 

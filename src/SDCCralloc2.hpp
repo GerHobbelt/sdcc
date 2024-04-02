@@ -267,7 +267,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    if (va==vb){for (auto i:permutation_map[va]){
     // float s=a[i].s+b[i].s;
      
-     c.emplace(i,assignment_ps(a[i].s+b[i].s,a[i].begin_cost,b[i].end_cost,va));
+     c.emplace(std::make_pair(i,assignment_ps(a[i].s+b[i].s,a[i].begin_cost,b[i].end_cost,va)));
    }
 
    return;
@@ -278,7 +278,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       f gvb=get_partial_global(i,vb);
       //float s=a[gva].s+b[gvb].s;
       
-      c.emplace(i,assignment_ps(a[gva].s+b[gvb].s,a[gva].begin_cost,b[gvb].end_cost,v));
+      c.emplace(std::make_pair(i,assignment_ps(a[gva].s+b[gvb].s,a[gva].begin_cost,b[gvb].end_cost,v)));
 
    }
 }
@@ -288,7 +288,7 @@ f va=a.begin()->second.variables;
 f vb=b.begin()->second.variables;
    if (va==vb){for (auto i:permutation_map[va]){
      //float s=a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost;
-     c.emplace(i,assignment_ps(a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost,a[i].begin_cost,a[i].end_cost,va));
+     c.emplace(std::make_pair(i,assignment_ps(a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost,a[i].begin_cost,a[i].end_cost,va)));
    }     return;
 }
    f v=unionVectors(va,vb);
@@ -296,7 +296,7 @@ f vb=b.begin()->second.variables;
       f gva=get_partial_global(i,va);
       f gvb=get_partial_global(i,vb);
       //float s=a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost;
-      c.emplace(assignment_ps(a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost,a[gva].begin_cost,a[gva].end_cost,v));
+      c.emplace(std::make_pair(i,assignment_ps(a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost,a[gva].begin_cost,a[gva].end_cost,v)));
       
    }
    
@@ -308,7 +308,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    f vb=b.begin()->second.variables;
    if (va==vb){for (auto i:permutation_map[va]){
     // float s=a[i].s+b[i].s;
-     c.emplace(i,assignment_ps(a[i].s+b[i].s,b[i].begin_cost,b[i].end_cost,va));
+     c.emplace(std::make_pair(i,assignment_ps(a[i].s+b[i].s,b[i].begin_cost,b[i].end_cost,va)));
    }     
    return;
 }
@@ -317,7 +317,7 @@ for(auto i:permutation_map[v]){
       f gva=get_partial_global(i,va);
       f gvb=get_partial_global(i,vb);
       //float s=a[gva].s+b[gvb].s;
-      c.emplace(i,assignment_ps(a[gva].s+b[gvb].s,b[gvb].begin_cost,b[gvb].end_cost,v));
+      c.emplace(std::make_pair(i,assignment_ps(a[gva].s+b[gvb].s,b[gvb].begin_cost,b[gvb].end_cost,v)));
    }
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
 }

@@ -31,7 +31,9 @@ struct assignment_ps{
    float s; //cost
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
    float begin_cost;
-    float end_cost;
+   float end_cost;
+   f begin_v;
+   f end_v;
     f variables;
 
    assignment_ps(){
@@ -45,14 +47,19 @@ struct assignment_ps{
       s = cost;
       begin_cost = cost;
       end_cost = cost;
-      this->variables = variables;
+      variables = variables;
+      begin_v = variables;
+      end_v = variables;
+
    }
 
-   assignment_ps(float cost, float begin, float end, f variables){
+   assignment_ps(float cost, float begin, float end,f beginv,f endv, f variables){
       s = cost;
       begin_cost = begin;
       end_cost = end;
-      this->variables = variables;
+      variables = variables;
+      begin_v = beginv;
+      end_v = endv;
    }
 };
 

@@ -328,10 +328,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
   
-  std::vector<var_t> variables;
-  int n=boost::num_vertices(I);
-  for (int i = 0; i <n; i++)
-    variables.push_back(i);
+
   //std::cout<<"begin pos created"<<std::endl;
   //generate_possibility(variables,n);
   //std::cout<<"end pos created"<<std::endl;

@@ -171,13 +171,30 @@ static std::vector<f> generate_permutation(f variables){
    return results;
 }
  
+static bool compare(f a, f b){
+   if a.size()>b.size(){
+      return true;
+   }else if(a.size()<b.size()){
+      return false;
+   }else{
+      for(int i=0;i<a.size();++i){
+         if(a[i]>b[i]){
+            return true;
+         }else if(a[i]<b[i]){
+            return false;
+         }
+      }
+   
+   }
+}
+
 std::vector<f > subsets(f& A)
 {
    f subset;
     std::vector<f > res;
     int index = 0;
     calcSubset(A, res, subset, index);
-    std::sort(res.begin(),res.end(),res.size());
+    std::sort(res.begin(),res.end(),compare);
     return res;
 }
 

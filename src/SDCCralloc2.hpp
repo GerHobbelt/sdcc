@@ -195,6 +195,11 @@ static void generate_possibility(f variables,int n){
  //  std::vector<f> results;
    std::vector<f> sub_set=subsets(variables);
    for(auto sub:sub_set){
+      std::cout<<"sub:"<<std::endl;
+      for(auto i:sub){
+         std::cout<<i<<" ";
+      }
+      std::cout<<std::endl;
       std::vector<f> globs;
       if(sub.size()<=MAX_NUM_REGS){
         f v;
@@ -230,8 +235,8 @@ static void generate_possibility(f variables,int n){
    }
  //  std::cout<<"finish generate_possibility"<<std::endl;
    f v={0,1,2,3,4,5};
-    f g={0,1,-1,-1,2,-1};
-       bool find=false;
+   f g={0,1,-1,-1,2,-1};
+   bool find=false;
    for(auto i:permutation_map[v]){
       if(i==g){
          find=true;

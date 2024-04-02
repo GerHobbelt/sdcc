@@ -217,7 +217,7 @@ static void generate_possibility(f variables,int n){
         for(auto i:sub_sub_set){
          if (i!=sub){
             for(auto j:permutation_map[i]){
-               f g=extend_glob(i,sub,global);
+               f g=extend_glob(i,sub,j);
                globs.push_back(g);
             }
          }

@@ -42,6 +42,14 @@ extern "C"
 
 //int duration_of_permutation=0;
 
+static void convert_to_global(std::vector<short int> v,std::vector<var_t> variables, f &global, int n){ 
+   global.resize(n,-3);
+   int end=variables.size();
+   for(int i=0;i<end;++i){
+      global[variables[i]]=getIndex(v,variables[i]);
+   }}
+
+
 static void if_f_match(f f1,f f2, f &f3){
    int n=f1.size();
   
@@ -108,6 +116,7 @@ static std::vector<var_t> unionVectors(std::vector<var_t>& vec1,
     for (auto it = s.begin(); it != s.end(); it++) { 
         ans.push_back(*it); 
     } 
+    std::sort(ans.begin(),ans.end());
     return ans; 
 } 
 
@@ -168,9 +177,9 @@ std::vector<f > subsets(f& A)
     return res;
 }
 
-static std::vector<f> generate_possibility(f variables){
+static void generate_possibility(f variables,int n){
   // std::cout<<"begin generate_possibility"<<std::endl;
-   std::vector<f> results;
+ //  std::vector<f> results;
    std::vector<f> sub_set=subsets(variables);
    for(auto sub:sub_set){
       if(sub.size()<=MAX_NUM_REGS){
@@ -178,25 +187,39 @@ static std::vector<f> generate_possibility(f variables){
         for(int i=0; i<MAX_NUM_REGS;++i){
           v.push_back(-1);
         }
-        std::sort(sub.begin(),sub.end());
         int len=sub.size();
         for(int i=0;i<len;++i){
           v[MAX_NUM_REGS-len+i]=sub[i];
         }
 
-        std::vector<f> p=generate_permutation(v);
 
-        results.reserve(results.size() + distance(p.begin(),p.end()));
-        results.insert(results.end(),p.begin(),p.end());
+        std::vector<f> p=generate_permutation(v);
+        std::vector<f> globs;
+        for (auto i:p){
+         f global;
+         convert_to_global(i,sub,global,n);
+         globs.push_back(global);
+        }
+        permutation_map[sub]=globs;
+        
+      //  results.reserve(results.size() + distance(p.begin(),p.end()));
+       // results.insert(results.end(),p.begin(),p.end());
         //results.push_back(v);
       }
    }
  //  std::cout<<"finish generate_possibility"<<std::endl;
 
-   return results;
+   //return results;
 }
 
-
+static f get_partial_global(f global, f variables){
+   f result;
+   result.resize(variables.size(),-3);
+   for(auto i:variables){
+      result[i]=global[i];
+   }
+   return result;
+}
 
 //this function is used to combine two assignment_ps_list while series merge
 static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
@@ -205,31 +228,17 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    if (va==vb){for (auto i:permutation_map[va]){
      float s=a[i].s+b[i].s;
      c[i]=assignment_ps(s,a[i].begin_cost,b[i].end_cost,va);
-   } return;}
-   f v=unionVectors(va,vb);
-   std::vector<f> gs; 
-   bool newv= (permutation_map.find(v)==permutation_map.end());   
-  for(auto &i:a){
-   for(auto &j:b){
-      f newf;
-      if_f_match(i.first ,j.first,newf);
-      if (newf[0]==-2){
-         continue;
-      }
-       if(newv){
-         gs.push_back(newf);
-      }
-      float s=i.second.s+j.second.s;
-       if(c.find( newf ) == c.end() || c[newf].s > s){
-         c[newf] = assignment_ps(s,i.second.begin_cost,j.second.end_cost,v);
-      }
-
+   } return;
    }
-  }
-  if(newv){
-  permutation_map[v]=gs;
- }
-   //std::cout<<"combine_assignment_ps_list_series.size"<<c.size() <<std::endl;
+   f v=unionVectors(va,vb);
+   for(auto i:permutation_map[v]){
+      f gva=get_partial_global(i,va);
+      f gvb=get_partial_global(i,vb);
+      float s=a[gva].s+b[gvb].s;
+      if(c.find(i)==c.end()||c[i].s>s){
+      c[i]=assignment_ps(s,a[gva].begin_cost,b[gvb].end_cost,v);
+      }
+   }
 }
 
 static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
@@ -241,28 +250,13 @@ f vb=b.begin()->second.variables;
    }     return;
 }
    f v=unionVectors(va,vb);
-   std::vector<f> gs; 
-   bool newv= (permutation_map.find(v)==permutation_map.end());    
-
- for(auto &i:a){
-   for(auto &j:b){
-      f newf;
-      if_f_match(i.first ,j.first,newf);
-      if (newf[0]==-2){
-         continue;
-      }
-      if(newv){
-         gs.push_back(newf);
-      }
-      float s=i.second.s-i.second.end_cost-i.second.begin_cost+j.second.s;
-      if(c.find( newf ) == c.end() || c[newf].s > s){
-      c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost,v);
-   }
-  }
- }
- if(newv){
-  permutation_map[v]=gs;
- }
+   for(auto i:permutation_map[v]){
+      f gva=get_partial_global(i,va);
+      f gvb=get_partial_global(i,vb);
+      float s=a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost;
+      if(c.find(i)==c.end()||c[i].s>s){
+      c[i]=assignment_ps(s,a[gva].begin_cost,a[gva].end_cost,v);
+   }}
    
 }
 
@@ -276,38 +270,19 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    }     return;
 }
 f v=unionVectors(va,vb);
-std::vector<f> gs; 
-   bool newv= (permutation_map.find(v)==permutation_map.end());   
-  for(auto &i:b){
-   for(auto &j:a){
-      f newf;
-      if_f_match(i.first ,j.first,newf);;
-     if (newf[0]==-2){
-         continue;
-      }
-       if(newv){
-         gs.push_back(newf);
-      }
-      float s=i.second.s+j.second.s;
-      if(c.find( newf ) == c.end() || c[newf].s > s){
-         c[newf] = assignment_ps(s,i.second.begin_cost,i.second.end_cost,v);
-      }
-   }
-   }
-   if(newv){
-  permutation_map[v]=gs;
- }
+for(auto i:permutation_map[v]){
+      f gva=get_partial_global(i,va);
+      f gvb=get_partial_global(i,vb);
+      float s=a[gva].s+b[gvb].s;
+      if(c.find(i)==c.end()||c[i].s>s){
+      c[i]=assignment_ps(s,b[gvb].begin_cost,b[gvb].end_cost,v);
+   }}
+  // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
 }
 
 template <class I_t>
 static float instruction_cost_easy(const f & global, cfg_node &node, const I_t &I);
 
-static void convert_to_global(std::vector<short int> v,std::vector<var_t> variables, f &global, int n){ 
-   global.resize(n,-3);
-   int end=variables.size();
-   for(int i=0;i<end;++i){
-      global[variables[i]]=getIndex(v,variables[i]);
-   }}
 
 
 static std::vector<f> generate_p_w(f variables, int n){
@@ -356,11 +331,6 @@ static std::vector<f> generate_p_w(f variables, int n){
 template <class I_t>
 static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
     
-    int n=boost::num_vertices(I);
-      //print begin v
-     if(permutation_map.find(a.begin_v)==permutation_map.end()){
-      generate_p_w(a.begin_v,n);
-     }
    std::vector<f>  begin_p=permutation_map[a.begin_v];
      
 

@@ -327,7 +327,12 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   typename boost::graph_traits<I_t>::edge_iterator e, e_end;
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
-
+  
+  std::vector<var_t> variables;
+  int n=boost::num_vertices(I);
+  for (int i = 0; i <n; i++)
+    variables.push_back(i);
+  generate_possibility(variables,n);
  // std::cout<<"I2 created"<<std::endl;
   initial_basic_block(root,I2);
   //std::cout<<"initial basic block"<<std::endl;

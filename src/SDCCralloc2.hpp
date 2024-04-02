@@ -232,7 +232,7 @@ static void generate_possibility(f variables,int n){
    f v={0,1,2,3,4,5};
     f g={0,1,-1,-1,2,-1};
        
-   if(permutaion_map[v].find(g)==permutaion_map[v].end()){
+   if(permutation_map[v].find(g)==permutation_map[v].end()){
       std::cout<<"error"<<std::endl;
    }else{
       std::cout<<"success"<<std::endl;

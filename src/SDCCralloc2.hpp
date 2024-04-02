@@ -323,7 +323,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
   f va=a.begin()->second.variables;
    f vb=b.begin()->second.variables;
-   if (va==vb){for (auto i:permutation_map[va]){
+   if (va==vb){for (auto i:a){
      if(b.find(i.first)!=b.end()){
      c.emplace(std::make_pair(i.first,assignment_ps(i.second.s+b[i.first].s,b[i.first].begin_cost,b[i.first].end_cost,va)));
    }     }

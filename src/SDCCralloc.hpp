@@ -74,7 +74,7 @@ typedef short int var_t;
 typedef signed char reg_t;
 
 // Integer constant upper bound on port->num_regs
-#define MAX_NUM_REGS port->num_regs
+#define MAX_NUM_REGS 9
 
 // Assignment at an instruction
 struct i_assignment_t

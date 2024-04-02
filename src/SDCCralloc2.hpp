@@ -38,8 +38,7 @@ extern "C"
 }
 
 // Integer constant upper bound on port->num_regs
-#define MAX_NUM_REGS port->num_regs
-
+#define MAX_NUM_REGS 3
 //int duration_of_permutation=0;
 
 static int getIndex(std::vector<short int> v, short int K) 

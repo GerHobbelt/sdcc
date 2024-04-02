@@ -252,7 +252,6 @@ static void generate_possibility(f variables,int n){
 static f get_partial_global(f global, f variables, f &result){
 
  //  std::cout<<"begin get_partial_global"<<std::endl;
-   result.resize(global.size(),-3);
    for(auto i:variables){
       result[i]=global[i];
    }
@@ -271,9 +270,12 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    return;
    }
    f v=unionVectors(va,vb);
+   int n=v.size();
    for(auto i:permutation_map[v]){
       f gva;
       f gvb;
+      gva.resize(n,-3);
+      gvb.resize(n,-3);
       get_partial_global(i,va,gva);
       get_partial_global(i,vb,gvb);
       
@@ -293,6 +295,8 @@ f vb=b.begin()->second.variables;
    for(auto i:permutation_map[v]){
       f gva;
       f gvb;
+      gva.resize(n,-3);
+      gvb.resize(n,-3);
       get_partial_global(i,va,gva);
       get_partial_global(i,vb,gvb);
       c[i]=assignment_ps(a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost,a[gva].begin_cost,a[gva].end_cost,v);
@@ -314,6 +318,8 @@ f v=unionVectors(va,vb);
 for(auto i:permutation_map[v]){
       f gva;
       f gvb;
+            gva.resize(n,-3);
+      gvb.resize(n,-3);
       get_partial_global(i,va,gva);
       get_partial_global(i,vb,gvb);
       c[i]=assignment_ps(a[gva].s+b[gvb].s,b[gvb].begin_cost,b[gvb].end_cost,v);

@@ -335,7 +335,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   //std::cout<<"begin pos created"<<std::endl;
   generate_possibility(variables,n);
   //std::cout<<"end pos created"<<std::endl;
-  //std::cout<<"permutation size: "<<permutation_map.size()<<std::endl;
+  std::cout<<"permutation size: "<<permutation_map.size()<<std::endl;
  // std::cout<<"I2 created"<<std::endl;
   initial_basic_block(root,I2);
   //std::cout<<"initial basic block"<<std::endl;

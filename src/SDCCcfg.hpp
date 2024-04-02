@@ -61,7 +61,7 @@ typedef std::map<f,assignment_ps> assignment_ps_map;
 std::map<f,std::vector<f>> permutation_map;
 
 
-
+typedef std::vector<assignment_ps_map> series;
 
 struct ps_cfg_t{
 
@@ -73,9 +73,11 @@ struct ps_cfg_t{
   int right;
   int index;
   int parent;
+  bool make_series;
   varset_t begin_v;
   varset_t end_v;
   assignment_ps_map assignments;
+  series series_assignments;
 };
 
 std::map<int,ps_cfg_t> ps_cfg_map;
@@ -109,6 +111,7 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   ps_cfg.assignments.clear();
   ps_cfg.begin_v=cfg[begin_node].alive;
   ps_cfg.end_v=cfg[end_node].after;
+  ps_cfg.make_series=false;
   
     return ps_cfg;
 }
@@ -351,6 +354,23 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   return ;
 }
 
+static void mark_series_pscfg(ps_cfg_t &pscfg){
+  if (pscfg.left!=-1 && pscfg.right!=-1){
+    mark_series_pscfg(ps_cfg_map[pscfg.left]);
+    mark_series_pscfg(ps_cfg_map[pscfg.right]);
+  }else{
+    pscfg.make_series=true;
+    pscfg.series_assignments.push_back(pscfg.assignments);
+    return;
+  }
+  if (ps_cfg_map[pscfg.left].make_series && ps_cfg_map[pscfg.right].make_series && pscfg.type==1){
+    pscfg.make_series=true;
+    pscfg.series_assignments.insert(pscfg.series_assignments.end(),ps_cfg_map[pscfg.left].series_assignments.begin(),ps_cfg_map[pscfg.left].series_assignments.end());
+    pscfg.series_assignments.insert(pscfg.series_assignments.end(),ps_cfg_map[pscfg.right].series_assignments.begin(),ps_cfg_map[pscfg.right].series_assignments.end());
+  }
+  
+}
+
 static void convert_cfg_to_spcfg(ps_cfg_t &pscfg){
   //ps_cfg_map.clear();
   //cfg_map.clear();
@@ -365,4 +385,7 @@ static void convert_cfg_to_spcfg(ps_cfg_t &pscfg){
       convert_cfg_to_spcfg(ps_cfg_map[pscfg.right]);
     }
   }
+
+  //mark_series_pscfg(pscfg);
 }
+

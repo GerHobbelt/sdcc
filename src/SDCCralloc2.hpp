@@ -264,7 +264,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       if(s==std::numeric_limits<float>::infinity()){
        std::cout<<"s is infinity"<<std::endl;
        std::cout<<"a[i].s:"<<a[gva].s<<std::endl;
-         std::cout<<"b[i].s:"<b[gvb].s<<std::endl;
+         std::cout<<"b[i].s:"<<b[gvb].s<<std::endl;
          std::cout<<"i:";
          for(auto j:i){
             std::cout<<j<<" ";

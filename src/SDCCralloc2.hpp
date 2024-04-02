@@ -271,7 +271,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       for (auto i:a){     
      c.emplace(std::make_pair(i.first,assignment_ps(i.second.s+b[i.first].s,i.second.begin_cost,b[i.first].end_cost,va,vb,v_n)));     
    }
-   std::cout<<"series size1 : "<<c.size()<<std::endl;
+   //std::cout<<"series size1 : "<<c.size()<<std::endl;
    return;
    }
    for(auto i:a){
@@ -288,7 +288,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
          }
       }
    }
-      std::cout<<"series size2 : "<<c.size()<<std::endl;
+ //     std::cout<<"series size2 : "<<c.size()<<std::endl;
 }
 
 static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
@@ -314,7 +314,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    for (auto i:a){ 
      c.emplace(std::make_pair(i.first,assignment_ps(i.second.s+b[i.first].s,b[i.first].begin_cost,b[i.first].end_cost,va,vb,v_n)));
    }
-   std::cout<<"loop size1 : "<<c.size()<<std::endl;
+  // std::cout<<"loop size1 : "<<c.size()<<std::endl;
    return;
 }
 for(auto i:a){
@@ -331,7 +331,7 @@ for(auto i:a){
       }
    }
    }
-   std::cout<<"loop size2 : "<<c.size()<<std::endl;
+  // std::cout<<"loop size2 : "<<c.size()<<std::endl;
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
 }
 
@@ -378,7 +378,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
 
          a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I),a.begin_v)));
    }
-   std::cout<<"basic block size: "<< a.assignments.size()<<std::endl;
+  // std::cout<<"basic block size: "<< a.assignments.size()<<std::endl;
 }
 
 

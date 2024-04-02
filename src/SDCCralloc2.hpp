@@ -234,13 +234,13 @@ static void generate_possibility(f variables,int n){
 }
 
 static f get_partial_global(f global, f variables){
-   std::cout<<"begin get_partial_global"<<std::endl;
+ //  std::cout<<"begin get_partial_global"<<std::endl;
    f result;
    result.resize(global.size(),-3);
    for(auto i:variables){
       result[i]=global[i];
    }
-   std::cout<<"finish get_partial_global"<<std::endl;
+  // std::cout<<"finish get_partial_global"<<std::endl;
    return result;
 }
 

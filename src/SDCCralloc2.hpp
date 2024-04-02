@@ -42,6 +42,27 @@ extern "C"
 
 //int duration_of_permutation=0;
 
+static int getIndex(std::vector<short int> v, short int K) 
+{ 
+    auto it = find(v.begin(), v.end(), K); 
+  
+    // If element was found 
+    if (it != v.end())  
+    { 
+      
+        // calculating the index 
+        // of K 
+        int index = it - v.begin(); 
+        return index;
+    } 
+    else { 
+        // If the element is not 
+        // present in the vector 
+        return -1;
+    } 
+} 
+
+
 static void convert_to_global(std::vector<short int> v,std::vector<var_t> variables, f &global, int n){ 
    global.resize(n,-3);
    int end=variables.size();
@@ -72,25 +93,7 @@ static void if_f_match(f f1,f f2, f &f3){
 
 
 
-static int getIndex(std::vector<short int> v, short int K) 
-{ 
-    auto it = find(v.begin(), v.end(), K); 
-  
-    // If element was found 
-    if (it != v.end())  
-    { 
-      
-        // calculating the index 
-        // of K 
-        int index = it - v.begin(); 
-        return index;
-    } 
-    else { 
-        // If the element is not 
-        // present in the vector 
-        return -1;
-    } 
-} 
+
 
 
 //we need to see if we can get the cost of each instruction directly from this function

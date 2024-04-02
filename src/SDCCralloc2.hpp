@@ -231,11 +231,16 @@ static void generate_possibility(f variables,int n){
  //  std::cout<<"finish generate_possibility"<<std::endl;
    f v={0,1,2,3,4,5};
     f g={0,1,-1,-1,2,-1};
-       
-   if(permutation_map[v].find(g)==permutation_map[v].end()){
-      std::cout<<"error"<<std::endl;
+       bool find=false;
+   for(auto i:permutation_map[v]){
+      if(i==g){
+         find=true;
+      }
+   }
+   if(find){
+      std::cout<<"find v"<<std::endl;
    }else{
-      std::cout<<"success"<<std::endl;
+      std::cout<<"not find v"<<std::endl;
    }
    //return results;
 }

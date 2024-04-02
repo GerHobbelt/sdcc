@@ -195,6 +195,7 @@ static void generate_possibility(f variables,int n){
  //  std::vector<f> results;
    std::vector<f> sub_set=subsets(variables);
    for(auto sub:sub_set){
+      std::vector<f> globs;
       if(sub.size()<=MAX_NUM_REGS){
         f v;
         for(int i=0; i<MAX_NUM_REGS;++i){
@@ -204,15 +205,13 @@ static void generate_possibility(f variables,int n){
         for(int i=0;i<len;++i){
           v[MAX_NUM_REGS-len+i]=sub[i];
         }
-
-
         std::vector<f> p=generate_permutation(v);
-        std::vector<f> globs;
-        for (auto i:p){
+         for (auto i:p){
          f global;
          convert_to_global(i,sub,global,n);
          globs.push_back(global);
         }
+      }
         std::vector<f> sub_sub_set=subsets(sub);
         for(auto i:sub_sub_set){
          if (i!=sub){
@@ -227,7 +226,7 @@ static void generate_possibility(f variables,int n){
       //  results.reserve(results.size() + distance(p.begin(),p.end()));
        // results.insert(results.end(),p.begin(),p.end());
         //results.push_back(v);
-      }
+      
    }
  //  std::cout<<"finish generate_possibility"<<std::endl;
 

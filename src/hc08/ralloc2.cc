@@ -734,6 +734,7 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
+  start = std::chrono::high_resolution_clock::now();
 
   assignment ac;
   assignment_optimal = true;
@@ -804,7 +805,6 @@ iCode *hc08_ralloc2_cc(ebbIndex *ebbi)
 
   if(options.dump_graphs)
     dump_con(conflict_graph);
-  start = std::chrono::high_resolution_clock::now();
   tree_dec_t tree_decomposition;
 
   get_nice_tree_decomposition(tree_decomposition, control_flow_graph);

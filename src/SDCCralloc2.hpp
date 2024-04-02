@@ -249,15 +249,14 @@ static void generate_possibility(f variables,int n){
  //  std::cout<<"finish generate_possibility"<<std::endl;
 }
 
-static f get_partial_global(f global, f variables){
+static f get_partial_global(f global, f variables, f &result){
+
  //  std::cout<<"begin get_partial_global"<<std::endl;
-   f result;
    result.resize(global.size(),-3);
    for(auto i:variables){
       result[i]=global[i];
    }
   // std::cout<<"finish get_partial_global"<<std::endl;
-   return result;
 }
 
 //this function is used to combine two assignment_ps_list while series merge
@@ -274,8 +273,10 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    }
    f v=unionVectors(va,vb);
    for(auto i:permutation_map[v]){
-      f gva=get_partial_global(i,va);
-      f gvb=get_partial_global(i,vb);
+      f gva;
+      f gvb;
+      get_partial_global(i,va,gva);
+      get_partial_global(i,vb,gvb);
       float s=a[gva].s+b[gvb].s;
       
       c[i]=assignment_ps(s,a[gva].begin_cost,b[gvb].end_cost,v);
@@ -293,8 +294,10 @@ f vb=b.begin()->second.variables;
 }
    f v=unionVectors(va,vb);
    for(auto i:permutation_map[v]){
-      f gva=get_partial_global(i,va);
-      f gvb=get_partial_global(i,vb);
+      f gva;
+      f gvb;
+      get_partial_global(i,va,gva);
+      get_partial_global(i,vb,gvb);
       float s=a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost;
       c[i]=assignment_ps(s,a[gva].begin_cost,a[gva].end_cost,v);
       
@@ -314,8 +317,10 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
 }
 f v=unionVectors(va,vb);
 for(auto i:permutation_map[v]){
-      f gva=get_partial_global(i,va);
-      f gvb=get_partial_global(i,vb);
+      f gva;
+      f gvb;
+      get_partial_global(i,va,gva);
+      get_partial_global(i,vb,gvb);
       float s=a[gva].s+b[gvb].s;
       c[i]=assignment_ps(s,b[gvb].begin_cost,b[gvb].end_cost,v);
    }
@@ -379,9 +384,6 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    for(auto i:begin_p){
          a.assignments.emplace(std::make_pair(i, assignment_ps(instruction_cost_easy(i,node,I),a.begin_v)));
    }
-   
-      
-   
 }
 
 static void generate_spcfg(ps_cfg_t &ps_cfg){
@@ -440,14 +442,5 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
   std::cout << "\n";
   std::cout << "Cost: " << b.s << "\n";
 
-  f v={0,1,-1,-1,2,-1};
-   std::cout << "Expected: ";
-   for(unsigned int i = 0; i < v.size(); i++)
-   {
-   	std::cout << "(" << i << ", " << int(v[i]) << ") ";
-   }
-   std::cout << "\n";
-   std::cout << "Expected Cost: " << a[v].s << "\n";
-   
    return b;
 }

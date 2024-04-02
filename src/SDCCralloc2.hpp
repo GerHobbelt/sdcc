@@ -180,6 +180,16 @@ std::vector<f > subsets(f& A)
     return res;
 }
 
+static f extend_glob(f v_origin, f v_new, f origin_glob){
+   for(auto i:v_new){
+    if (origin_glob[i]==-3)
+      {
+         origin_glob[i]=-1;
+   }
+   }
+   return origin_glob;
+}
+
 static void generate_possibility(f variables,int n){
   // std::cout<<"begin generate_possibility"<<std::endl;
  //  std::vector<f> results;
@@ -206,7 +216,10 @@ static void generate_possibility(f variables,int n){
         std::vector<f> sub_sub_set=subsets(sub);
         for(auto i:sub_sub_set){
          if (i!=sub){
-            globs.insert(globs.end(),permutation_map[i].begin(),permutation_map[i].end());
+            for(auto j:permutation_map[i]){
+               f g=extend_glob(i,sub,global);
+               globs.push_back(g);
+            }
          }
         }
         permutation_map[sub]=globs;

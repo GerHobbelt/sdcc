@@ -216,16 +216,10 @@ static void generate_possibility(f variables,int n){
         std::vector<f> sub_sub_set=subsets(sub);
         for(auto i:sub_sub_set){
          if (i!=sub){
-            std::cout<<"i:";
-            for(auto j:i){
-               std::cout<<j<<" ";
-            }
-            std::cout<<std::endl;
             for(auto j:permutation_map[i]){
                f g=extend_glob(i,sub,j);
                globs.push_back(g);
             }
-            std::cout<<"finish extend"<<std::endl;
          }
         }
         permutation_map[sub]=globs;
@@ -242,7 +236,7 @@ static void generate_possibility(f variables,int n){
 
 static f get_partial_global(f global, f variables){
    f result;
-   result.resize(variables.size(),-3);
+   result.resize(global.size(),-3);
    for(auto i:variables){
       result[i]=global[i];
    }

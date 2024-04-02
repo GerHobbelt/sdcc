@@ -316,18 +316,19 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
 }
 for(auto i:a){
      for(auto j:b){
-      f newg;
-      if_f_match(i.first,j.first,newg);
-      if(newg[0]==-2){
+      f new_g;
+      if_f_match(i.first,j.first,new_g);
+      if(new_g[0]==-2){
          continue;
       }
       float s=i.second.s+j.second.s;
-      newg=get_partial_global(newg,v_n);
-      if(c.find(newg)==c.end()||c[newg].s>s){
-         c[newg]=assignment_ps(s,j.second.begin_cost,j.second.end_cost,va,vb,v_n);
+      new_g=get_partial_global(new_g,v_n);
+      if(c.find(new_g)==c.end()||c[new_g].s>s){
+         c[new_g]=assignment_ps(s,j.second.begin_cost,j.second.end_cost,va,vb,v_n);
       }
    }
    }
+   std::cout<<c.size()<<std::endl;
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
 }
 

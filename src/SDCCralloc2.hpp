@@ -203,6 +203,12 @@ static void generate_possibility(f variables,int n){
          convert_to_global(i,sub,global,n);
          globs.push_back(global);
         }
+        std::vector<f> sub_sub_set=subsets(sub);
+        for(auto i:sub_sub_set){
+         if i!=sub{
+            globs.insert(globs.end(),permutation_map[i].begin(),permutation_map[i].end())
+         }
+        }
         permutation_map[sub]=globs;
         
       //  results.reserve(results.size() + distance(p.begin(),p.end()));

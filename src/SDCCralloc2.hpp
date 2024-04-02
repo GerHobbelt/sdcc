@@ -267,7 +267,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    if (va==vb){for (auto i:a){
      //float s=a[i].s+b[i].s;
      if(b.find(i.first)!=b.end()){
-     c.emplace(std::make_pair(i.first,assignment_ps(i.s+b[i.first].s,i.begin_cost,b[i.first].end_cost,va)));
+     c.emplace(std::make_pair(i.first,assignment_ps(i.second.s+b[i.first].s,i.second.begin_cost,b[i.first].end_cost,va)));
      }
    }
 
@@ -293,10 +293,10 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
 static void combine_assignment_ps_list_parallel(assignment_ps_map &a, assignment_ps_map &b, assignment_ps_map &c){
 f va=a.begin()->second.variables;
 f vb=b.begin()->second.variables;
-   if (va==vb){for (auto i:permutation_map[va]){
+   if (va==vb){for (auto i:a){
      //float s=a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost;
      if(b.find(i.first)!=b.end()){
-     c[i]=assignment_ps(a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost,a[i].begin_cost,a[i].end_cost,va);
+     c.emplace(std::make_pair(i.first,assignment_ps(i.second.s+b[i.first].s-i.second.begin_cost-i.second.end_cost,i.second.begin_cost,i.second.end_cost,va)));
      }
    }   
      return;   
@@ -325,7 +325,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    f vb=b.begin()->second.variables;
    if (va==vb){for (auto i:permutation_map[va]){
      if(b.find(i.first)!=b.end()){
-     c[i]=assignment_ps(a[i].s+b[i].s,b[i].begin_cost,b[i].end_cost,va);
+     c.emplace(std::make_pair(i.first,assignment_ps(i.second.s+b[i.first].s,b[i.first].begin_cost,b[i.first].end_cost,va)));
    }     }
    return;
 }

@@ -386,7 +386,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
    int n = boost::num_vertices(I);
    for(auto i:begin_p){
          f global;
-         convert_to_global(i,a.variables,global,n);
+         convert_to_global(i,a.begin_v,global,n);
 
          a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I),a.begin_v)));
    }

@@ -53,11 +53,11 @@ struct assignment_ps{
 
    }
 
-   assignment_ps(float cost, float begin, float end,f beginv,f endv, f variables){
+   assignment_ps(float cost, float begin, float end,f beginv,f endv, f variable){
       s = cost;
       begin_cost = begin;
       end_cost = end;
-      variables = variables;
+      variables = variable;
       begin_v = beginv;
       end_v = endv;
    }

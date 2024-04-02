@@ -256,7 +256,7 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
          std::cout<<"b[i].s:"<<b[i].s<<std::endl;
          std::cout<<"i:";
          for(auto j:i){
-            std::cout<<i<<" ";
+            std::cout<<j<<" ";
          }
          std::cout<<std::endl;
      }

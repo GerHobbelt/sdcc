@@ -205,7 +205,7 @@ static void generate_possibility(f variables,int n){
         }
         std::vector<f> sub_sub_set=subsets(sub);
         for(auto i:sub_sub_set){
-         if i!=sub{
+         if (i!=sub){
             globs.insert(globs.end(),permutation_map[i].begin(),permutation_map[i].end())
          }
         }

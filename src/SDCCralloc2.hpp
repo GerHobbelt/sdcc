@@ -252,7 +252,9 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    if (va==vb){for (auto i:permutation_map[va]){
      float s=a[i].s+b[i].s;
      c[i]=assignment_ps(s,a[i].begin_cost,b[i].end_cost,va);
-   } return;
+   }
+
+   return;
    }
    f v=unionVectors(va,vb);
    for(auto i:permutation_map[v]){

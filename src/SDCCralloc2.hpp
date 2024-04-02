@@ -292,6 +292,7 @@ f vb=b.begin()->second.variables;
    }     return;
 }
    f v=unionVectors(va,vb);
+   int n=v.size();
    for(auto i:permutation_map[v]){
       f gva;
       f gvb;
@@ -315,6 +316,7 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    return;
 }
 f v=unionVectors(va,vb);
+n=v.size();
 for(auto i:permutation_map[v]){
       f gva;
       f gvb;

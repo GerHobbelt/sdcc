@@ -426,6 +426,15 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
   }
   std::cout << "\n";
   std::cout << "Cost: " << b.s << "\n";
+
+  f v={0,1,-1,-1,2,-1};
+   std::cout << "Expected: ";
+   for(unsigned int i = 0; i < v.size(); i++)
+   {
+   	std::cout << "(" << i << ", " << int(v[i]) << ") ";
+   }
+   std::cout << "\n";
+   std::cout << "Expected Cost: " << a[v].s << "\n";
    
    return b;
 }

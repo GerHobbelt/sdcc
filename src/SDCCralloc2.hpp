@@ -249,13 +249,16 @@ static void generate_possibility(f variables,int n){
  //  std::cout<<"finish generate_possibility"<<std::endl;
 }
 
-static f get_partial_global(f global, f variables, f &result){
+static f get_partial_global(f global, f variables, ){
 
  //  std::cout<<"begin get_partial_global"<<std::endl;
+ f result;
+   result.resize(variables.size(),-3);
    for(auto i:variables){
       result[i]=global[i];
    }
   // std::cout<<"finish get_partial_global"<<std::endl;
+  return result;
 }
 
 //this function is used to combine two assignment_ps_list while series merge
@@ -272,12 +275,8 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
    f v=unionVectors(va,vb);
    int n=v.size();
    for(auto i:permutation_map[v]){
-      f gva;
-      f gvb;
-      gva.resize(n,-3);
-      gvb.resize(n,-3);
-      get_partial_global(i,va,gva);
-      get_partial_global(i,vb,gvb);
+      f gva= get_partial_global(i,va);;
+      f gvb =get_partial_global(i,vb);
       
       c[i]=assignment_ps(a[gva].s+b[gvb].s,a[gva].begin_cost,b[gvb].end_cost,v);
 
@@ -294,12 +293,8 @@ f vb=b.begin()->second.variables;
    f v=unionVectors(va,vb);
    int n=v.size();
    for(auto i:permutation_map[v]){
-      f gva;
-      f gvb;
-      gva.resize(n,-3);
-      gvb.resize(n,-3);
-      get_partial_global(i,va,gva);
-      get_partial_global(i,vb,gvb);
+      f gva= get_partial_global(i,va);;
+      f gvb =get_partial_global(i,vb);
       c[i]=assignment_ps(a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost,a[gva].begin_cost,a[gva].end_cost,v);
       
    }
@@ -318,12 +313,8 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
 f v=unionVectors(va,vb);
 int n=v.size();
 for(auto i:permutation_map[v]){
-      f gva;
-      f gvb;
-            gva.resize(n,-3);
-      gvb.resize(n,-3);
-      get_partial_global(i,va,gva);
-      get_partial_global(i,vb,gvb);
+      f gva= get_partial_global(i,va);;
+      f gvb =get_partial_global(i,vb);
       c[i]=assignment_ps(a[gva].s+b[gvb].s,b[gvb].begin_cost,b[gvb].end_cost,v);
    }
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;

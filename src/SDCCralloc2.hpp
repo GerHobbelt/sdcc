@@ -216,10 +216,12 @@ static void generate_possibility(f variables,int n){
         std::vector<f> sub_sub_set=subsets(sub);
         for(auto i:sub_sub_set){
          if (i!=sub){
+            std::cout<<"i:"<<i<<std::endl;
             for(auto j:permutation_map[i]){
                f g=extend_glob(i,sub,j);
                globs.push_back(g);
             }
+            std::cout<<"finish extend"<<std::endl;
          }
         }
         permutation_map[sub]=globs;

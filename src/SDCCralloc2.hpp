@@ -252,6 +252,13 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
      float s=a[i].s+b[i].s;
      
      c[i]=assignment_ps(s,a[i].begin_cost,b[i].end_cost,va);
+      f v={0,1,-1,-1,2,-1};
+       if(i==v){
+         std::cout<<"s:"<<s<<std::endl;
+         std::cout<<"a[i].s:"<<a[i].s<<std::endl;
+         std::cout<<"b[i].s:"<<b[i].s<<std::endl;
+
+       }
    }
 
    return;
@@ -263,6 +270,13 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       float s=a[gva].s+b[gvb].s;
       
       c[i]=assignment_ps(s,a[gva].begin_cost,b[gvb].end_cost,v);
+       f v={0,1,-1,-1,2,-1};
+       if(i==v){
+         std::cout<<"s:"<<s<<std::endl;
+         std::cout<<"a[gva].s:"<<a[gva].s<<std::endl;
+         std::cout<<"b[gvb].s:"<<b[gvb].s<<std::endl;
+
+       }
    }
 }
 
@@ -280,6 +294,7 @@ f vb=b.begin()->second.variables;
       f gvb=get_partial_global(i,vb);
       float s=a[gva].s+b[gvb].s-a[gva].end_cost-a[gva].begin_cost;
       c[i]=assignment_ps(s,a[gva].begin_cost,a[gva].end_cost,v);
+      
    }
    
 }
@@ -291,18 +306,13 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    if (va==vb){for (auto i:permutation_map[va]){
      float s=a[i].s+b[i].s;
      c[i]=assignment_ps(s,b[i].begin_cost,b[i].end_cost,va);
-    if(s==std::numeric_limits<float>::infinity()){
-       std::cout<<"s is infinity"<<std::endl;
-       std::cout<<"a[i].s:"<<a[i].s<<std::endl;
+      f v={0,1,-1,-1,2,-1};
+       if(i==v){
+         std::cout<<"s:"<<s<<std::endl;
+         std::cout<<"a[i].s:"<<a[i].s<<std::endl;
          std::cout<<"b[i].s:"<<b[i].s<<std::endl;
-         std::cout<<"i:";
-         for(auto j:i){
-            std::cout<<j<<" ";
-         }
-         std::cout<<std::endl;
-     }
-  
-  
+
+       }
    }     
    return;
 }
@@ -312,6 +322,13 @@ for(auto i:permutation_map[v]){
       f gvb=get_partial_global(i,vb);
       float s=a[gva].s+b[gvb].s;
       c[i]=assignment_ps(s,b[gvb].begin_cost,b[gvb].end_cost,v);
+       f v={0,1,-1,-1,2,-1};
+       if(i==v){
+         std::cout<<"s:"<<s<<std::endl;
+         std::cout<<"a[gva].s:"<<a[gva].s<<std::endl;
+         std::cout<<"b[gvb].s:"<<b[gvb].s<<std::endl;
+
+       }
    }
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
 }

@@ -67,9 +67,9 @@
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <BrowseInformation>true</BrowseInformation>
       <ObjectFileName />
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation />
-      <ProgramDataBaseFileName />
+      
+      
+      
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -89,10 +89,10 @@
       <WarningLevel>Level4</WarningLevel>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <BrowseInformation>true</BrowseInformation>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation />
+      
+      
       <ObjectFileName />
-      <ProgramDataBaseFileName />
+      
       <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>

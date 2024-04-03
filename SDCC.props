@@ -23,8 +23,12 @@ warning C4267: '=': conversion from 'size_t' to 'var_t', possible loss of data
 warning C4189: 'dying_H': local variable is initialized but not referenced
 warning C4706: assignment within conditional expression
 warning C4127: conditional expression is constant
+warning C4457: declaration of 'type' hides function parameter
+boost\libs\xpressive\include\boost\xpressive\detail\core\matcher\simple_repeat_matcher.hpp(71,95): warning C4458: declaration of 'width' hides class member
+warning C4305: '+=': truncation from 'double' to 'float'
+warning C4505: 'var_from_operand': unreferenced function with internal linkage has been removed
 -->	
-      <DisableSpecificWarnings>4127;4706;4189;4267;4201;4310;4018;4245;4389;4456;4459;4244;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4505;4305;4458;4457;4127;4706;4189;4267;4201;4310;4018;4245;4389;4456;4459;4244;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_CRT_SECURE_NO_DEPRECATE;_CRT_INTERNAL_NONSTDC_NAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Midl>

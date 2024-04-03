@@ -267,7 +267,7 @@ static void combine_assignment_ps_list_series(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t
    assignment_ps_map::iterator ita_end=a.assignments.end();
    if (a.variables==b.variables){
       for (;ita!=ita_end;++ita){
-         c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b[ita->first].s,ita->second.begin_cost,b[ita->first].end_cost)));
+         c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b.assignments[ita->first].s,ita->second.begin_cost,b.assignments[ita->first].end_cost)));
       }
          return;
 
@@ -303,7 +303,7 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t &a, ps_cfg_t &b, ps_cfg
    assignment_ps_map::iterator ita_end=a.assignments.end();
    for (;ita!=ita_end;++ita){
      //float s=a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost;
-       c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b[ita->first].s-ita->second.begin_cost-ita->second.end_cost,ita->second.begin_cost,ita->second.end_cost)));
+       c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b.assignments[ita->first].s-ita->second.begin_cost-ita->second.end_cost,ita->second.begin_cost,ita->second.end_cost)));
      
    }   
 }
@@ -315,7 +315,7 @@ static void combine_assignment_ps_list_loop(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t &
 
    if (b.variables==a.variables){
    for (;ita!=ita_end;++ita){
-       c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+a[ita->first].s,ita->second.begin_cost,ita->second.end_cost)));
+       c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+a.assignments[ita->first].s,ita->second.begin_cost,ita->second.end_cost)));
    }
   // std::cout<<"loop size1 : "<<c.size()<<std::endl;
    return;

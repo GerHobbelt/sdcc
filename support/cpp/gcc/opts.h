@@ -22,6 +22,8 @@ along with GCC; see the file COPYING3.  If not see
 
 #include "obstack.h"
 #include "system.h"
+#include "coretypes.h"
+#include "line-map.h"
 
 /* Specifies how a switch's VAR_VALUE relates to its FLAG_VAR.  */
 enum cl_var_type {

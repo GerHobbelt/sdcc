@@ -303,7 +303,7 @@ assignment_ps first_a=a.begin()->second;
    assignment_ps_map::iterator ita=a.begin();
    for (;ita!=a.end();++ita){
      //float s=a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost;
-       c.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b[ita->first].s-ita->second.begin_cost-it_a->second.end_cost,ita->second.begin_cost,it_a->second.end_cost,va,vb,v)));
+       c.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b[ita->first].s-ita->second.begin_cost-ita->second.end_cost,ita->second.begin_cost,ita->second.end_cost,va,vb,v)));
      
    }   
 }

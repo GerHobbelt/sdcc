@@ -336,9 +336,9 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
  // std::cout<<"I2 created"<<std::endl;
    auto start = std::chrono::high_resolution_clock::now();
 
-  //initial_basic_block(root,I2);
+  initial_basic_block(root,I2);
   //std::cout<<"initial basic block"<<std::endl;
-  generate_spcfg(root,I2);
+  generate_spcfg(root);
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
 

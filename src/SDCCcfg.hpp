@@ -58,7 +58,7 @@ struct assignment_ps{
 
 typedef std::map<f,assignment_ps> assignment_ps_map;
 
-std::map<f,std::vector<f>> permutation_map;
+//std::map<f,std::vector<f>> permutation_map;
 
 
 struct ps_cfg_t{
@@ -76,7 +76,7 @@ struct ps_cfg_t{
   varset_t variables;
 };
 
-std::vector< assignment_ps_map> assignmenets;
+std::vector<assignment_ps_map> assignments;
 
 std::vector<ps_cfg_t> ps_cfg_map;
 std::vector<cfg_t> cfg_map;

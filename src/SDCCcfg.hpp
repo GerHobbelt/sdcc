@@ -108,7 +108,6 @@ static ps_cfg_t init_ps_cfg( vertex begin_node, vertex end_node, int index, int 
   ps_cfg.begin_v=cfg_map[index][begin_node].alive;
   ps_cfg.end_v=cfg_map[index][end_node].alive;
   std::set_union(ps_cfg.begin_v.begin(),ps_cfg.begin_v.end(),ps_cfg.end_v.begin(),ps_cfg.end_v.end(),std::inserter(ps_cfg.variables,ps_cfg.variables.begin()));
-  ps_cfg.make_series=false;
   
     return ps_cfg;
 }

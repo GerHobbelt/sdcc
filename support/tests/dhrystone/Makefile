@@ -1,7 +1,7 @@
 # Simple Makefile for dhrystone and sdcc
 TOPDIR = ../../..
 
-PROC = z80
+PROC = hc08
 
 CC = $(TOPDIR)/bin/sdcc
 

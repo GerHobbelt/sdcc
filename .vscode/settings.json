@@ -79,6 +79,7 @@
         "common.h": "c",
         "sdccralloc2.hpp": "c",
         "compare": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "times.h": "c"
     }
 }

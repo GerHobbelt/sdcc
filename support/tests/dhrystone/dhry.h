@@ -368,8 +368,8 @@
 		/* Use Microsoft C hi-res clock */
 
 #ifdef TIMES
-#include <linux/types.h>
-#include <linux/times.h>
+//#include <sys/types.h>
+//#include <sys/times.h>
                 /* for "times" */
 #endif
 

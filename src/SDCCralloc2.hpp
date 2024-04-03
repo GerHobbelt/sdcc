@@ -343,7 +343,7 @@ for (;ita!=ita_end;++ita){
    }
   // std::cout<<"loop size2 : "<<c.size()<<std::endl;
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
-}
+}}
 
 template <class I_t>
 static float instruction_cost_easy(const f & global, cfg_node &node, const I_t &I);
@@ -392,8 +392,8 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
 }
 
 
-
-static void generate_spcfg(ps_cfg_t &ps_cfg){
+template <class I_t>
+static void generate_spcfg(ps_cfg_t &ps_cfg, I_t &I){
  // if (ps_cfg.make_series){
   //    series_addition(ps_cfg);
    //   return;
@@ -409,11 +409,11 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
 
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
        //  std::cout<<"2"<<std::endl;
-         generate_spcfg(ps_cfg_map[ps_cfg.left]);
+         generate_spcfg(ps_cfg_map[ps_cfg.left],I);
       }
       if (ps_cfg_map[ps_cfg.right].assignments.size() == 0){
        //  std::cout<<"3"<<std::endl;
-         generate_spcfg(ps_cfg_map[ps_cfg.right]);
+         generate_spcfg(ps_cfg_map[ps_cfg.right],I);
       }
       switch (ps_cfg.type){
          case 1:

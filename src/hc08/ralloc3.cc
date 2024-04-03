@@ -292,9 +292,10 @@ static void extra_ic_generated(iCode *ic)
 }
 
 template <class I_t>
-static void initial_basic_block(ps_cfg_t &ps_cfg, const I_t &I)
+static void initial_basic_block(int index, const I_t &I)
 {
-   if (assignments[ps_cfg.index].size() == 0){
+    ps_cfg_t ps_cfg = ps_cfg_map[index];
+   if (assignments[index].size() == 0){
       if(ps_cfg.left==-1 || ps_cfg.right==-1){
         // std::cout<<"1"<<std::endl;
          initlize_assignment_ps_list(ps_cfg, I);
@@ -302,11 +303,11 @@ static void initial_basic_block(ps_cfg_t &ps_cfg, const I_t &I)
       }
       if (assignments[ps_cfg.left].size() == 0){
        //  std::cout<<"2"<<std::endl;
-         initial_basic_block(ps_cfg_map[ps_cfg.left], I);
+         initial_basic_block(ps_cfg.left, I);
       }
       if (assignments[ps_cfg.right].size() == 0){
        //  std::cout<<"3"<<std::endl;
-         initial_basic_block(ps_cfg_map[ps_cfg.right], I);
+         initial_basic_block(ps_cfg.right, I);
       }
 }}
 

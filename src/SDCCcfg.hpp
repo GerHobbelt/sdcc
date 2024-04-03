@@ -407,12 +407,14 @@ static void convert_cfg_to_spcfg(ps_cfg_t &pscfg){
   //cfg_count=0;
 
   convert_cfg_to_spcfg_one_step(pscfg);
-  if(pscfg.left!=-1 || pscfg.right!=-1){
-    if (pscfg.left!=-1){
-      convert_cfg_to_spcfg(ps_cfg_map[pscfg.left]);
+  int left=pscfg.left;
+  int right=pscfg.right;
+  if(left!=-1 || right!=-1){
+    if (left!=-1){
+      convert_cfg_to_spcfg(ps_cfg_map[left]);
     }
-    if (pscfg.right!=-1){
-      convert_cfg_to_spcfg(ps_cfg_map[pscfg.right]);
+    if (right!=-1){
+      convert_cfg_to_spcfg(ps_cfg_map[right]);
     }
   }
 

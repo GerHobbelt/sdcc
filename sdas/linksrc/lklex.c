@@ -251,7 +251,7 @@ getfid(char *str, int c)
  */
 
 int
-getnb()
+getnb(void)
 {
         int c;
 
@@ -283,8 +283,7 @@ getnb()
  */
 
 VOID
-skip(c)
-int c;
+skip(int c)
 {
         if (c < 0)
                 c = getnb();
@@ -316,7 +315,7 @@ int c;
  */
 
 int
-get()
+get(void)
 {
         int c;
 
@@ -354,8 +353,7 @@ get()
  */
 
 VOID
-unget(c)
-int c;
+unget(int c)
 {
         if (c != 0)
                 --ip;
@@ -393,8 +391,7 @@ int c;
  */
 
 int
-getmap(d)
-int d;
+getmap(int d)
 {
         int c, n, v;
 
@@ -502,7 +499,7 @@ int d;
  */
 
 int
-nxtline()
+nxtline(void)
 {
         int ftype;
         char *fid;
@@ -609,7 +606,7 @@ static int isHex(int c)
 }
 
 int
-more()
+more(void)
 {
         int c;
 
@@ -643,7 +640,7 @@ more()
  */
 
 char
-endline()
+endline(void)
 {
         int c;
 
@@ -672,8 +669,7 @@ endline()
  */
 
 VOID
-chopcrlf(str)
-char *str;
+chopcrlf(char *str)
 {
         int i;
 

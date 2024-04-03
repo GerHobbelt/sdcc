@@ -30,7 +30,6 @@
 #include "ralloc.h"
 #include "gen.h"
 
-char *aopLiteral (value * val, int offset);
 extern int allocInfo;
 
 /* this is the down and dirty file with all kinds of
@@ -224,15 +223,15 @@ outAcc (operand * result)
 /*-----------------------------------------------------------------*/
 /* emitcode - writes the code into a file : for now it is simple    */
 /*-----------------------------------------------------------------*/
-static void
-emitcode (char *inst, char *fmt, ...)
+void
+emitcode (const char *inst, const char *fmt, ...)
 {
         va_list ap;
         const char *lbp, *lb;
 
         va_start (ap, fmt);
 
-        lbp = lb = format_opcode (inst, va_list ap);
+        lbp = lb = format_opcode (inst, ap);
 
         while (isspace ((unsigned char)*lbp))
                 lbp++;
@@ -2546,7 +2545,7 @@ genCmpLe (iCode * ic, iCode * ifx)
 /* ifxForOp - returns the icode containing the ifx for operand     */
 /*-----------------------------------------------------------------*/
 static iCode *
-ifxForOp (operand * op, iCode * ic)
+ifxForOp (const operand * op, const iCode * ic)
 {
         /* if true symbol then needs to be assigned */
         if (IS_TRUE_SYMOP (op))

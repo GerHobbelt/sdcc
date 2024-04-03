@@ -92,6 +92,7 @@ int cfg_count=1;
   pscfg.begin_v=cfg_map[index][begin_node].alive;
   pscfg.end_v=cfg_map[index][end_node].alive;
   std::set_union(pscfg.begin_v.begin(),pscfg.begin_v.end(),pscfg.end_v.begin(),pscfg.end_v.end(),std::inserter(pscfg.variables,pscfg.variables.begin()));
+return pscfg;
 }
 
 static vertex find_vertex_from_node(cfg_node node,cfg_t &cfg){

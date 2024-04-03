@@ -323,6 +323,8 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
   if (pscfg.begin==pscfg.end) {
+    std::cout<<"begin v"<< *vi<<std::endl;
+    std::cout<<"end v"<< *(vi_end-1)<<std::endl;
     pscfg.left=-1;
     pscfg.right=-1;
     //std::cout<<"basic block"<<std::endl;

@@ -316,17 +316,18 @@ static void check_cfg(cfg_t cfg){
 
 static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //convert the original cfg to the root node of ps_cfg
-  //std::cout<<"convert_cfg_to_spcfg_one_step begin"<<std::endl;
-  //std::cout<<"pscfg.index: "<<pscfg.index<<std::endl;
-  //std::cout<<"cfg_size: "<<cfg_map.size()<<std::endl;
+  std::cout<<"convert_cfg_to_spcfg_one_step begin"<<std::endl;
+  std::cout<<"pscfg.index: "<<pscfg.index<<std::endl;
+  std::cout<<"cfg_size: "<<cfg_map.size()<<std::endl;
   cfg_t cfg=cfg_map[pscfg.index];
-  //std::cout<<"get_cfg"<<std::endl;
+  std::cout<<"get_cfg"<<std::endl;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
   if (*vi == *(vi_end-1)) {
     pscfg.left=-1;
     pscfg.right=-1;
+    std::cout<<"basic block"<<std::endl;
     return ;
   }
 
@@ -334,7 +335,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   next++;
   //series merge - boost::in_degree=1, boost::out_degree=1
   if (boost::in_degree(*vi,cfg)==0 && boost::out_degree(*vi, cfg) == 1){
-   // std::cout<<"series merge break!"<<std::endl;
+    std::cout<<"series merge break!"<<std::endl;
     //boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));
     cfg_t cfg_1, cfg_2;
     boost::copy_graph(cfg, cfg_1);
@@ -347,7 +348,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //start of parallel merge - in degree=1, out degree=2, both next verdexes with larger index
   //end of parallel merge - in degree=2, out degree=1, both previous vertexes with smaller index
   if (boost::in_degree(*vi,cfg)==0 && boost::out_degree(*vi,cfg)==2){
-   // std::cout<<"parallel merge break!"<<std::endl;
+    std::cout<<"parallel merge break!"<<std::endl;
     vertex p_end=find_parallel_end(cfg);
     if(*(vi_end-1)!=p_end){
       //if the graph is built by parallel merge then series merge
@@ -370,7 +371,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //end of loop merge - in degree=1, out degree=2, both next vertexes with larger index.
   if (boost::in_degree(*vi,cfg)==1){
     if (boost::out_degree(*(vi+2),cfg)==1){
-      //std::cout<<"loop merge break!"<<std::endl;
+      std::cout<<"loop merge break!"<<std::endl;
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
       boost::copy_graph(cfg, cfg_2);
@@ -398,7 +399,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
       return ;
     }
   }
-  return ;
+  throw std::invalid_argument("invalid cfg while breaking graph");
 }
 
 static void convert_cfg_to_spcfg(ps_cfg_t &pscfg){

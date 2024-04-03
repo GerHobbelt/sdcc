@@ -290,14 +290,18 @@ static void check_cfg(cfg_t cfg){
     }
     if (boost::in_degree(*vi,cfg)==2){
       if( boost::out_degree(*vi,cfg)==1){
-         num_loop_or_parallel++;}
+         num_loop_or_parallel++;
+         std::cout<<"current node: n++ "<<*vi<<std::endl;
+         }
       else{
         throw std::invalid_argument("invalid begin loop/end parallel");
       }
     }
    if (boost::out_degree(*vi,cfg)==2){
       if( boost::in_degree(*vi,cfg)==1){
-         num_loop_or_parallel--;}
+         num_loop_or_parallel--;
+                  std::cout<<"current node: "<<*vi<<std::endl;
+}
       else{
         throw std::invalid_argument("invalid end loop/begin parallel");
       }

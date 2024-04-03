@@ -120,8 +120,9 @@ static ps_cfg_t init_ps_cfg( vertex begin_node, vertex end_node, int index, int 
 }
 
 //break the graph into two series part
-static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+static void break_graph_series( vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
   //std::cout<<"break_graph_series begin"<<std::endl;
+  cfg_t cfg=cfg_map[ps_cfg.index];
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next,f;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   ps_cfg.type=1;
@@ -156,8 +157,9 @@ static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, c
 //  std::cout<<"break_graph_series end"<<std::endl;
 }
 
-static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
  // std::cout<<"break_graph_parallel begin"<<std::endl;
+ cfg_t cfg=cfg_map[ps_cfg.index];
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   ps_cfg.type=2;
@@ -245,8 +247,9 @@ static vertex find_parallel_end(cfg_t &cfg){
   throw std::invalid_argument("invalid parallel");
 }
 
-static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
 //  std::cout<<"break_graph_loop begin"<<std::endl;
+  cfg_t cfg=cfg_map[ps_cfg.index];
   ps_cfg.type=3;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next,f;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
@@ -326,11 +329,11 @@ static void check_cfg(cfg_t cfg){
 
 static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //convert the original cfg to the root node of ps_cfg
-  std::cout<<"convert_cfg_to_spcfg_one_step begin"<<std::endl;
-  std::cout<<"pscfg.index: "<<pscfg.index<<std::endl;
-  std::cout<<"cfg_size: "<<cfg_map.size()<<std::endl;
+  //std::cout<<"convert_cfg_to_spcfg_one_step begin"<<std::endl;
+  //std::cout<<"pscfg.index: "<<pscfg.index<<std::endl;
+  //std::cout<<"cfg_size: "<<cfg_map.size()<<std::endl;
   cfg_t cfg=cfg_map[pscfg.index];
-  std::cout<<"get_cfg"<<std::endl;
+  //std::cout<<"get_cfg"<<std::endl;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
@@ -347,7 +350,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
     cfg_t cfg_1, cfg_2;
     boost::copy_graph(cfg, cfg_1);
     boost::copy_graph(cfg, cfg_2);
-    break_graph_series(cfg, *vi, *next, cfg_1, cfg_2, pscfg);
+    break_graph_series( *vi, *next, cfg_1, cfg_2, pscfg);
 
     //boost::write_graphviz(std::cout,cfg_1);
     return;
@@ -362,18 +365,15 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
       boost::copy_graph(cfg, cfg_2);
-      next=vi;
-      while(*next!=p_end){
-        next++;
-      }
-      break_graph_series(cfg, *vi, *(next+1), cfg_1, cfg_2, pscfg);
+
+      break_graph_series( *vi, p_end+1, cfg_1, cfg_2, pscfg);
       return ;
     }else{
       //if the graph is built by parallel merge directly
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
       boost::copy_graph(cfg, cfg_2);
-      break_graph_parallel(cfg, *vi, p_end, cfg_1, cfg_2, pscfg);
+      break_graph_parallel( *vi, p_end, cfg_1, cfg_2, pscfg);
     }
     return ;
   }
@@ -385,7 +385,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
       boost::copy_graph(cfg, cfg_2);
-      break_graph_loop(cfg, *vi, *(vi+2), cfg_1, cfg_2, pscfg);
+      break_graph_loop( *vi, *(vi+2), cfg_1, cfg_2, pscfg);
 
       return ;
     }else{
@@ -405,7 +405,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
       boost::copy_graph(cfg, cfg_2);
-      break_graph_series(cfg, *vi, l_end, cfg_1, cfg_2, pscfg);
+      break_graph_series( *vi, l_end, cfg_1, cfg_2, pscfg);
       return ;
     }
   }

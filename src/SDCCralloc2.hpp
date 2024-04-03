@@ -356,7 +356,7 @@ for (;ita!=ita_end;++ita){
       }
       float s=ita->second.s+itb->second.s;
       new_g=get_partial_global(new_g,v_n);
-      itc=c.assignments.(new_g);
+      itc=c.assignments.find(new_g);
       if(itc==c.assignments.end()||itc->second.s>s){
      // if(c.find(new_g)==c.end()||c[new_g].s>s){
          c.assignments[new_g]=assignment_ps(s,ita->second.begin_cost,ita->second.end_cost);

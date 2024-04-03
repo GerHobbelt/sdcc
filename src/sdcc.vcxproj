@@ -60,12 +60,12 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -98,10 +98,10 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -121,305 +121,127 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cdbFile.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="..\support\util\dbuf.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="..\support\util\dbuf_string.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="..\support\util\NewAlloc.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCasm.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCast.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCattr.c" />
     <ClCompile Include="SDCCBBlock.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCbitv.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCbtree.cc" />
     <ClCompile Include="SDCCcflow.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCcse.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCdebug.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCdflow.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCdwarf2.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCerr.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCgen.c" />
     <ClCompile Include="SDCCgenconstprop.cc" />
     <ClCompile Include="SDCCglue.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCChasht.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCicode.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCClabel.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCClex.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCloop.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCClospre.cc" />
     <ClCompile Include="SDCClrange.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCmacro.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCmain.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCmem.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCnaddr.cc" />
     <ClCompile Include="SDCCopt.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCpeeph.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCptropt.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCset.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCsymt.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCsystem.c" />
     <ClCompile Include="SDCCutil.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCval.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="SDCCy.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="regression\add.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\arrays.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\b.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\bool1.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\call1.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\compare.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\compare2.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\for.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\pointer1.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\struct1.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\sub.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
     <ClCompile Include="regression\while.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      
-      
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      
-      
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\support\scripts\resource.rc">
-      
-      
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -490,6 +312,12 @@
     <ProjectReference Include="mcs51\mcs51.vcxproj">
       <Project>{9facdb81-be66-42d0-95f5-ea2fa3b09065}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="mos6502\mos6502.vcxproj">
+      <Project>{6fa87476-0fab-4518-9845-12efe1111110}</Project>
+    </ProjectReference>
+    <ProjectReference Include="pdk\pdk.vcxproj">
+      <Project>{6fa87476-0fab-4518-9845-12efe0001234}</Project>
     </ProjectReference>
     <ProjectReference Include="pic14\pic14.vcxproj">
       <Project>{b96e942e-39f5-4c7c-97fd-a095de6847c6}</Project>

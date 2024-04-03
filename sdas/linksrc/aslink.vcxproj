@@ -60,16 +60,15 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;INDEXLIB;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -105,6 +104,7 @@
       <LanguageStandard_C>stdc11</LanguageStandard_C>
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -129,130 +129,46 @@
     <ClCompile Include="lkrloc3.c" />
     <ClCompile Include="lksdcdb.c" />
     <ClCompile Include="lk_readnl.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkaomf51.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkar.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkarea.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkdata.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkelf.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkeval.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkhead.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lklex.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lklib.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lklibr.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lklist.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkmain.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkmem.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lknoice.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkrel.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lkrloc.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lksdcclib.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="lksym.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="sdld.c">
-      
-      
-      
-      
     </ClCompile>
     <ClCompile Include="..\asxxsrc\strcmpi.c">
-      
-      
-      
-      
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

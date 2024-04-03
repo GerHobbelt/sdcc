@@ -32,10 +32,7 @@ struct assignment_ps{
    //std::vector<i_assignment_ps> insts; //assignments for each instruction
    float begin_cost;
    float end_cost;
-   f begin_v;
-   f end_v;
-    f variables;
-
+   
    assignment_ps(){
     //std::cout<<"assignment_ps constructor"<<std::endl;
       s = std::numeric_limits<float>::infinity();
@@ -43,23 +40,19 @@ struct assignment_ps{
      // std::cout<<"assignment_ps constructor end"<<std::endl;
    }
 
-   assignment_ps(float cost,f variables){
+   assignment_ps(float cost){
       s = cost;
       begin_cost = cost;
       end_cost = cost;
-      variables = variables;
-      begin_v = variables;
-      end_v = variables;
+ 
 
    }
 
-   assignment_ps(float cost, float begin, float end,f beginv,f endv, f variable){
+   assignment_ps(float cost, float begin, float end){
       s = cost;
       begin_cost = begin;
       end_cost = end;
-      variables = variable;
-      begin_v = beginv;
-      end_v = endv;
+
    }
 };
 
@@ -83,11 +76,9 @@ struct ps_cfg_t{
   bool make_series;
   varset_t begin_v;
   varset_t end_v;
+  varset_t variables;
   assignment_ps_map assignments;
   series series_assignments;
-  f variables;
-  f begin_v;
-  f end_v;
 };
 
 std::map<int,ps_cfg_t> ps_cfg_map;
@@ -120,7 +111,8 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
   ps_cfg.parent=parent;
   ps_cfg.assignments.clear();
   ps_cfg.begin_v=cfg[begin_node].alive;
-  ps_cfg.end_v=cfg[end_node].after;
+  ps_cfg.end_v=cfg[end_node].alive;
+  std::set_union(ps_cfg.begin_v.begin(),ps_cfg.begin_v.end(),ps_cfg.end_v.begin(),ps_cfg.end_v.end(),std::inserter(ps_cfg.variables,ps_cfg.variables.begin()));
   ps_cfg.make_series=false;
   
     return ps_cfg;

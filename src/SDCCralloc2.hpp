@@ -263,14 +263,9 @@ static f get_partial_global(f global, f variables){
 static void combine_assignment_ps_list_series(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t &c){
    //assignment_ps first_a=a.assignments.begin()->second;
    //assignment_ps first_b=b.assignments.begin()->second;
-   f va=a.begin_v;
-   f vb=b.end_v;
    assignment_ps_map::iterator ita=a.assignments.begin();
    assignment_ps_map::iterator ita_end=a.assignments.end();
    if (a.variables==b.variables){
-      c.begin_v=va;
-      c.end_v=vb;
-      c.variables=a.variables;
       for (;ita!=ita_end;++ita){
          c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b[ita->first].s,ita->second.begin_cost,b[ita->first].end_cost)));
       }
@@ -278,11 +273,7 @@ static void combine_assignment_ps_list_series(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t
 
    }
    //std::cout<<"series size1 : "<<c.size()<<std::endl;
-   f v_n;
-   std::set_union(va.begin(),va.end(),vb.begin(),vb.end(),std::back_inserter(v_n));
-      c.begin_v=va;
-      c.end_v=vb;
-      c.variables=v_n;
+   f v_n=c.variables;
    assignment_ps_map::iterator itb;
    assignment_ps_map::iterator itb_begin=b.assignments.begin();
    assignment_ps_map::iterator itb_end=b.assignments.end();
@@ -308,13 +299,8 @@ static void combine_assignment_ps_list_series(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t
 
 static void combine_assignment_ps_list_parallel(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t &c){
 //assignment_ps first_a=a.begin()->second;
-   f va=a.begin_v;
-   f vb=a.end_v;
    assignment_ps_map::iterator ita=a.assignments.begin();
    assignment_ps_map::iterator ita_end=a.assignments.end();
-        c.begin_v=va;
-      c.end_v=vb;
-      c.variables=a.variables;
    for (;ita!=ita_end;++ita){
      //float s=a[i].s+b[i].s-a[i].end_cost-a[i].begin_cost;
        c.assignments.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b[ita->first].s-ita->second.begin_cost-ita->second.end_cost,ita->second.begin_cost,ita->second.end_cost)));
@@ -324,8 +310,6 @@ static void combine_assignment_ps_list_parallel(ps_cfg_t &a, ps_cfg_t &b, ps_cfg
 
 static void combine_assignment_ps_list_loop(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t &c){
   // std::cout<<"begin combine_assignment_ps_list_loop"<<std::endl;
-   f va=b.begin_v;
-   f vb=b.end_v;
    assignment_ps_map::iterator ita=b.assignments.begin();
    assignment_ps_map::iterator ita_end=b.assignments.end();
 
@@ -339,10 +323,7 @@ static void combine_assignment_ps_list_loop(ps_cfg_t &a, ps_cfg_t &b, ps_cfg_t &
   // std::cout<<"loop size1 : "<<c.size()<<std::endl;
    return;
 }
- f v_n=b.variables;
-      c.begin_v=va;
-      c.end_v=vb;
-      c.variables=v_n;
+ f v_n=c.variables;
 assignment_ps_map::iterator itb;
 assignment_ps_map::iterator itb_begin=a.assignments.begin();
    assignment_ps_map::iterator itb_end=a.assignments.end();
@@ -408,7 +389,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
          f global;
          convert_to_global(i,a.begin_v,global,n);
 
-         a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I),a.begin_v)));
+         a.assignments.emplace(std::make_pair(global, assignment_ps(instruction_cost_easy(global,node,I))));
    }
   // std::cout<<"basic block size: "<< a.assignments.size()<<std::endl;
 }

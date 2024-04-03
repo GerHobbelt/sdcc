@@ -75,8 +75,7 @@
  */
 
 VOID
-lkout(i)
-int i;
+lkout(int i)
 {
 	int j;
 
@@ -140,7 +139,7 @@ int i;
  */
 
 VOID
-lkflush()
+lkflush(void)
 {
 	if (ofp == NULL)   { return; }
 
@@ -389,7 +388,7 @@ ixx(int i)
  */
 
 VOID
-iflush()
+iflush(void)
 {
         int i, max, reclen;
         a_uint chksum, lo_addr, hi_addr;
@@ -556,8 +555,7 @@ iflush()
  */
 
 VOID
-sxx(i)
-int i;
+sxx(int i)
 {
 	struct sym *sp;
 	char *frmt;
@@ -693,7 +691,7 @@ int i;
  */
 
 VOID
-sflush()
+sflush(void)
 {
 	char *frmt;
 	int i, max, reclen;
@@ -810,8 +808,7 @@ sflush()
  */
 
 VOID
-dbx(i)
-int i;
+dbx(int i)
 {
 	struct sym *sp;
 	int k;
@@ -921,7 +918,7 @@ int i;
  */
 
 VOID
-dflush()
+dflush(void)
 {
 	int i, max;
 

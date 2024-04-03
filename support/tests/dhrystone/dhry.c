@@ -67,7 +67,7 @@ unsigned int _clock(void);
 #else
 /** For clock() */
 #include <time.h>
-#include <types.h>
+//#include <types.h>
 #endif
 
 /** Set to one to print more messages about expected values etc. 

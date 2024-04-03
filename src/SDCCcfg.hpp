@@ -322,7 +322,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
-  if (*vi == *(vi_end-1)) {
+  if (pscfg.begin==pscfg.end) {
     pscfg.left=-1;
     pscfg.right=-1;
     //std::cout<<"basic block"<<std::endl;

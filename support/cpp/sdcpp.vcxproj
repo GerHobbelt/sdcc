@@ -74,6 +74,7 @@
       <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -81,7 +82,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\..\bin_vc\$(TargetFileName)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\Release/sdcpp.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -109,7 +109,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..\sdbinutils\include;.\win32;.\libcpp;.\libcpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;WIN32;_CONSOLE;HAVE_CONFIG_H;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\Debug/sdcpp.pch</PrecompiledHeaderOutputFile>
@@ -120,6 +119,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -127,7 +127,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\..\bin_vc\$(TargetFileName)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/sdcpp.pdb</ProgramDatabaseFile>
@@ -159,30 +158,30 @@
     <ClCompile Include="..\sdbinutils\libiberty\xmemdup.c" />
     <ClCompile Include="..\sdbinutils\libiberty\xstrdup.c" />
     <ClCompile Include="..\sdbinutils\libiberty\xstrerror.c" />
-    <ClCompile Include="c-incpath.c" />
-    <ClCompile Include="c-ppoutput.c" />
-    <ClCompile Include="cppdefault.c" />
-    <ClCompile Include="options.c" />
-    <ClCompile Include="opts-common.c" />
-    <ClCompile Include="opts.c" />
-    <ClCompile Include="prefix.c" />
+    <ClCompile Include="../../support/cpp/gcc/incpath.cc" />
+    <ClCompile Include="../../support/cpp/gcc/c-family/c-ppoutput.c" />
+    <ClCompile Include="../../support/cpp/gcc/cppdefault.c" />
+    <ClCompile Include="../../support/cpp/options.c" />
+    <ClCompile Include="../../support/cpp/gcc/opts-common.c" />
+    <ClCompile Include="../../support/cpp/gcc/opts.c" />
+    <ClCompile Include="../../support/cpp/gcc/prefix.c" />
     <ClCompile Include="sdcpp-diagnostic.c" />
     <ClCompile Include="sdcpp-opts.c" />
     <ClCompile Include="sdcpp.c" />
     <ClCompile Include="version.c" />
-    <ClCompile Include="libcpp\charset.c" />
-    <ClCompile Include="libcpp\directives.c" />
-    <ClCompile Include="libcpp\errors.c" />
-    <ClCompile Include="libcpp\expr.c" />
-    <ClCompile Include="libcpp\files.c" />
-    <ClCompile Include="libcpp\identifiers.c" />
-    <ClCompile Include="libcpp\init.c" />
-    <ClCompile Include="libcpp\lex.c" />
-    <ClCompile Include="libcpp\line-map.c" />
-    <ClCompile Include="libcpp\macro.c" />
-    <ClCompile Include="libcpp\mkdeps.c" />
-    <ClCompile Include="libcpp\symtab.c" />
-    <ClCompile Include="libcpp\traditional.c" />
+    <ClCompile Include="libcpp\charset.cc" />
+    <ClCompile Include="libcpp\directives.cc" />
+    <ClCompile Include="libcpp\errors.cc" />
+    <ClCompile Include="libcpp\expr.cc" />
+    <ClCompile Include="libcpp\files.cc" />
+    <ClCompile Include="libcpp\identifiers.cc" />
+    <ClCompile Include="libcpp\init.cc" />
+    <ClCompile Include="libcpp\lex.cc" />
+    <ClCompile Include="libcpp\line-map.cc" />
+    <ClCompile Include="libcpp\macro.cc" />
+    <ClCompile Include="libcpp\mkdeps.cc" />
+    <ClCompile Include="libcpp\symtab.cc" />
+    <ClCompile Include="libcpp\traditional.cc" />
     <ClCompile Include="win32\dirent.c" />
   </ItemGroup>
   <ItemGroup>

@@ -315,6 +315,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //convert the original cfg to the root node of ps_cfg
   cfg_t cfg=cfg_map[pscfg.index];
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
+  std::cout<<"get cfg with size: "<<boost::num_vertices(cfg)<<std::endl;
   if (boost::num_vertices(cfg)==1){ 
     std::cout<<"basic block break!"<<std::endl;
     pscfg.left=-1;
@@ -342,9 +343,10 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //start of parallel merge - in degree=1, out degree=2, both next verdexes with larger index
   //end of parallel merge - in degree=2, out degree=1, both previous vertexes with smaller index
   if (boost::in_degree(*vi,cfg)==0 && boost::out_degree(*vi,cfg)==2){
-    std::cout<<"parallel merge break!"<<std::endl;
     vertex p_end=find_parallel_end(cfg);
     if(*(vi_end-1)!=p_end){
+      std::cout<<"preparallel merge break!"<<std::endl;
+
       //if the graph is built by parallel merge then series merge
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
@@ -354,7 +356,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
       return ;
     }else{
       //if the graph is built by parallel merge directly
-      std::cout<<"preparallel merge break!"<<std::endl;
+      std::cout<<"parallel merge break!"<<std::endl;
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
       boost::copy_graph(cfg, cfg_2);

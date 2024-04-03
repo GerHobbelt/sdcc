@@ -272,9 +272,10 @@ static void combine_assignment_ps_list_series(assignment_ps_map &a, assignment_p
       for (;ita!=a.end();++ita){
          c.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+b[ita->first].s,ita->second.begin_cost,b[ita->first].end_cost,va,vb,v_n)));
       }
+         return;
+
    }
    //std::cout<<"series size1 : "<<c.size()<<std::endl;
-   return;
    assignment_ps_map::iterator itb;
    //assignment_ps_map::iterator itc;
    for (;ita!=a.end();++ita){

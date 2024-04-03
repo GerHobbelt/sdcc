@@ -230,15 +230,15 @@ static void generate_possibility(f variables,int n){
         }
       }
         std::vector<f> sub_sub_set=subsets(sub);
-        for(auto i:sub_sub_set){
-         if (i!=sub){
-            for(auto j:permutation_map[i]){
-               f g=extend_glob(i,sub,j);
-               globs.emplace_back(g);
-            }
-         }
-        }
-        permutation_map[sub]=globs;
+        //for(auto i:sub_sub_set){
+         //if (i!=sub){
+          //  for(auto j:permutation_map[i]){
+           //    f g=extend_glob(i,sub,j);
+           //    globs.emplace_back(g);
+            //}
+         //}
+        //}
+       // permutation_map[sub]=globs;
         
       //  results.reserve(results.size() + distance(p.begin(),p.end()));
        // results.insert(results.end(),p.begin(),p.end());

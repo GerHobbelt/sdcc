@@ -368,6 +368,15 @@
 		/* Use Microsoft C hi-res clock */
 
 #ifdef TIMES
+
+#ifndef CLOCKS_PER_SEC
+#ifdef CLK_TCK
+#define CLOCKS_PER_SEC CLK_TCK /* Some systems still use this older form */
+#endif
+#endif
+#ifndef CLOCKS_PER_SEC
+#define CLOCKS_PER_SEC 1000000 /* For non-ANSI systems, like SunOS! */
+#endif
 //#include <sys/types.h>
 //#include <sys/times.h>
                 /* for "times" */

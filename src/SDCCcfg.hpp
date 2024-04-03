@@ -76,7 +76,9 @@ struct ps_cfg_t{
   varset_t variables;
   assignment_ps_map assignments;
 
-  ps_cfg_t( vertex begin_node, vertex end_node, int index, int parent){
+};
+
+  static ps_cfg_t init_ps_cfg( vertex begin_node, vertex end_node, int index, int parent){
   //ps_cfg.cfg=&cfg;
   begin=begin_node;
   end=end_node;
@@ -87,7 +89,6 @@ struct ps_cfg_t{
   end_v=cfg_map[index][end_node].alive;
   std::set_union(ps_cfg.begin_v.begin(),ps_cfg.begin_v.end(),ps_cfg.end_v.begin(),ps_cfg.end_v.end(),std::inserter(variables,variables.begin()));
 }
-};
 
 std::vector<ps_cfg_t> ps_cfg_map;
 int ps_cfg_count=1;
@@ -124,7 +125,7 @@ static void break_graph_series( vertex begin_node, vertex end_node, cfg_t &cfg_1
       }
   }
   cfg_map.push_back(cfg_1);
-  ps_cfg_t right=ps_cfg_t(find_vertex_from_node(cfg[end_node],cfg_1), find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),cfg_count,ps_cfg.index);
+  ps_cfg_t right=init_ps_cfg(find_vertex_from_node(cfg[end_node],cfg_1), find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),cfg_count,ps_cfg.index);
   ps_cfg.right=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(right);
@@ -136,7 +137,7 @@ static void break_graph_series( vertex begin_node, vertex end_node, cfg_t &cfg_1
       boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map.push_back( cfg_2);
-  ps_cfg_t left=ps_cfg_t(find_vertex_from_node(cfg[begin_node],cfg_2), find_vertex_from_node(cfg[*f],cfg_2),cfg_count,ps_cfg.index);
+  ps_cfg_t left=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_2), find_vertex_from_node(cfg[*f],cfg_2),cfg_count,ps_cfg.index);
   ps_cfg.left=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(left);
@@ -167,7 +168,7 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
       }
   }
   cfg_map.push_back(cfg_1);
-  ps_cfg_t left=ps_cfg_t(find_vertex_from_node(cfg[begin_node],cfg_1), find_vertex_from_node(cfg[end_node],cfg_1) ,cfg_count,ps_cfg.index);
+  ps_cfg_t left=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_1), find_vertex_from_node(cfg[end_node],cfg_1) ,cfg_count,ps_cfg.index);
   ps_cfg.left=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(left);
@@ -179,7 +180,7 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
       boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map.push_back(cfg_2);
-  ps_cfg_t right=ps_cfg_t(find_vertex_from_node(cfg[begin_node],cfg_2), find_vertex_from_node(cfg[end_node],cfg_2) ,cfg_count,ps_cfg.index);
+  ps_cfg_t right=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_2), find_vertex_from_node(cfg[end_node],cfg_2) ,cfg_count,ps_cfg.index);
   ps_cfg.right=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(right);
@@ -247,7 +248,7 @@ static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, c
     }
   }
   cfg_map.push_back(cfg_1);
-  ps_cfg_t left=ps_cfg_t(find_vertex_from_node(cfg[begin_node],cfg_1), find_vertex_from_node(cfg[*vi],cfg_1),cfg_count,ps_cfg.index);
+  ps_cfg_t left=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_1), find_vertex_from_node(cfg[*vi],cfg_1),cfg_count,ps_cfg.index);
     ps_cfg.left=cfg_count;
 
   cfg_count++;
@@ -259,7 +260,7 @@ static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, c
     boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map.push_back(cfg_2);
-  ps_cfg_t right=ps_cfg_t(find_vertex_from_node(cfg[*f],cfg_2), find_vertex_from_node(cfg[*(vi_end-1)],cfg_2),cfg_count,ps_cfg.index);
+  ps_cfg_t right=init_ps_cfg(find_vertex_from_node(cfg[*f],cfg_2), find_vertex_from_node(cfg[*(vi_end-1)],cfg_2),cfg_count,ps_cfg.index);
   ps_cfg.right=cfg_count;
 
   cfg_count++;
@@ -316,7 +317,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   cfg_t cfg=cfg_map[pscfg.index];
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
-  //pscfg=ps_cfg_t(cfg, *vi, *(vi_end-1));
+  //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
   if (pscfg.begin==pscfg.end) {
     std::cout<<"begin v"<< *vi<<std::endl;
     std::cout<<"end v"<< *(vi_end-1)<<std::endl;

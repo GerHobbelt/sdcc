@@ -327,6 +327,8 @@ static void check_cfg(cfg_t cfg){
 static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //convert the original cfg to the root node of ps_cfg
   std::cout<<"convert_cfg_to_spcfg_one_step begin"<<std::endl;
+  std::cout<<"pscfg.index: "<<pscfg.index<<std::endl;
+  std::cout<<"cfg_size: "<<cfg_map.size()<<std::endl;
   cfg_t cfg=cfg_map[pscfg.index];
   std::cout<<"get_cfg"<<std::endl;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;

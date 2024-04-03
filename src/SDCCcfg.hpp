@@ -78,6 +78,11 @@ struct ps_cfg_t{
 
 };
 
+std::vector<ps_cfg_t> ps_cfg_map;
+int ps_cfg_count=1;
+std::vector<cfg_t> cfg_map;
+int cfg_count=1;
+
   static ps_cfg_t init_ps_cfg( vertex begin_node, vertex end_node, int index, int parent){
   ps_cfg_t pscfg;
   pscfg.begin=begin_node;
@@ -89,12 +94,6 @@ struct ps_cfg_t{
   pscfg.end_v=cfg_map[index][end_node].alive;
   std::set_union(ps_cfg.begin_v.begin(),ps_cfg.begin_v.end(),ps_cfg.end_v.begin(),ps_cfg.end_v.end(),std::inserter(pscfg.variables,pscfg.variables.begin()));
 }
-
-std::vector<ps_cfg_t> ps_cfg_map;
-int ps_cfg_count=1;
-std::vector<cfg_t> cfg_map;
-int cfg_count=1;
-
 
 static vertex find_vertex_from_node(cfg_node node,cfg_t &cfg){
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;

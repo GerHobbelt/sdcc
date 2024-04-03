@@ -384,6 +384,8 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
   std::cout<<"root created"<<std::endl;
   try{
+    check_cfg(*(pscfg.cfg));
+
     convert_cfg_to_spcfg(root);
   }catch(std::exception &e){
     std::cerr<<e.what()<<std::endl;

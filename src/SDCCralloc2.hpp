@@ -380,7 +380,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
     
    std::vector<f>  begin_p=generate_p_w(a.begin_v);
 
-   cfg_node node=((*(a.cfg))[a.begin]);
+   cfg_node node=cfg_map[a.index];
    int n = boost::num_vertices(I);
    for(auto i:begin_p){
          f global;

@@ -336,14 +336,14 @@ for (;ita!=ita_end;++ita){
       new_g=get_partial_global(new_g,v_n);
       itc=c.assignments.find(new_g);
       if(itc==c.assignments.end()||itc->second.s>s){
-     // if(c.find(new_g)==c.end()||c[new_g].s>s){
+      //if(c.find(new_g)==c.end()||c[new_g].s>s){
          c.assignments[new_g]=assignment_ps(s,ita->second.begin_cost,ita->second.end_cost);
       }
    }
    }
   // std::cout<<"loop size2 : "<<c.size()<<std::endl;
   // std::cout<<"finish combine_assignment_ps_list_loop"<<std::endl;
-}}
+}
 
 template <class I_t>
 static float instruction_cost_easy(const f & global, cfg_node &node, const I_t &I);

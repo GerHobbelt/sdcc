@@ -85,6 +85,9 @@ struct ps_cfg_t{
   varset_t end_v;
   assignment_ps_map assignments;
   series series_assignments;
+  f variables;
+  f begin_v;
+  f end_v;
 };
 
 std::map<int,ps_cfg_t> ps_cfg_map;

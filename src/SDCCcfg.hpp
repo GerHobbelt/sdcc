@@ -292,14 +292,14 @@ static void check_cfg(cfg_t cfg){
       if( boost::out_degree(*vi,cfg)==1){
          num_loop_or_parallel++;}
       else{
-        throw std::invalid_argument("invalid cfg");
+        throw std::invalid_argument("invalid begin loop/end parallel");
       }
     }
    if (boost::out_degree(*vi,cfg)==2){
       if( boost::in_degree(*vi,cfg)==1){
          num_loop_or_parallel--;}
       else{
-        throw std::invalid_argument("invalid cfg");
+        throw std::invalid_argument("invalid end loop/begin parallel");
       }
     }
   }

@@ -247,7 +247,7 @@ static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, c
     }
   }
   cfg_map.push_back(cfg_1);
-  ps_cfg_t left=init_ps_cfg(find_vertex_from_node(*f,cfg_1), find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),cfg_count,ps_cfg.index);
+  ps_cfg_t left=init_ps_cfg(find_vertex_from_node(cfg[*f],cfg_1), find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),cfg_count,ps_cfg.index);
     ps_cfg.left=cfg_count;
 
   cfg_count++;

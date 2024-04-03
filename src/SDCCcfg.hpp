@@ -79,7 +79,6 @@ struct ps_cfg_t{
 };
 
 std::vector<ps_cfg_t> ps_cfg_map;
-int ps_cfg_count=1;
 std::vector<cfg_t> cfg_map;
 int cfg_count=1;
 

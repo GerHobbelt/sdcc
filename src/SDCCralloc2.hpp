@@ -400,6 +400,13 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
    //}
 
    if (ps_cfg.assignments.size() == 0){
+
+       if(ps_cfg.left==-1 || ps_cfg.right==-1){
+        // std::cout<<"1"<<std::endl;
+         initlize_assignment_ps_list(ps_cfg, I);
+         return;
+      }
+
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
        //  std::cout<<"2"<<std::endl;
          generate_spcfg(ps_cfg_map[ps_cfg.left]);
@@ -443,15 +450,6 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
          c=i.first;
       }
    }
-
-
-  std::cout << "our Winner: ";
-  for(unsigned int i = 0; i < c.size(); i++)
-  {
-  	std::cout << "(" << i << ", " << int(c[i]) << ") ";
-  }
-  std::cout << "\n";
-  std::cout << "Cost: " << b.s << "\n";
 
 
    return b;

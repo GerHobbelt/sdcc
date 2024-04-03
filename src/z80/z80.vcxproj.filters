@@ -60,7 +60,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="peeph-gbz80.def">
+    <CustomBuild Include="peeph-sm83.def">
       <Filter>Custom Build</Filter>
     </CustomBuild>
     <CustomBuild Include="peeph-z80.def">

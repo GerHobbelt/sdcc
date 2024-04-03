@@ -38,6 +38,12 @@
     <ClCompile Include="symtab.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\support\util\dbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\support\util\dbuf_string.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="break.h">

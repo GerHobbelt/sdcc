@@ -8,7 +8,21 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
+<!--
+warning C4100: 'ic': unreferenced formal parameter
+warning C4244: '=': conversion from 'unsigned int' to 'bool', possible loss of data
+... and lots like that one
+warning C4459: declaration of 'reg' hides global declaration     <- happens way too often to my taste, but alas
+warning C4456: declaration of 'offset' hides previous local declaration
+warning C4389: '!=': signed/unsigned mismatch
+warning C4245: 'initializing': conversion from 'int' to 'unsigned char', signed/unsigned mismatch
+warning C4018: '<': signed/unsigned mismatch
+warning C4310: cast truncates constant value
+warning C4201: nonstandard extension used: nameless struct/union
+warning C4267: '=': conversion from 'size_t' to 'var_t', possible loss of data
+warning C4189: 'dying_H': local variable is initialized but not referenced
+-->	
+      <DisableSpecificWarnings>4189;4267;4201;4310;4018;4245;4389;4456;4459;4244;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_CRT_SECURE_NO_DEPRECATE;_CRT_INTERNAL_NONSTDC_NAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Midl>

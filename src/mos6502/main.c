@@ -29,6 +29,7 @@
 #include "dbuf_string.h"
 #include "m6502.h"
 #include "peep.h"
+#include "port.h"
 
 #define OPTION_SMALL_MODEL          "--model-small"
 #define OPTION_LARGE_MODEL          "--model-large"

@@ -709,7 +709,7 @@ machine(struct mne *mp)
  * Branch/Jump PCR Mode Check
  */
 int
-mchpcr(struct expr *esp
+mchpcr(struct expr *esp)
 {
 	if (esp->e_base.e_ap == dot.s_area) {
 		return(1);

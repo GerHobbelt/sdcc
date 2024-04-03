@@ -316,6 +316,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   cfg_t cfg=cfg_map[pscfg.index];
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
   if (boost::num_vertices(cfg)==1){ 
+    std::cout<<"basic block break!"<<std::endl;
     pscfg.left=-1;
     pscfg.right=-1;
     //std::cout<<"basic block"<<std::endl;
@@ -353,6 +354,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
       return ;
     }else{
       //if the graph is built by parallel merge directly
+      std::cout<<"preparallel merge break!"<<std::endl;
       cfg_t cfg_1, cfg_2;
       boost::copy_graph(cfg, cfg_1);
       boost::copy_graph(cfg, cfg_2);
@@ -372,6 +374,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
 
       return ;
     }else{
+      std::cout<<"preloop merge break!"<<std::endl;
       boost::graph_traits < cfg_t >::out_edge_iterator eei, eei_end;
       //std::cout<<"series merge break!2"<<std::endl;
       //boost::write_graphviz(std::cout, cfg,boost::make_label_writer(boost::get(&cfg_node::ic,cfg )));

@@ -386,6 +386,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   try{
     convert_cfg_to_spcfg(root);
   }catch(std::exception &e){
+    std::cerr<<e.what()<<std::endl;
    return -1;
   }
 

@@ -159,12 +159,12 @@
     <ClCompile Include="..\sdbinutils\libiberty\xstrdup.c" />
     <ClCompile Include="..\sdbinutils\libiberty\xstrerror.c" />
     <ClCompile Include="../../support/cpp/gcc/incpath.cc" />
-    <ClCompile Include="../../support/cpp/gcc/c-family/c-ppoutput.c" />
-    <ClCompile Include="../../support/cpp/gcc/cppdefault.c" />
+    <ClCompile Include="gcc\c-family\c-ppoutput.cc" />
+    <ClCompile Include="gcc\cppdefault.cc" />
     <ClCompile Include="../../support/cpp/options.c" />
-    <ClCompile Include="../../support/cpp/gcc/opts-common.c" />
-    <ClCompile Include="../../support/cpp/gcc/opts.c" />
-    <ClCompile Include="../../support/cpp/gcc/prefix.c" />
+    <ClCompile Include="gcc\opts-common.cc" />
+    <ClCompile Include="gcc\opts.cc" />
+    <ClCompile Include="gcc\prefix.cc" />
     <ClCompile Include="sdcpp-diagnostic.c" />
     <ClCompile Include="sdcpp-opts.c" />
     <ClCompile Include="sdcpp.c" />

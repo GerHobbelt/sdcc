@@ -140,22 +140,22 @@
       <Filter>Source Files\win32</Filter>
     </ClCompile>
     <ClCompile Include="../../support/cpp/gcc/incpath.cc" />
-    <ClCompile Include="../../support/cpp/gcc/c-family/c-ppoutput.c">
+    <ClCompile Include="gcc\c-family\c-ppoutput.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="../../support/cpp/gcc/cppdefault.c">
+    <ClCompile Include="gcc\cppdefault.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
     <ClCompile Include="../../support/cpp/options.c">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="../../support/cpp/gcc/opts-common.c">
+    <ClCompile Include="gcc\opts-common.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="../../support/cpp/gcc/opts.c">
+    <ClCompile Include="gcc\opts.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="../../support/cpp/gcc/prefix.c">
+    <ClCompile Include="gcc\prefix.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
   </ItemGroup>

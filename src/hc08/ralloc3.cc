@@ -392,12 +392,12 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
 
   std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
+  return  cost;
   //std::cout<<"get cost"<<std::endl;
 }catch(std::exception &e){
     std::cout<<e.what()<<std::endl;
    return -1;
   }
 
-  return  cost;
 }
 

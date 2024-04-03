@@ -803,8 +803,11 @@ iCode *hc08_ralloc2_cc(ebbIndex *ebbi)
   iCode *ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
 
 
-  if(options.dump_graphs)
+
+  if(options.dump_graphs){
     dump_con(conflict_graph);
+    dump_cfg(control_flow_graph);
+  }
   tree_dec_t tree_decomposition;
 
   get_nice_tree_decomposition(tree_decomposition, control_flow_graph);

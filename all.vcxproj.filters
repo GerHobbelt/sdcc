@@ -11,19 +11,4 @@
       <Filter>Info</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="bin_vc\makebin.exe" />
-    <CustomBuild Include="bin_vc\packihx.exe" />
-    <CustomBuild Include="bin_vc\sdas6808.exe" />
-    <CustomBuild Include="bin_vc\sdas8051.exe" />
-    <CustomBuild Include="bin_vc\sdasgb.exe" />
-    <CustomBuild Include="bin_vc\sdasz80.exe" />
-    <CustomBuild Include="bin_vc\sdcc.exe" />
-    <CustomBuild Include="bin_vc\sdcclib.exe" />
-    <CustomBuild Include="bin_vc\sdcpp.exe" />
-    <CustomBuild Include="bin_vc\sdld.exe" />
-    <CustomBuild Include="bin_vc\sdcdb.exe" />
-    <CustomBuild Include="bin_vc\sdranlib.exe" />
-    <CustomBuild Include="bin_vc\sdasrab.exe" />
-  </ItemGroup>
 </Project>

@@ -134,7 +134,7 @@
     <ClCompile Include="gcc\cppdefault.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="../../support/cpp/options.c">
+    <ClCompile Include="options.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
     <ClCompile Include="gcc\opts-common.cc">

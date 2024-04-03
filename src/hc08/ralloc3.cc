@@ -385,7 +385,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   std::cout<<"root created"<<std::endl;
   try{
     check_cfg(control_flow_graph);
-
+    std::cout<<"cfg checked"<<std::endl;
     convert_cfg_to_spcfg(root);
   }catch(std::exception &e){
     std::cerr<<e.what()<<std::endl;

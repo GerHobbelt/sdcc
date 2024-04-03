@@ -21,8 +21,10 @@ warning C4310: cast truncates constant value
 warning C4201: nonstandard extension used: nameless struct/union
 warning C4267: '=': conversion from 'size_t' to 'var_t', possible loss of data
 warning C4189: 'dying_H': local variable is initialized but not referenced
+warning C4706: assignment within conditional expression
+warning C4127: conditional expression is constant
 -->	
-      <DisableSpecificWarnings>4189;4267;4201;4310;4018;4245;4389;4456;4459;4244;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4127;4706;4189;4267;4201;4310;4018;4245;4389;4456;4459;4244;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_CRT_SECURE_NO_DEPRECATE;_CRT_INTERNAL_NONSTDC_NAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Midl>

@@ -120,6 +120,7 @@ static ps_cfg_t init_ps_cfg(cfg_t &cfg, vertex begin_node, vertex end_node, int 
 
 //break the graph into two series part
 static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+  std::cout<<"break_graph_series begin"<<std::endl;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next,f;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   ps_cfg.type=1;
@@ -151,9 +152,11 @@ static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, c
   ps_cfg_map[ps_cfg_count]=left;
   ps_cfg.left=ps_cfg_count;
   ps_cfg_count++;
+  std::cout<<"break_graph_series end"<<std::endl;
 }
 
 static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+  std::cout<<"break_graph_parallel begin"<<std::endl;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   ps_cfg.type=2;
@@ -193,6 +196,8 @@ static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node,
   ps_cfg_map[ps_cfg_count]=right;
   ps_cfg.right=ps_cfg_count;
   ps_cfg_count++;
+  std::cout<<"break_graph_parallel begin"<<std::endl;
+
 }
 
 static vertex find_parallel_end(cfg_t &cfg){
@@ -240,6 +245,7 @@ static vertex find_parallel_end(cfg_t &cfg){
 }
 
 static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){
+  std::cout<<"break_graph_loop begin"<<std::endl;
   ps_cfg.type=3;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next,f;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
@@ -270,6 +276,7 @@ static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg
   ps_cfg_map[ps_cfg_count]=right;
   ps_cfg.right=ps_cfg_count;
   ps_cfg_count++;
+  std::cout<<"break_graph_loop end"<<std::endl;
 }
 
 static void check_cfg(cfg_t cfg){

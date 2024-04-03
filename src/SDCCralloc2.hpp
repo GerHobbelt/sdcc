@@ -336,7 +336,7 @@ for (;ita!=ita_end;++ita){
       new_g=get_partial_global(new_g,v_n);
       itc=c.assignments.find(new_g);
       if(itc==c.assignments.end()||itc->second.s>s){
-     // if(c.find(new_g)==c.end()||c[new_g].s>s){
+      //if(c.find(new_g)==c.end()||c[new_g].s>s){
          c.assignments[new_g]=assignment_ps(s,ita->second.begin_cost,ita->second.end_cost);
       }
    }
@@ -380,7 +380,7 @@ static void initlize_assignment_ps_list(ps_cfg_t &a, I_t &I){
     
    std::vector<f>  begin_p=generate_p_w(a.begin_v);
 
-   cfg_node node=((*(a.cfg))[a.begin]);
+   cfg_node node=cfg_map[a.index][0];
    int n = boost::num_vertices(I);
    for(auto i:begin_p){
          f global;
@@ -400,6 +400,7 @@ static void generate_spcfg(ps_cfg_t &ps_cfg){
    //}
 
    if (ps_cfg.assignments.size() == 0){
+
       if (ps_cfg_map[ps_cfg.left].assignments.size() == 0){
        //  std::cout<<"2"<<std::endl;
          generate_spcfg(ps_cfg_map[ps_cfg.left]);
@@ -443,15 +444,6 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
          c=i.first;
       }
    }
-
-
-  std::cout << "our Winner: ";
-  for(unsigned int i = 0; i < c.size(); i++)
-  {
-  	std::cout << "(" << i << ", " << int(c[i]) << ") ";
-  }
-  std::cout << "\n";
-  std::cout << "Cost: " << b.s << "\n";
 
 
    return b;

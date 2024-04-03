@@ -1,10 +1,6 @@
 /.vs/
 
-*.sbr
-*.obj
-*.tlog
-*.idb
-*.pdb
-*.lastbuildstate
-*.ilk
-*.bsc
+# MSVC projects/solution 
+/bin/
+/obj/
+*.user

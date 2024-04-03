@@ -304,6 +304,9 @@ static void check_cfg(cfg_t cfg){
     }
   }
   if(num_begin!=1 || num_end!=1 || num_loop_or_parallel!=0){
+    std::cout<<"num_begin: "<<num_begin<<std::endl;
+    std::cout<<"num_end: "<<num_end<<std::endl;
+    std::cout<<"num_loop_or_parallel: "<<num_loop_or_parallel<<std::endl;
     throw std::invalid_argument("invalid cfg");
   }
 

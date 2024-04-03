@@ -259,7 +259,7 @@ static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, c
     boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map.push_back(cfg_2);
-  ps_cfg_t right=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_2), find_vertex_from_node(cfg[*(begin_node+2)],cfg_2),cfg_count,ps_cfg.index);
+  ps_cfg_t right=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_2), find_vertex_from_node(cfg[begin_node+2],cfg_2),cfg_count,ps_cfg.index);
   ps_cfg.right=cfg_count;
 
   cfg_count++;

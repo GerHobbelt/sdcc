@@ -134,7 +134,7 @@ static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, c
       }
   }
   cfg_map[cfg_count]=cfg_1;
-  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[end_node],cfg_1), find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),ps_cfg_count,ps_cfg.index);
+  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],0, find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=right;
   ps_cfg.right=ps_cfg_count;
@@ -147,7 +147,7 @@ static void break_graph_series(cfg_t &cfg, vertex begin_node, vertex end_node, c
       boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map[cfg_count]=cfg_2;
-  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_2), find_vertex_from_node(cfg[*f],cfg_2),ps_cfg_count,ps_cfg.index);
+  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],0, find_vertex_from_node(cfg[*f],cfg_2),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=left;
   ps_cfg.left=ps_cfg_count;
@@ -178,7 +178,7 @@ static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node,
       }
   }
   cfg_map[cfg_count]=cfg_1;
-  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_1), find_vertex_from_node(cfg[end_node], cfg_1),ps_cfg_count,ps_cfg.index);
+  ps_cfg_t left=init_ps_cfg(cfg_map[cfg_count],0, boost::num_vertices(cfg_1)-1 ,ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=left;
   ps_cfg.left=ps_cfg_count;
@@ -191,12 +191,12 @@ static void break_graph_parallel(cfg_t &cfg, vertex begin_node, vertex end_node,
       boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
   }
   cfg_map[cfg_count]=cfg_2;
-  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],find_vertex_from_node(cfg[begin_node], cfg_2), find_vertex_from_node(cfg[end_node], cfg_2),ps_cfg_count,ps_cfg.index);
+  ps_cfg_t right=init_ps_cfg(cfg_map[cfg_count],0, boost::num_vertices(cfg_2)-1, cfg_2),ps_cfg_count,ps_cfg.index);
   cfg_count++;
   ps_cfg_map[ps_cfg_count]=right;
   ps_cfg.right=ps_cfg_count;
   ps_cfg_count++;
-  std::cout<<"break_graph_parallel begin"<<std::endl;
+  std::cout<<"break_graph_parallel end"<<std::endl;
 
 }
 
@@ -241,7 +241,7 @@ static vertex find_parallel_end(cfg_t &cfg){
       count++;
     }
   }
-  return -1;
+  throw std::invalid_argument("invalid parallel");
 }
 
 static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){

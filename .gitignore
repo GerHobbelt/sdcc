@@ -2,3 +2,9 @@
 
 *.sbr
 *.obj
+*.tlog
+*.idb
+*.pdb
+*.lastbuildstate
+*.ilk
+*.bsc

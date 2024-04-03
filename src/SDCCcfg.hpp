@@ -272,9 +272,47 @@ static void break_graph_loop(cfg_t &cfg, vertex begin_node, vertex end_node, cfg
   ps_cfg_count++;
 }
 
+static void check_cfg(cfg_t cfg){
+  boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
+  boost::tie(vi, vi_end) = boost::vertices(cfg);
+  int num_begin=0;
+  int num_end=0;
+  int num_loop_or_parallel=0;
+  for (; vi != vi_end; ++vi) {
+    if(boost::in_degree(*vi,cfg)>2 || boost::out_degree(*vi,cfg)>2){
+      throw std::exception("break or continue");
+    }
+   if (boost::in_degree(*vi,cfg)==0){
+     num_begin++;
+   }
+    if (boost::out_degree(*vi,cfg)==0){
+      num_end++;
+    }
+    if (boost::in_degree(*vi,cfg)==2){
+      if( boost::out_degree(*vi,cfg)==1){
+         num_loop_or_parallel++;}
+      else{
+        throw std::exception("invalid cfg");
+      }
+    }
+   if (boost::out_degree(*vi,cfg)==2){
+      if( boost::in_degree(*vi,cfg)==1){
+         num_loop_or_parallel--;}
+      else{
+        throw std::exception("invalid cfg");
+      }
+    }
+  }
+  if(num_begin!=1 || num_end!=1 || num_loop_or_parallel!=0){
+    throw std::exception("invalid cfg");
+  }
+
+}
+
 static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //convert the original cfg to the root node of ps_cfg
   cfg_t cfg=*(pscfg.cfg);
+  check_cfg(cfg);
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));

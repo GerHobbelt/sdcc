@@ -382,10 +382,14 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   root=init_ps_cfg(control_flow_graph,*vi,*(vi_end-1),-1,-1);
-  std::cout<<"root created"<<std::endl;
-  convert_cfg_to_spcfg(root);
+  //std::cout<<"root created"<<std::endl;
+  try{
+    convert_cfg_to_spcfg(root);
+  }catch(std::exception &e){
+   return -1;
+  }
 
-  std::cout<<"spcfg created"<<std::endl;
+  //std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
   //std::cout<<"get cost"<<std::endl;
 

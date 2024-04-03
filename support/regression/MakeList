@@ -1,7 +1,7 @@
 # Exclude lists for testing
 # Tests listed in ${EXCLUDE_${PORT}} will not be tested
 #
-# PORT ist the directory name
+# PORT is the directory name
 #
 # Tests to be excluded completely (i.e. for all PORT can be excluded in cases/Makefile.in more easily.
 
@@ -22,8 +22,26 @@ EXCLUDE_host += \
 	gte_20040409-2w \
 	gte_20040409-3w
 
+# Bug #3598
+EXCLUDE_s08-stack-auto += \
+	tst_gcc-torture-execute-pr47148
+
+# Bug #3599
+EXCLUDE_s08-stack-auto += \
+	tst_gcc-torture-execute-ssad-run \
+	tst_gcc-torture-execute-usad-run
+
+# Bug #3600
+EXCLUDE_s08-stack-auto += \
+	tst_gcc-torture-execute-930628-1
+	
+# Bug #3601
+EXCLUDE_s08-stack-auto += \
+	gte_20091229-1
+
 # possibly unsupported.
 EXCLUDE_host += \
+	tst_p99-conformance \
 	tcc_83_utf8_in_identifiers
 
 # Fails when compiled with clang on FreeBSD 13.1 on aarch64
@@ -54,16 +72,16 @@ EXCLUDE_ARCH_mcs51 += \
 	gte_memcpy-1
 EXCLUDE_s08 += \
 	gte_memcpy-1
+# fail
+EXCLUDE_hc08 += \
+	gte_memcpy-1
+# compile issue - test is malformed unless STACK_SIZE is defined
+EXCLUDE_ARCH_mos6502 += \
+	gte_memcpy-1
 
 # Failure
-EXCLUDE_uc6502 += \
-	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
-
-# compile issue
-EXCLUDE_uc6502 += \
-	gte_memcpy-1
+EXCLUDE_ARCH_mos6502 += \
+	gte_20091229-1
 
 # Failure
 EXCLUDE_ucr3ka += \
@@ -73,7 +91,6 @@ EXCLUDE_ucr3ka += \
 # Failure
 EXCLUDE_s08 += \
 	gte_20091229-1 \
-	gte_pr94567 \
 	gte_20041218-1
 
 # Failure
@@ -87,27 +104,23 @@ EXCLUDE_stm8-large += \
 # Failure
 EXCLUDE_ucr2k += \
 	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
 # Failure
 EXCLUDE_ucr2ka += \
 	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
 # Fail
 EXCLUDE_ucgbz80 += \
 	gte_20041218-1 \
 	gte_20091229-1 \
-	gte_pr94567 \
 	gte_pr97404
 
 # Fail
 EXCLUDE_ucz180 += \
 	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
 # abnormal stop
 EXCLUDE_ucz80 += \
@@ -122,34 +135,29 @@ EXCLUDE_ucz180-resiy += \
 # Fail
 EXCLUDE_ucz180-resiy += \
 	gte_20091229-1 \
-	gte_pr94567 \
 	gte_pr97404
 
 # Fail
 EXCLUDE_ucz80 += \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
 # Fail
 EXCLUDE_ucz80-nmos += \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
-# fail
-EXCLUDE_hc08 += \
-	gte_memcpy-1
+# Fail
+EXCLUDE_ucr800 += \
+	gte_20091229-1
 
 # Failure
 EXCLUDE_hc08 += \
 	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
 # Failure
 EXCLUDE_ucz80n += \
 	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
 # Failure
 EXCLUDE_ARCH_z80 += \
@@ -157,14 +165,12 @@ EXCLUDE_ARCH_z80 += \
 
 # Failure
 EXCLUDE_ucz80-resiy += \
-	gte_20091229-1 \
-	gte_pr94567
+	gte_20091229-1
 
 # Fail
 EXCLUDE_ucz80-undoc += \
 	gte_20091229-1 \
-	gte_20041218-1 \
-	gte_pr94567
+	gte_20041218-1
 
 # Stack overflow
 EXCLUDE_pdk14 += \
@@ -176,21 +182,12 @@ EXCLUDE_pdk15-stack-auto += \
 # misc Failure
 EXCLUDE_ucrxk3a += \
 	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
-
-# Failure
-EXCLUDE_ucr3ka += \
-	gte_pr94567
+	gte_20091229-1
 
 # abnormal stop
 EXCLUDE_ez80-z80 += \
 	gte_20041218-1 \
 	gte_20091229-1
-
-# Failure
-EXCLUDE_ez80-z80 += \
-   gte_pr94567
 
 # Failure
 EXCLUDE_ARCH_mcs51 += \
@@ -201,15 +198,7 @@ EXCLUDE_ARCH_mcs51 += \
 # Failure
 EXCLUDE_tlcs90 += \
 	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567 \
-	gte_20041218-1 \
-	gte_20091229-1 \
-	gte_pr94567
-
-# compile issue
-EXCLUDE_uc6502 += \
-	gte_memcpy-1
+	gte_20091229-1
 
 # Bug?
 EXCLUDE_pdk15-stack-auto += \
@@ -238,12 +227,15 @@ EXCLUDE_s08 += \
 	gte_991019-1 \
 	gte_pr30185 \
 	gte_pr58365
+EXCLUDE_s08-stack-auto += \
+	gte_991019-1 \
+	gte_pr30185 \
+	gte_pr58365
 EXCLUDE_ds390 += \
 	gte_991019-1 \
 	gte_pr30185 \
 	gte_pr58365
-EXCLUDE_uc6502 += \
-	gte_991019-1 \
+EXCLUDE_ARCH_mos6502 += \
 	gte_pr30185 \
 	gte_pr58365
 
@@ -293,6 +285,9 @@ EXCLUDE_mcs51-medium += \
 	gte_shiftdi-2
 EXCLUDE_mcs51-large-stack-auto += \
 	gte_loop-ivopts-2
+EXCLUDE_uc6502-stack-auto += \
+	gte_loop-ivopts-2
+
 
 ###################################################
 # QuickC Tests
@@ -379,10 +374,6 @@ EXCLUDE_ARCH_pdk += \
 	tcc_70_floating_point_literals \
 	tcc_91_ptr_longlong_arith32
 
-# Fails since symbol B from test conflicts with symbol B defined in mcs51-common/support.c (via processor register include)
-EXCLUDE_ARCH_mcs51 += \
-	tcc_30_hanoi
-
 # Target doesn't have enough memory
 EXCLUDE_ARCH_pdk += \
 	tcc_05_array \
@@ -441,3 +432,8 @@ EXCLUDE_pdk14 += ${EXCLUDE_ARCH_pdk}
 EXCLUDE_pdk15 += ${EXCLUDE_ARCH_pdk}
 EXCLUDE_pdk15-stack-auto += ${EXCLUDE_ARCH_pdk}
 ###################################################
+EXCLUDE_uc6502 += ${EXCLUDE_ARCH_mos6502}
+EXCLUDE_uc65c02 += ${EXCLUDE_ARCH_mos6502}
+EXCLUDE_uc6502-stack-auto += ${EXCLUDE_ARCH_mos6502}
+###################################################
+

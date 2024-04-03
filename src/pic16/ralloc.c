@@ -295,8 +295,7 @@ pic16_decodeOp (unsigned int op)
                 case FUNCTION:          return "FUNCTION";
                 case ENDFUNCTION:       return "ENDFUNCTION";
                 case JUMPTABLE:         return "JUMPTABLE";
-                case RRC:               return "RRC";
-                case RLC:               return "RLC";
+                case ROT:               return "ROT";
                 case CAST:              return "CAST";
                 case CALL:              return "CALL";
                 case PARAM:             return "PARAM  ";
@@ -2810,8 +2809,8 @@ regTypeNum ()
       sym->nRegs = 3; // patch 14
     }
 
-      if (sym->nRegs > 4) {
-        fprintf (stderr, "allocated more than 4 or 0 registers for type ");
+      if (sym->nRegs > PIC16_MAX_ASMOP_REGS) {
+        fprintf (stderr, "allocated more than %d registers for type ", PIC16_MAX_ASMOP_REGS);
         printTypeChain (sym->type, stderr);
         fprintf (stderr, "\n");
       }

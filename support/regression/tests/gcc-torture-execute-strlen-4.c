@@ -41,7 +41,6 @@ volatile int v7 = 7;
 void test_array_ptr (void)
 {
 #if !defined( __SDCC_pdk14) && !defined( __SDCC_pdk15) // Lack of memory
-#if !defined(__SDCC_hc08) && !defined(__SDCC_s08) && !defined(__SDCC_mos6502) && !defined(__SDCC_mos65c02) // Bug #2987
   /* Compute the length of the string at the refeenced array.  */
   A (*(&a[0][0] + 0), 1);
   A (*(&a[0][0] + 1), 3);
@@ -171,7 +170,6 @@ void test_array_ptr (void)
   A (*(&a[i0][v1] + i0) + i3, 0);
   A (*(&a[i0][v1] + i1) + i5, 0);
 #endif
-#endif
 }
 
 static const A3_28* const pa0 = &a[0];
@@ -184,7 +182,6 @@ static const A3_28* const paa[] = { &a[0], &a[1] };
 
 void test_ptr_array (void)
 {
-#if 0 // Bug #2987
   int i0 = 0;
   int i1 = i0 + 1;
   int i2 = i1 + 1;
@@ -202,7 +199,7 @@ void test_ptr_array (void)
   A ((*pa0)[i1] + i2, 1);
   A ((*pa0)[i2] + i3, 2);
 
-
+#if !defined( __SDCC_pdk14) && !defined( __SDCC_pdk15) // Lack of memory
   A (*((*pa1) + i0), 7);
   A (*((*pa1) + i1), 9);
   A (*((*pa1) + i2), 11);
@@ -222,11 +219,11 @@ void test_ptr_array (void)
   A (*(*(paa[1]) + i0), 7);
   A (*(*(paa[1]) + i1), 9);
   A (*(*(paa[1]) + i2), 11);
-
+#if 0 // Bug #2987
   A (*(*(paa[1]) - i1), 5);
   A (*(*(paa[1]) - i2), 3);
   A (*(*(paa[1]) - i3), 1);
-
+#endif
   A (*(*(paa[0]) + i0) + i1, 0);
   A (*(*(paa[0]) + i1) + i2, 1);
   A (*(*(paa[0]) + i2) + i3, 2);

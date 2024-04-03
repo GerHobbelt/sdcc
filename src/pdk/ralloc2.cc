@@ -140,15 +140,15 @@ static bool Ainst_ok(const assignment &a, unsigned short int i, const G_t &G, co
   bool right_dir = IS_TRUE_SYMOP (right) || IS_ITEMP (right) && !(options.stackAuto || reentrant) && !right_in_A;
 
   // For some iCodes, code generation can handle anything.
-  if (ic->op == GETBYTE || ic->op == '=' || ic->op == DUMMY_READ_VOLATILE || ic->op == CAST || ic->op == GET_VALUE_AT_ADDRESS || ic->op == SET_VALUE_AT_ADDRESS || ic->op == '~' || ic->op == '|' || ic->op == '^' || ic->op == BITWISEAND && !ifxForOp (result, ic))
+  if (ic->op == GETBYTE || ic->op == '=' || ic->op == DUMMY_READ_VOLATILE || ic->op == CAST || ic->op == GET_VALUE_AT_ADDRESS || ic->op == SET_VALUE_AT_ADDRESS || ic->op == '~' || ic->op == '|' || ic->op == '^' || ic->op == BITWISEAND)
     return(true);
 
   if(result && IS_ITEMP(result) && OP_SYMBOL_CONST(result)->remat && !operand_in_reg(result, REG_A, ia, i, G) && !operand_in_reg(result, REG_P, ia, i, G))
     return(true);
 
   if ((ic->op == EQ_OP || ic->op == NE_OP) && dying_A &&
-    (left_in_A && (right_dir || IS_OP_LITERAL(right) || IS_ITEMP(right) && OP_SYMBOL_CONST(right)->remat) ||
-    right_in_A && (left_dir || IS_OP_LITERAL(left) || IS_ITEMP(left) && OP_SYMBOL_CONST(left)->remat)))
+    (left_in_A && (right_dir || IS_OP_LITERAL (right) || IS_ITEMP(right) && OP_SYMBOL_CONST (right)->remat) ||
+    right_in_A && (left_dir || IS_OP_LITERAL (left) || IS_ITEMP(left) && OP_SYMBOL_CONST (left)->remat)))
     return (true);
 
   if ((ic->op == EQ_OP || ic->op == NE_OP || (ic->op == '>' || ic->op == '<') && SPEC_USIGN(getSpec(operandType(left)))) && // Non-destructive comparison.
@@ -191,7 +191,7 @@ static bool Ainst_ok(const assignment &a, unsigned short int i, const G_t &G, co
     return (true);
 
   if ((ic->op == LEFT_OP || ic->op == RIGHT_OP))
-    return(IS_OP_LITERAL(right) || right_in_A && !result_in_A);
+    return (IS_OP_LITERAL(right) || right_in_A && !result_in_A);
 
   if (ic->op == '^' &&
     (operand_byte_in_reg(result, 0, REG_A, a, i, G) && (operand_byte_in_reg(left, 0, REG_A, a, i, G) || operand_byte_in_reg(right, 0, REG_A, a, i, G)) ||
@@ -316,16 +316,9 @@ static void assign_operands_for_cost(const assignment &a, unsigned short int i, 
 {
   const iCode *ic = G[i].ic;
   
-  if(ic->op == IFX)
-    assign_operand_for_cost(IC_COND(ic), a, i, G, I);
-  else if(ic->op == JUMPTABLE)
-    assign_operand_for_cost(IC_JTCOND(ic), a, i, G, I);
-  else
-    {
-      assign_operand_for_cost(IC_LEFT(ic), a, i, G, I);
-      assign_operand_for_cost(IC_RIGHT(ic), a, i, G, I);
-      assign_operand_for_cost(IC_RESULT(ic), a, i, G, I);
-    }
+  assign_operand_for_cost(IC_LEFT(ic), a, i, G, I);
+  assign_operand_for_cost(IC_RIGHT(ic), a, i, G, I);
+  assign_operand_for_cost(IC_RESULT(ic), a, i, G, I);
     
   if(ic->op == SEND && ic->builtinSEND)
     assign_operands_for_cost(a, (unsigned short)*(adjacent_vertices(i, G).first), G, I);
@@ -442,6 +435,7 @@ static float instruction_cost(const assignment &a, unsigned short int i, const G
     //case GETABIT:
     //case GETBYTE:
     //case GETWORD:
+    case ROT:
     case LEFT_OP:
     case RIGHT_OP:
     case GET_VALUE_AT_ADDRESS:
@@ -456,7 +450,6 @@ static float instruction_cost(const assignment &a, unsigned short int i, const G
     case DUMMY_READ_VOLATILE:
     /*case CRITICAL:
     case ENDCRITICAL:*/
-    case SWAP:
       assign_operands_for_cost(a, i, G, I);
       set_surviving_regs(a, i, G, I);
       c = dryPdkiCode(ic);
@@ -657,6 +650,11 @@ iCode *pdk_ralloc2_cc(ebbIndex *ebbi)
   con_t conflict_graph;
 
   ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
+
+  if(optimize.genconstprop)
+    recomputeValinfos(ic, ebbi, "_2");
+
+  guessCounts(ic, ebbi);
 
   if(options.dump_graphs)
     dump_cfg(control_flow_graph);

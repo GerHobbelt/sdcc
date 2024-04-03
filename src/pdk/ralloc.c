@@ -344,9 +344,12 @@ packRegsForOneuse (iCode *ic, operand **opp, eBBlock *ebp)
   if (dic->seq < ebp->fSeq || dic->seq > ebp->lSeq)
     return 0;                /* non-local */
 
-  /* for now handle results from assignments from globals only */
-  if (!(dic->op == '=' || dic->op == CAST && SPEC_USIGN (getSpec (operandType (IC_RIGHT (dic)))) && operandSize (op) > operandSize (IC_RIGHT (dic)))
-    || !isOperandGlobal (IC_RIGHT (dic)))
+  /* for now handle results from assignments from globals, and from 8-bit __sfr only */
+  if (!(dic->op == '=' || dic->op == CAST && SPEC_USIGN (getSpec (operandType (IC_RIGHT (dic)))) && operandSize (op) >= operandSize (IC_RIGHT (dic)) && (!IS_BITINT (OP_SYM_TYPE (IC_RIGHT (dic))) || !(SPEC_BITINTWIDTH (OP_SYM_TYPE (IC_RIGHT (dic))) % 8)))
+    || !(isOperandGlobal (IC_RIGHT (dic)) || IS_SYMOP (IC_RIGHT (dic)) && IN_REGSP (SPEC_OCLS (OP_SYMBOL (IC_RIGHT (dic))->etype)) && operandSize (op) == 1 && operandSize (IC_RIGHT (dic)) == 1))
+    return 0;
+
+  if ((IS_OP_VOLATILE (IC_LEFT (ic)) || IS_OP_VOLATILE (IC_RIGHT (ic))) && IS_OP_VOLATILE (IC_RIGHT (dic))) // Avoid swapping read order on volatiles.
     return 0;
 
   if (IS_OP_VOLATILE (IC_RESULT (ic)) && IS_OP_VOLATILE (IC_RIGHT (dic))) // Only case with two volatiles that we can optimize: Some bitwise operation on __sfr.
@@ -391,7 +394,7 @@ packRegsForOneuse (iCode *ic, operand **opp, eBBlock *ebp)
     }
 
   /* Optimize out the assignment */
-  *opp = operandFromOperand (IC_RIGHT(dic));
+  *opp = operandFromOperand (IC_RIGHT (dic));
   (*opp)->isaddr = true;
   
   bitVectUnSetBit (OP_SYMBOL (op)->defs, dic->key);
@@ -502,14 +505,14 @@ packRegisters (eBBlock * ebp)
       /* In some cases redundant moves can be eliminated */
       if (ic->op == GET_VALUE_AT_ADDRESS || ic->op == SET_VALUE_AT_ADDRESS ||
         ic->op == '+' || ic->op == '-' || ic->op == UNARYMINUS ||
-        ic->op == '|' || ic->op == '&' || ic->op == '^' ||
+        ic->op == '|' || ic->op == BITWISEAND || ic->op == '^' ||
         ic->op == EQ_OP || ic->op == NE_OP ||
         ic->op == IFX && operandSize (IC_COND (ic)) == 1 ||
         ic->op == IPUSH && operandSize (IC_LEFT (ic)) == 1 ||
         ic->op == LEFT_OP || ic->op == RIGHT_OP)
         packRegsForOneuse (ic, &(IC_LEFT (ic)), ebp);
       if (ic->op == '+' || ic->op == '-' ||
-        ic->op == '|' || ic->op == '&' || ic->op == '^' ||
+        ic->op == '|' || ic->op == BITWISEAND || ic->op == '^' ||
         ic->op == EQ_OP || ic->op == NE_OP ||
         ic->op == LEFT_OP || ic->op == RIGHT_OP)
         packRegsForOneuse (ic, &(IC_RIGHT (ic)), ebp);
@@ -523,24 +526,30 @@ packRegisters (eBBlock * ebp)
           operand *op = IC_RESULT (ic);
           if ((use->op == LEFT_OP || use->op == '+' || use->op == '-' || use->op == UNARYMINUS ||
             use->op == '&' || use->op == '|' || use->op == '^') &&
-            IC_LEFT (use)->key == op->key && (!IC_RIGHT(use) || IC_RIGHT (use)->key != op->key))
+            IC_LEFT (use)->key == op->key && (!IC_RIGHT (use) || IC_RIGHT (use)->key != op->key))
             {
-              bitVectUnSetBit (OP_SYMBOL (IC_RIGHT (ic))->uses, ic->key);
-              bitVectSetBit (OP_SYMBOL (IC_RIGHT (ic))->uses, use->key);
+              if (IS_SYMOP (ic->right))
+                {
+                  bitVectUnSetBit (OP_SYMBOL (ic->right)->uses, ic->key);
+                  bitVectSetBit (OP_SYMBOL (ic->right)->uses, use->key);
+                }
               IC_LEFT (use) = operandFromOperand (IC_RIGHT(ic));
               remiCodeFromeBBlock (ebp, ic);
               hTabDeleteItem (&iCodehTab, ic->key, ic, DELETE_ITEM, NULL);
               if(ic->prev)
                 ic = ic->prev;
             }
-          else if ((/*(use->op == SET_VALUE_AT_ADDRESS && !IS_BITVAR (getSpec (operandType (IC_LEFT (use)))) && !IS_BITVAR (getSpec (operandType (IC_RIGHT (use))))) || - resulted in pointer writes toring too few bytes*/
+          else if ((/*(use->op == SET_VALUE_AT_ADDRESS && !IS_BITVAR (getSpec (operandType (IC_LEFT (use)))) && !IS_BITVAR (getSpec (operandType (IC_RIGHT (use))))) || - resulted in pointer write storing too few bytes*/
             use->op == CAST && (SPEC_USIGN (getSpec (operandType (IC_RIGHT (use)))) || operandSize (IC_RESULT (use)) <= operandSize (IC_RIGHT (use))) ||
             use->op == LEFT_OP || use->op == RIGHT_OP || use->op == '+' || use->op == '-' ||
             use->op == '&' || use->op == '|' || use->op == '^') &&
             IC_RIGHT (use)->key == op->key && (!IC_LEFT(use) || IC_LEFT (use)->key != op->key))
             {
-              bitVectUnSetBit (OP_SYMBOL (IC_RIGHT (ic))->uses, ic->key);
-              bitVectSetBit (OP_SYMBOL (IC_RIGHT (ic))->uses, use->key);
+              if (IS_SYMOP (ic->right))
+                {
+                  bitVectUnSetBit (OP_SYMBOL (IC_RIGHT (ic))->uses, ic->key);
+                  bitVectSetBit (OP_SYMBOL (IC_RIGHT (ic))->uses, use->key);
+                }
               IC_RIGHT (use) = operandFromOperand (IC_RIGHT(ic));
               remiCodeFromeBBlock (ebp, ic);
               hTabDeleteItem (&iCodehTab, ic->key, ic, DELETE_ITEM, NULL);
@@ -690,18 +699,6 @@ pdkRegFix (eBBlock ** ebbs, int count)
         {
           if (SKIP_IC2 (ic))
             continue;
-
-          if (ic->op == IFX)
-            {
-              verifyRegsAssigned (IC_COND (ic), ic);
-              continue;
-            }
-
-          if (ic->op == JUMPTABLE)
-            {
-              verifyRegsAssigned (IC_JTCOND (ic), ic);
-              continue;
-            }
 
           verifyRegsAssigned (IC_RESULT (ic), ic);
           verifyRegsAssigned (IC_LEFT (ic), ic);

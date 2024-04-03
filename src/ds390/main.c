@@ -486,16 +486,23 @@ bool _ds390_nativeMulCheck(iCode *ic, sym_link *left, sym_link *right)
 
 /* Indicate which extended bit operations this port supports */
 static bool
-hasExtBitOp (int op, int size)
+hasExtBitOp (int op, sym_link *left, int right)
 {
-  if (op == RRC
-      || op == RLC
-      || op == GETABIT
-      || (op == SWAP && size <= 2)
-     )
-    return TRUE;
-  else
-    return FALSE;
+  switch (op)
+    {
+    case GETABIT:
+      return true;
+    case ROT:
+      {
+        unsigned int lbits = bitsForType (left);
+        if (getSize (left) <= 2 && (right % lbits  == 1 || right % lbits == lbits - 1))
+          return true;
+        if (getSize (left) <= 2 && lbits == right * 2)
+          return true;
+      }
+      return false;
+    }
+  return false;
 }
 
 /* Indicate the expense of an access to an output storage class */
@@ -978,11 +985,12 @@ get_model (void)
     $2 is always the output file.
     $3 varies
     $l is the list of extra options that should be there somewhere...
+    $L is the list of extra options that should be passed on the command line...
     MUST be terminated with a NULL.
 */
 static const char *_linkCmd[] =
 {
-  "sdld", "-nf", "$1", NULL
+  "sdld", "-nf", "$1", "$L", NULL
 };
 
 /* $3 is replaced by assembler.debug_opts resp. port->assembler.plain_opts */
@@ -1243,13 +1251,13 @@ static void _tininative_do_assemble (set *asmOptions)
         "a390","$1.mpp",NULL
     };
 
-    buf = buildCmdLine(macroCmd, dstFileName, NULL, NULL, NULL);
+    buf = buildCmdLine(macroCmd, dstFileName, NULL, NULL, NULL, NULL);
     if (sdcc_system(buf)) {
         Safe_free (buf);
         exit(1);
     }
     Safe_free (buf);
-    buf = buildCmdLine(a390Cmd, dstFileName, NULL, NULL, asmOptions);
+    buf = buildCmdLine(a390Cmd, dstFileName, NULL, NULL, asmOptions, NULL);
     if (sdcc_system(buf)) {
         Safe_free (buf);
         exit(1);
@@ -1416,7 +1424,7 @@ PORT tininative_port =
   0,                            // ABI revision
   { +1, 1, 4, 1, 1, 0, 0 },
   /* ds390 has an 16 bit mul & div */
-  { -1, FALSE },
+  { -1, false, false },         /* Neither int x int -> long nor unsigned long x unsigned char -> unsigned long long multiplication support routine. */
   { ds390_emitDebuggerSymbol },
   {
     255/4,      /* maxCount */
@@ -1673,7 +1681,7 @@ PORT ds400_port =
   { _ds400_generateRomDataArea, _ds400_linkRomDataArea },
   0,                            // ABI revision
   { +1, 1, 4, 1, 1, 0, 0 },
-  { -1, FALSE },
+  { -1, false, false },         /* Neither int x int -> long nor unsigned long x unsigned char -> unsigned long long multiplication support routine. */
   { ds390_emitDebuggerSymbol },
   {
     255/4,      /* maxCount */

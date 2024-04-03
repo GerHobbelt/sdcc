@@ -231,6 +231,7 @@ LD = @LD@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 OBJEXT = @OBJEXT@
@@ -293,6 +294,7 @@ top_srcdir = @top_srcdir@
 lib_LIBRARIES = libdebug.a
 libdebug_a_SOURCES = gstack/gstack.c
 AM_CPPFLAGS = -I. -I$(top_srcdir)/../../include/pic16 \
+	-I$(top_srcdir)/../../include \
 	-I$(top_srcdir)/../../non-free/include/pic16
 #AM_CFLAGS += --no-optimize-goto
 
@@ -311,12 +313,13 @@ AM_CFLAGS = --std-c11 --asm="$(CCAS)" --no-warn-non-free \
 	--fomit-frame-pointer --obanksel=9 --denable-peeps \
 	--optimize-cmp --optimize-df --i-code-in-asm @USE_FLOATS@
 AM_CCASFLAGS = -I$(top_srcdir)/../../include/pic16 \
+	-I$(top_srcdir)/../../include \
 	-I$(top_srcdir)/../../non-free/include/pic16 -I$(srcdir)
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/Makefile.common $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/Makefile.common $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -341,9 +344,9 @@ $(top_srcdir)/Makefile.common $(am__empty):
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 install-libLIBRARIES: $(lib_LIBRARIES)

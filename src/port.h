@@ -34,6 +34,7 @@
 #define TARGET_ID_R2KA     24
 #define TARGET_ID_MOS6502  25
 #define TARGET_ID_MOS65C02 26
+#define TARGET_ID_R800     27
 
 /* Macro to test the target we are compiling for.
    Can only be used after SDCCmain has defined the port
@@ -53,6 +54,7 @@
 #define TARGET_IS_TLCS90   (port->id == TARGET_ID_TLCS90)
 #define TARGET_IS_EZ80_Z80 (port->id == TARGET_ID_EZ80_Z80)
 #define TARGET_IS_Z80N     (port->id == TARGET_ID_Z80N)
+#define TARGET_IS_R800     (port->id == TARGET_ID_R800)
 #define TARGET_IS_HC08     (port->id == TARGET_ID_HC08)
 #define TARGET_IS_S08      (port->id == TARGET_ID_S08)
 #define TARGET_IS_STM8     (port->id == TARGET_ID_STM8)
@@ -64,7 +66,7 @@
 #define TARGET_IS_MOS65C02 (port->id == TARGET_ID_MOS65C02)
 
 #define TARGET_MCS51_LIKE  (TARGET_IS_MCS51 || TARGET_IS_DS390 || TARGET_IS_DS400)
-#define TARGET_Z80_LIKE    (TARGET_IS_Z80 || TARGET_IS_Z180 || TARGET_IS_SM83 || TARGET_IS_R2K || TARGET_IS_R2KA || TARGET_IS_R3KA || TARGET_IS_TLCS90 || TARGET_IS_EZ80_Z80 || TARGET_IS_Z80N)
+#define TARGET_Z80_LIKE    (TARGET_IS_Z80 || TARGET_IS_Z180 || TARGET_IS_SM83 || TARGET_IS_R2K || TARGET_IS_R2KA || TARGET_IS_R3KA || TARGET_IS_TLCS90 || TARGET_IS_EZ80_Z80 || TARGET_IS_Z80N || TARGET_IS_R800)
 #define TARGET_IS_RABBIT   (TARGET_IS_R2K || TARGET_IS_R2KA || TARGET_IS_R3KA)
 #define TARGET_HC08_LIKE   (TARGET_IS_HC08 || TARGET_IS_S08)
 #define TARGET_PIC_LIKE    (TARGET_IS_PIC14 || TARGET_IS_PIC16)
@@ -283,8 +285,10 @@ typedef struct
     /** Size of the biggest shift the port can handle. -1 if port can handle shifts of arbitrary size. */
     signed int shift;
 
-    /* Has support routines for int x int -> long multiplication and unsigned int x unsigned int -> unsigned long multiplication */
+    // Has support routines for int x int -> long multiplication and unsigned int x unsigned int -> unsigned long multiplication
     bool has_mulint2long;
+    // Has support routine for unsigned long x unsigned char -> unsigned long long multiplication.
+    bool has_mululonguchar2ulonglong;
   }
   support;
 
@@ -389,8 +393,13 @@ typedef struct
 
   /** Returns true if the port has implemented certain bit
       manipulation iCodes (RRC, RLC, SWAP, GETABIT, GETBYTE, GETWORD)
+      right parameter: value of right operand if in >= 0; negative if non-literal.
    */
-  bool (*hasExtBitOp) (int op, int size);
+  bool (*hasExtBitOp) (int op, sym_link *left, int right);
+
+  /** Returns true if the port has implemented certain bit
+      manipulation iCodes (RRC, RLC, SWAP, GETABIT, GETBYTE, GETWORD)
+   */
 
   /** Returns the relative expense of accessing a particular output
       storage class. Larger values indicate higher expense.
@@ -460,6 +469,9 @@ extern PORT ez80_z80_port;
 #endif
 #if !OPT_DISABLE_Z80N
 extern PORT z80n_port;
+#endif
+#if !OPT_DISABLE_R800
+extern PORT r800_port;
 #endif
 #if !OPT_DISABLE_AVR
 extern PORT avr_port;

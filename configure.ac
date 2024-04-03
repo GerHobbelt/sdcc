@@ -81,6 +81,8 @@ AC_LANG([C])
 
 AC_CHECK_HEADERS(endian.h sys/endian.h machine/endian.h sys/isa_defs.h)
 AC_CHECK_HEADERS(uchar.h)
+# zlib is not needed by sdcc itself, but by sdcpp and sdbinutils.
+AC_CHECK_HEADERS(zlib.h,,AC_MSG_ERROR([[zlib library not found (zlib.h).]]))
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADERS(treedec/combinations.hpp,,AC_MSG_NOTICE([[treedec library missing, falling back to Thorup.]]))
 AC_CHECK_HEADERS(gala/graph.h)
@@ -406,48 +408,24 @@ if test "$ac_cv_c_compiler_gnu" = "yes"; then
   fi
 
   WALL_FLAG="-Wall -Wno-parentheses"
-  C99_FLAG="--std=c99"
   MAKEDEP_CXX="$CXX $sdcc_cv_MM"
   MAKEDEP="$CC $sdcc_cv_MM"
 else
   sdcc_IS_SUNPRO
-  if test "$sdcc_cv_c_compiler_sunpro" = "yes"; then
-    C99_FLAG="-xc99"
-    CFLAGS="-xO2 ${C99_FLAG} ${CFLAGS}"
-    CXXFLAGS="-xO2 ${CXXFLAGS}"
-    WALL_FLAG=
-    MAKEDEP="$CC ${C99_FLAG} -xM1"
-    MAKEDEP_CXX="$CXX -xM1"
-  fi
 fi
 
 AC_SUBST(MAKEDEP)
 AC_SUBST(MAKEDEP_CXX)
 AC_SUBST(WALL_FLAG)
-AC_SUBST(C99_FLAG)
 
-# Try to append a c99 flag
+# Check for c11
 # -------------------------------------------------------------------------
-AC_PROG_CC_C99
-if test "$ac_cv_prog_cc_c99" != "no"; then
-  CFLAGS="$ac_cv_prog_cc_c99 ${CFLAGS}"
+if test "$ac_cv_prog_cc_c11" == "no"; then
+  AC_MSG_ERROR([Could not find C11-capable host compiler.])
 fi
 
 # Checks for typedefs, structures, and compiler characteristics.
 # ===========================================================================
-m4_warn([obsolete],
-[your code may safely assume C89 semantics that RETSIGTYPE is void.
-Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
-AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
-[AC_LANG_PROGRAM([#include <sys/types.h>
-#include <signal.h>
-],
-		 [return *(signal (0, 0)) (0) == 1;])],
-		   [ac_cv_type_signal=int],
-		   [ac_cv_type_signal=void])])
-AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
-		    (`int' or `void').])
-
 
 AC_CHECK_SIZEOF(char)
 AC_CHECK_SIZEOF(short)
@@ -809,6 +787,7 @@ AC_DO_PORT(sm83,     z80,    SM83,     [Excludes the SM83 port])
 AC_DO_PORT(tlcs90,   z80,    TLCS90,   [Excludes the TLCS-90 port])
 AC_DO_PORT(ez80_z80, z80,    EZ80_Z80, [Excludes the EZ80-Z80 port])
 AC_DO_PORT(z80n,     z80,    Z80N,     [Excludes the Z80N port])
+AC_DO_PORT(r800,     z80,    R800,     [Excludes the R800 port])
 AC_DO_PORT(ds390,    ds390,  DS390,    [Excludes the DS390 port])
 AC_DEFINE_UNQUOTED(OPT_DISABLE_TININative, $OPT_DISABLE_DS390, [XXX])
 AC_DO_PORT(ds400,    ds390,  DS400,    [Excludes the DS400 port])
@@ -822,7 +801,7 @@ AC_DO_PORT(pdk14,    pdk,    PDK14,    [Excludes the PDK14 port])
 AC_DO_PORT(pdk15,    pdk,    PDK15,    [Excludes the PDK15 port])
 AC_DO_PORT_ENABLER(pdk16,    pdk,    PDK16,    [Includes the PDK16 port])
 AC_DO_PORT(mos6502,  mos6502,MOS6502,  [Excludes the MOS6502 port])
-AC_DO_PORT_ENABLER(mos65c02, mos6502,MOS65C02, [Includes the MOS65C02 port])
+AC_DO_PORT(mos65c02, mos6502,MOS65C02, [Excludes the MOS65C02 port])
 
 # Unsupported targets
 ####AC_DO_PORT_ENABLER(avr,   avr,   AVR,   [Includes the AVR port (disabled by default)])
@@ -890,7 +869,8 @@ if test $OPT_DISABLE_HC08 = 0 || test $OPT_DISABLE_S08 = 0; then
   AC_CONFIG_FILES([src/hc08/Makefile
                    sdas/as6808/Makefile])
   test $OPT_DISABLE_DEVICE_LIB = 0 && AC_CONFIG_FILES([device/lib/hc08/Makefile
-                                                       device/lib/s08/Makefile])
+                                                       device/lib/s08/Makefile
+                                                       device/lib/s08-stack-auto/Makefile])
 fi
 
 if test $OPT_DISABLE_MOS6502 = 0 || test $OPT_DISABLE_MOS65C02 = 0; then
@@ -926,16 +906,17 @@ if test $OPT_DISABLE_PIC16 = 0 && test $OPT_DISABLE_NON_FREE = 0; then
   test $OPT_DISABLE_DEVICE_LIB = 0 && AC_CONFIG_SUBDIRS(device/non-free/lib/pic16)
 fi
 
-if test $OPT_DISABLE_Z80 = 0 || test $OPT_DISABLE_Z180 = 0 || test $OPT_DISABLE_R2K = 0 || test $OPT_DISABLE_R2KA = 0 || test $OPT_DISABLE_R3KA = 0 || test $OPT_DISABLE_SM83 = 0 || test $OPT_DISABLE_TLCS90 = 0 || test $OPT_DISABLE_EZ80_Z80 = 0 || test $OPT_DISABLE_Z80N = 0; then
+if test $OPT_DISABLE_Z80 = 0 || test $OPT_DISABLE_Z180 = 0 || test $OPT_DISABLE_R2K = 0 || test $OPT_DISABLE_R2KA = 0 || test $OPT_DISABLE_R3KA = 0 || test $OPT_DISABLE_SM83 = 0 || test $OPT_DISABLE_TLCS90 = 0 || test $OPT_DISABLE_EZ80_Z80 = 0 || test $OPT_DISABLE_Z80N = 0 || test $OPT_DISABLE_R800 = 0; then
   AC_CONFIG_FILES([src/z80/Makefile])
 fi
 
-if test $OPT_DISABLE_Z80 = 0 || test $OPT_DISABLE_Z180 = 0 || test $OPT_DISABLE_EZ80_Z80 = 0 || test $OPT_DISABLE_Z80N = 0; then
+if test $OPT_DISABLE_Z80 = 0 || test $OPT_DISABLE_Z180 = 0 || test $OPT_DISABLE_EZ80_Z80 = 0 || test $OPT_DISABLE_Z80N = 0 || test $OPT_DISABLE_R800 = 0; then
   AC_CONFIG_FILES([sdas/asz80/Makefile])
   test $OPT_DISABLE_DEVICE_LIB = 0 && AC_CONFIG_FILES([device/lib/z80/Makefile
                                                        device/lib/z180/Makefile
                                                        device/lib/ez80_z80/Makefile
-                                                       device/lib/z80n/Makefile])
+                                                       device/lib/z80n/Makefile
+                                                       device/lib/r800/Makefile])
 fi
 
 if test $OPT_DISABLE_R2K = 0 || test $OPT_DISABLE_R2KA = 0 || test $OPT_DISABLE_R3KA = 0; then
@@ -1074,6 +1055,7 @@ sdcc ${VERSION} is now configured for
     tlcs90              ${enable_tlcs90_port}
     ez80_z80            ${enable_ez80_z80_port}
     z80n                ${enable_z80n_port}
+    r800                ${enable_r800_port}
     stm8                ${enable_stm8_port}
     pdk13               ${enable_pdk13_port}
     pdk14               ${enable_pdk14_port}

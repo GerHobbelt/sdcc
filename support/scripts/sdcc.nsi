@@ -401,12 +401,12 @@ ${Section} "SDCC application files" SEC01
   File "${SDCC_ROOT}\bin\packihx.exe"
   File "${SDCC_ROOT}\bin\sdcc.exe"
   File "${SDCC_ROOT}\bin\sdcpp.exe"
-  File "${SDCC_ROOT}\bin\cc1.exe"
+  File "${SDCC_ROOT}\libexec\sdcc\cc1"
   File "${SDCC_ROOT}\bin\as2gbmap.cmd"
   File "${SDCC_ROOT}\bin\readline5.dll"
-!ifdef WIN64
   File "${SDCC_ROOT}\bin\libgcc_s_*-1.dll"
   File "${SDCC_ROOT}\bin\libstdc++-6.dll"
+!ifdef WIN64
   File "${SDCC_ROOT}\bin\libwinpthread-1.dll"
 !endif
 ${SectionEnd}
@@ -416,11 +416,7 @@ ${Section} "ucSim application files" SEC02
   SetOutPath "$INSTDIR\bin"
   File "${SDCC_ROOT}\bin\s51.exe"
   File "${SDCC_ROOT}\bin\ucsim_51.exe"
-  File "${SDCC_ROOT}\bin\ucsim_m6800.exe"
-  File "${SDCC_ROOT}\bin\ucsim_m6809.exe"
   File "${SDCC_ROOT}\bin\ucsim_m68hc08.exe"
-  File "${SDCC_ROOT}\bin\ucsim_m68hc11.exe"
-  File "${SDCC_ROOT}\bin\ucsim_m68hc12.exe"
   File "${SDCC_ROOT}\bin\ucsim_mos6502.exe"
   File "${SDCC_ROOT}\bin\ucsim_pdk.exe"
   File "${SDCC_ROOT}\bin\ucsim_rxk.exe"
@@ -789,7 +785,6 @@ ${Section} "SDCC library sources" SEC25
 #  File "${DEV_ROOT}\lib\src\pic16\libio\usart\Makefile"
 
   SetOutPath "$INSTDIR\lib\src\pic16\libm"
-  File "${DEV_ROOT}\lib\src\pic16\libm\*.c"
 #  File "${DEV_ROOT}\lib\src\pic16\libm\Makefile"
 
   SetOutPath "$INSTDIR\lib\src\pic16\libsdcc"
@@ -803,10 +798,6 @@ ${Section} "SDCC library sources" SEC25
   File "${DEV_ROOT}\lib\src\pic16\libsdcc\fixed16x16\*.c"
   File "${DEV_ROOT}\lib\src\pic16\libsdcc\fixed16x16\*.S"
 #  File "${DEV_ROOT}\lib\src\pic16\libsdcc\fixed16x16\Makefile"
-
-  SetOutPath "$INSTDIR\lib\src\pic16\libsdcc\float"
-  File "${DEV_ROOT}\lib\src\pic16\libsdcc\float\*.c"
-#  File "${DEV_ROOT}\lib\src\pic16\libsdcc\float\Makefile"
 
   SetOutPath "$INSTDIR\lib\src\pic16\libsdcc\gptr"
   File "${DEV_ROOT}\lib\src\pic16\libsdcc\gptr\*.c"
@@ -890,6 +881,24 @@ ${Section} "SDCC MOS 6502 library" SEC34
   File "${DEV_ROOT}\lib\mos6502\*.*"
 ${SectionEnd}
 
+${Section} "SDCC R800 library" SEC35
+  SectionIn 1 2
+  SetOutPath "$INSTDIR\lib\r800"
+  File "${DEV_ROOT}\lib\r800\*.*"
+${SectionEnd}
+
+${Section} "SDCC WDC 65C02 library" SEC36
+  SectionIn 1 2
+  SetOutPath "$INSTDIR\lib\mos65c02"
+  File "${DEV_ROOT}\lib\mos65c02\*.*"
+${SectionEnd}
+
+${Section} "SDCC S08 stack-auto library" SEC37
+  SectionIn 1 2
+  SetOutPath "$INSTDIR\lib\s08-stack-auto"
+  File "${DEV_ROOT}\lib\s08-stack-auto\*.*"
+${SectionEnd}
+
 ;--------------------------------
 ;Descriptions
 
@@ -928,6 +937,9 @@ LangString DESC_SEC31 ${LANG_ENGLISH} "SDCC PDK15 stack-auto library"
 LangString DESC_SEC32 ${LANG_ENGLISH} "SDCC Z80N library"
 LangString DESC_SEC33 ${LANG_ENGLISH} "SDCC Rabbit 2000A library"
 LangString DESC_SEC34 ${LANG_ENGLISH} "SDCC MOS 6502 library"
+LangString DESC_SEC35 ${LANG_ENGLISH} "SDCC R800 library"
+LangString DESC_SEC36 ${LANG_ENGLISH} "SDCC WDC 65C02 library"
+LangString DESC_SEC37 ${LANG_ENGLISH} "SDCC S08 stack-auto library"
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -967,6 +979,9 @@ LangString DESC_SEC34 ${LANG_ENGLISH} "SDCC MOS 6502 library"
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC32} $(DESC_SEC32)
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC33} $(DESC_SEC33)
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC34} $(DESC_SEC34)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC35} $(DESC_SEC35)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC36} $(DESC_SEC36)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC37} $(DESC_SEC37)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 ;--------------------------------
 
@@ -1133,6 +1148,18 @@ ${Section} Uninstall SECUNINSTALL
   Delete "$INSTDIR\lib\src\z80n\README"
   Delete "$INSTDIR\lib\src\z80n\Makefile"
 
+  Delete "$INSTDIR\lib\src\r800n\*.s"
+  Delete "$INSTDIR\lib\src\r800\r800.lib"
+  Delete "$INSTDIR\lib\src\r800\README"
+  Delete "$INSTDIR\lib\src\r800\Makefile"
+
+  Delete "$INSTDIR\lib\src\mos65c02\*.s"
+  Delete "$INSTDIR\lib\src\mos65c02\mos65c02.lib"
+  Delete "$INSTDIR\lib\src\mos65c02\Makefile"
+
+  Delete "$INSTDIR\lib\src\s08-stack-auto\pdk15.lib"
+  Delete "$INSTDIR\lib\src\s08-stack-auto\Makefile"
+
   Delete "$INSTDIR\lib\src\*.c"
 
   Delete "$INSTDIR\lib\pic14\*.lib"
@@ -1205,6 +1232,14 @@ ${Section} Uninstall SECUNINSTALL
   Delete "$INSTDIR\lib\z80n\*.rel"
   Delete "$INSTDIR\lib\z80n\*.lib"
 
+  Delete "$INSTDIR\lib\r800\*.rel"
+  Delete "$INSTDIR\lib\r800\*.lib"
+
+  Delete "$INSTDIR\lib\mos65c02\*.rel"
+  Delete "$INSTDIR\lib\mos65c02\*.lib"
+
+  Delete "$INSTDIR\lib\s08-stack-auto\*.lib"
+
   Delete "$INSTDIR\include\asm\z80\*.h"
   Delete "$INSTDIR\include\asm\r2k\*.h"
   Delete "$INSTDIR\include\asm\r3ka\*.h"
@@ -1260,12 +1295,12 @@ ${Section} Uninstall SECUNINSTALL
   Delete "$INSTDIR\bin\packihx.exe"
   Delete "$INSTDIR\bin\sdcc.exe"
   Delete "$INSTDIR\bin\sdcpp.exe"
-  Delete "$INSTDIR\bin\cc1.exe"
+  Delete "$INSTDIR\bin\cc1"
   Delete "$INSTDIR\bin\as2gbmap.cmd"
   Delete "$INSTDIR\bin\readline5.dll"
-!ifdef WIN64
   Delete "$INSTDIR\bin\libgcc_s_*-1.dll"
   Delete "$INSTDIR\bin\libstdc++-6.dll"
+!ifdef WIN64
   Delete "$INSTDIR\bin\libwinpthread-1.dll"
 !endif
 
@@ -1275,11 +1310,7 @@ ${Section} Uninstall SECUNINSTALL
   Delete "$INSTDIR\bin\sstm8.exe"
 
   Delete "$INSTDIR\bin\ucsim_51.exe"
-  Delete "$INSTDIR\bin\ucsim_m6800.exe"
-  Delete "$INSTDIR\bin\ucsim_m6809.exe"
   Delete "$INSTDIR\bin\ucsim_m68hc08.exe"
-  Delete "$INSTDIR\bin\ucsim_m68hc11.exe"
-  Delete "$INSTDIR\bin\ucsim_m68hc12.exe"
   Delete "$INSTDIR\bin\ucsim_mos6502.exe"
   Delete "$INSTDIR\bin\ucsim_pdk.exe"
   Delete "$INSTDIR\bin\ucsim_rxk.exe"
@@ -1327,6 +1358,9 @@ ${Section} Uninstall SECUNINSTALL
   RMDir "$INSTDIR\lib\src\tlcs90"
   RMDir "$INSTDIR\lib\src\mos6502"
   RMDir "$INSTDIR\lib\src\z80n"
+  RMDir "$INSTDIR\lib\src\r800"
+  RMDir "$INSTDIR\lib\src\mos65c02"
+  RMDir "$INSTDIR\lib\src\s08-stack-auto"
   RMDir "$INSTDIR\lib\src"
   RMDir "$INSTDIR\non-free\lib\src"
 
@@ -1360,6 +1394,9 @@ ${Section} Uninstall SECUNINSTALL
   RMDir "$INSTDIR\lib\tlcs90"
   RMDir "$INSTDIR\lib\mos6502"
   RMDir "$INSTDIR\lib\z80n"
+  RMDir "$INSTDIR\lib\r800"
+  RMDir "$INSTDIR\lib\mos65c02"
+  RMDir "$INSTDIR\lib\s08-stack-auto"
   RMDir "$INSTDIR\lib"
   RMDir "$INSTDIR\non-free\lib"
 

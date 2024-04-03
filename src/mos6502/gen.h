@@ -44,9 +44,9 @@ AOP_TYPE;
 typedef struct asmop
   {
     AOP_TYPE type;		
+    short coff;			/* current offset */
     short size;			/* total size */    	
     short regmask;              /* register mask if AOP_REG */
-    short coff;			/* current offset */
     operand *op;		/* originating operand */
     unsigned freed:1;		/* already freed    */
     unsigned stacked:1;		/* partial results stored on stack */
@@ -56,10 +56,7 @@ typedef struct asmop
 	value *aop_lit;		/* if literal */
 	reg_info *aop_reg[4];	/* array of registers */
 	char *aop_dir;		/* if direct  */
-	struct {
-		char *aop_immd1;	/* if immediate others are implied */
-		char *aop_immd2;	/* cast remat will generate this   */
-	} aop_immd;
+        char *aop_immd;         /* if immediate */
 	int aop_stk;		/* stack offset when AOP_STK */
     } aopu;
   }
@@ -71,8 +68,6 @@ void m6502_emitDebuggerSymbol (const char *);
 extern unsigned fReturnSizeM6502;
 
 extern bool m6502_assignment_optimal;
-
-#define NUM_TEMP_REGS 8
 
 #endif
 

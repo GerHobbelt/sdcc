@@ -6,6 +6,7 @@
   Bug Fixes - Wojciech Stryjewski  wstryj1@tiger.lsu.edu (1999 v2.1.9a)
   Hacked for the 68HC08:
   Copyright (C) 2003, Erik Petrich
+  Copyright (c) 2023, Philipp Klaus Krause philipp@colecovision.eu
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the
@@ -251,7 +252,7 @@ transferRegReg (reg_info *sreg, reg_info *dreg, bool freesrc)
 
 /*--------------------------------------------------------------------------*/
 /* updateCFA - update the debugger information to reflect the current       */
-/*             connonical frame address relative to the stack pointer       */
+/*             canonical frame address relative to the stack pointer        */
 /*--------------------------------------------------------------------------*/
 static void
 updateCFA (void)
@@ -262,6 +263,39 @@ updateCFA (void)
 
   if (options.debug && !regalloc_dry_run)
     debugFile->writeFrameAddress (NULL, hc08_reg_sp, 1 + _G.stackOfs + _G.stackPushes);
+}
+
+/*-----------------------------------------------------------------*/
+/* aopIsLitVal - asmop from offset is val                          */
+/*-----------------------------------------------------------------*/
+static bool
+aopIsLitVal (const asmop *aop, int offset, int size, unsigned long long int val)
+{
+  wassert_bt (size <= sizeof (unsigned long long int)); // Make sure we are not testing outside of argument val.
+
+  for(; size; size--, offset++)
+    {
+      unsigned char b = val & 0xff;
+      val >>= 8;
+
+      // Leading zeroes
+      if (aop->size <= offset && !b && aop->type != AOP_LIT)
+        continue;
+
+      // Information from generalized constant propagation analysis
+      if (!aop->valinfo.anything &&
+        ((aop->valinfo.knownbitsmask >> (offset * 8)) & 0xff) == 0xff &&
+        ((aop->valinfo.knownbits >> (offset * 8)) & 0xff) == b)
+        continue;
+
+      if (aop->type != AOP_LIT)
+        return (false);
+
+      if (byteOfVal (aop->aopu.aop_lit, offset) != b)
+        return (false);
+    }
+
+  return (true);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -533,7 +567,7 @@ aopName (asmop * aop)
   switch (aop->type)
     {
     case AOP_IMMD:
-      sprintf (buf, "IMMD(%s)", aop->aopu.aop_immd.aop_immd1);
+      sprintf (buf, "IMMD(%s)", aop->aopu.aop_immd);
       return buf;
     case AOP_LIT:
       sprintf (buf, "LIT(%s)", aopLiteral (aop->aopu.aop_lit, 0));
@@ -1688,17 +1722,18 @@ accopWithAop (char *accop, asmop *aop, int loffset)
   if (aop->type == AOP_DUMMY)
     return;
 
-  if (loffset >= aop->size)
+  if (aop->type == AOP_REG)
     {
-      emitcode (accop, "#0");
-      regalloc_dry_run_cost += 2;
-    }
-  else if (aop->type == AOP_REG)
+  if (loffset < aop->size)
     {
       pushReg (aop->aopu.aop_reg[loffset], false);
       emitcode (accop, "1,s");
       regalloc_dry_run_cost += 3;
       pullNull (1);
+    } else {
+      emitcode (accop, "#0");
+      regalloc_dry_run_cost += 2;
+    }
     }
   else
     {
@@ -2035,6 +2070,7 @@ newAsmop (short type)
   aop = Safe_calloc (1, sizeof (asmop));
   aop->type = type;
   aop->op = NULL;
+  aop->valinfo.anything = true;
   return aop;
 }
 
@@ -2170,8 +2206,8 @@ aopForSym (iCode * ic, symbol * sym, bool result)
   if (IS_FUNC (sym->type))
     {
       sym->aop = aop = newAsmop (AOP_IMMD);
-      aop->aopu.aop_immd.aop_immd1 = Safe_calloc (1, strlen (sym->rname) + 1);
-      strcpy (aop->aopu.aop_immd.aop_immd1, sym->rname);
+      aop->aopu.aop_immd = Safe_calloc (1, strlen (sym->rname) + 1);
+      strcpy (aop->aopu.aop_immd, sym->rname);
       aop->size = FARPTRSIZE;
       return aop;
     }
@@ -2180,7 +2216,7 @@ aopForSym (iCode * ic, symbol * sym, bool result)
   if (sym->onStack)
     {
       sym->aop = aop = newAsmop (AOP_SOF);
-      aop->aopu.aop_dir = sym->rname;
+//      aop->aopu.aop_dir = sym->rname;
       aop->size = getSize (sym->type);
       aop->aopu.aop_stk = sym->stack;
 
@@ -2280,8 +2316,7 @@ aopForRemat (symbol * sym)
         }
 
       aop = newAsmop (AOP_IMMD);
-      aop->aopu.aop_immd.aop_immd1 = Safe_strdup (buffer);
-      /* set immd2 field if required */
+      aop->aopu.aop_immd = Safe_strdup (buffer);
     }
   else if (ic->op == '=')
     {
@@ -2379,7 +2414,7 @@ operandsEqu (operand *op1, operand *op2)
 /* sameRegs - two asmops have the same registers                   */
 /*-----------------------------------------------------------------*/
 static bool
-sameRegs (asmop * aop1, asmop * aop2)
+sameRegs (asmop *aop1, asmop *aop2)
 {
   int i;
 
@@ -2389,7 +2424,7 @@ sameRegs (asmop * aop1, asmop * aop2)
 //  if (aop1->size != aop2->size)
 //    return false;
 
-  if (aop1->type == aop2->type)
+  if (aop1->type == aop2->type && aop1->size == aop2->size)
     {
       switch (aop1->type)
         {
@@ -2405,6 +2440,8 @@ sameRegs (asmop * aop1, asmop * aop2)
             return false;
         case AOP_EXT:
           return (!strcmp (aop1->aopu.aop_dir, aop2->aopu.aop_dir));
+        default:
+          break;
         }
     }
 
@@ -2438,6 +2475,8 @@ aopOp (operand *op, iCode * ic, bool result)
       aop->aopu.aop_lit = OP_VALUE (op);
       aop->size = getSize (operandType (op));
       aop->op = op;
+      if (!result)
+        aop->valinfo = getOperandValinfo (ic, op);
       return;
     }
 
@@ -2470,6 +2509,8 @@ aopOp (operand *op, iCode * ic, bool result)
     {
       op->aop = aop = aopForSym (ic, OP_SYMBOL (op), result);
       aop->op = op;
+      if (!result)
+        aop->valinfo = getOperandValinfo (ic, op);
       //printf ("new symbol %s\n", OP_SYMBOL (op)->name);
       //printf (" with size = %d\n", aop->size);
       return;
@@ -2494,6 +2535,8 @@ aopOp (operand *op, iCode * ic, bool result)
       sym->aop = op->aop = aop = newAsmop (AOP_CRY);
       aop->size = 0;
       aop->op = op;
+      if (!result)
+        aop->valinfo = getOperandValinfo (ic, op);
       return;
     }
 
@@ -2510,6 +2553,8 @@ aopOp (operand *op, iCode * ic, bool result)
           sym->aop = op->aop = aop = aopForRemat (sym);
           aop->size = getSize (sym->type);
           aop->op = op;
+          if (!result)
+            aop->valinfo = getOperandValinfo (ic, op);
           return;
         }
 
@@ -2526,6 +2571,8 @@ aopOp (operand *op, iCode * ic, bool result)
             sym->aop = op->aop = aop = newAsmop (AOP_DIR);
           aop->size = getSize (sym->type);
           aop->op = op;
+          if (!result)
+            aop->valinfo = getOperandValinfo (ic, op);
           return;
         }
 
@@ -2551,6 +2598,8 @@ aopOp (operand *op, iCode * ic, bool result)
           aop->op = op;
           //printf ("spill symbol %s\n", OP_SYMBOL (op)->name);
           //printf (" with size = %d\n", aop->size);
+          if (!result)
+            aop->valinfo = getOperandValinfo (ic, op);
           return;
         }
 
@@ -2558,6 +2607,8 @@ aopOp (operand *op, iCode * ic, bool result)
       sym->aop = op->aop = aop = newAsmop (AOP_DUMMY);
       aop->size = getSize (sym->type);
       aop->op = op;
+      if (!result)
+        aop->valinfo = getOperandValinfo (ic, op);
       return;
     }
 
@@ -2575,11 +2626,13 @@ aopOp (operand *op, iCode * ic, bool result)
   if ((sym->nRegs > 1) && (sym->regs[0]->mask > sym->regs[1]->mask))
     aop->regmask |= HC08MASK_REV;
   aop->op = op;
+  if (!result)
+    aop->valinfo = getOperandValinfo (ic, op);
 }
 
 /*-----------------------------------------------------------------*/
 /* freeAsmop - free up the asmop given to an operand               */
-/*----------------------------------------------------------------*/
+/*-----------------------------------------------------------------*/
 static void
 freeAsmop (operand * op, asmop * aaop, iCode * ic, bool pop)
 {
@@ -2670,11 +2723,11 @@ aopDerefAop (asmop * aop, int offset)
       else
         newaop = newAsmop (AOP_EXT);
       if (!offset)
-        newaop->aopu.aop_dir = aop->aopu.aop_immd.aop_immd1;
+        newaop->aopu.aop_dir = aop->aopu.aop_immd;
       else
         {
           dbuf_init (&dbuf, 64);
-          dbuf_printf (&dbuf, "(%s+%d)", aop->aopu.aop_immd.aop_immd1, offset);
+          dbuf_printf (&dbuf, "(%s+%d)", aop->aopu.aop_immd, offset);
           newaop->aopu.aop_dir = dbuf_detach_c_str (&dbuf);
         }
       break;
@@ -2701,7 +2754,6 @@ aopDerefAop (asmop * aop, int offset)
       werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "unsupported asmop");
       return NULL;
     }
-
 
   return newaop;
 }
@@ -2817,12 +2869,12 @@ aopAdrStr (asmop * aop, int loffset, bool bit16)
       if (loffset)
         {
           if (loffset > 1)
-            sprintf (s, "#(%s >> %d)", aop->aopu.aop_immd.aop_immd1, loffset * 8);
+            sprintf (s, "#(%s >> %d)", aop->aopu.aop_immd, loffset * 8);
           else
-            sprintf (s, "#>%s", aop->aopu.aop_immd.aop_immd1);
+            sprintf (s, "#>%s", aop->aopu.aop_immd);
         }
       else
-        sprintf (s, "#%s", aop->aopu.aop_immd.aop_immd1);
+        sprintf (s, "#%s", aop->aopu.aop_immd);
       rs = Safe_calloc (1, strlen (s) + 1);
       strcpy (rs, s);
       return rs;
@@ -2885,6 +2937,8 @@ aopAdrStr (asmop * aop, int loffset, bool bit16)
         }
       else
         return ",x";
+    default:
+      break;
     }
 
   werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "aopAdrStr got unsupported aop->type");
@@ -3141,7 +3195,7 @@ asmopToBool (asmop *aop, bool resultInA)
 /*           The caller is responsible for aopOp and freeAsmop     */
 /*-----------------------------------------------------------------*/
 static void
-genCopy (operand * result, operand * source)
+genCopy (operand *result, operand *source)
 {
   int size = AOP_SIZE (result);
   int srcsize = AOP_SIZE (source);
@@ -3214,41 +3268,100 @@ genCopy (operand * result, operand * source)
       return;
     }
 
-   if (IS_HC08 && (size > 2))
+   if (IS_HC08 && (size > 2) && size == srcsize /* todo: load adjusted value into hx when srcsize > size to generate better code */)
      aopOpExtToIdx (AOP (result), NULL, AOP (source));
-    
-  /* general case */
-  /* Copy in msb to lsb order, since some multi-byte hardware registers */
-  /* expect this order. */
-  offset = size - 1;
-  while (size)
-    {
-      if (size >= 2 && hc08_reg_h->isDead && hc08_reg_x->isDead  &&
-        (AOP_TYPE (source) == AOP_IMMD || AOP_TYPE (source) == AOP_LIT ||IS_S08 && AOP_TYPE (source) == AOP_EXT) &&
-        (AOP_TYPE (result) == AOP_DIR || IS_S08 && AOP_TYPE (result) == AOP_EXT))
-        {
-          loadRegFromAop (hc08_reg_hx, AOP (source), offset - 1);
-          storeRegToAop (hc08_reg_hx, AOP (result), offset - 1);
-          offset -= 2;
-          size -= 2;
-        }
 
-      else
+  /* general case */
+  bool need_lsb_to_msb_order = false; // Copy in msb to lsb order, if possible, since some multi-byte hardware registers expect this order.
+  if ((result->aop->type == AOP_DIR || result->aop->type == AOP_SOF) && // Avoid overwriting still-needed value.
+    result->aop->type == source->aop->type)
+   {
+     bool overlap = false;
+     bool result_at_lower_address = false;
+     if (result->aop->type == AOP_DIR)
+       {
+         symbol *rsym = OP_SYMBOL (result);
+         symbol *ssym = OP_SYMBOL (source);
+         if(rsym && ssym && !strcmp (rsym->rname, ssym->rname))
+           {
+             overlap = true;
+             result_at_lower_address = (result->aop->size < source->aop->size);
+           }
+       }
+     else if (result->aop->type == AOP_SOF)
+       {
+         // todo.
+       }
+     else
+       wassert (0);
+     need_lsb_to_msb_order = (overlap && result_at_lower_address);
+   }
+  if (need_lsb_to_msb_order)
+    {
+      wassert (!IS_OP_VOLATILE (result) && !IS_OP_VOLATILE (source));
+      offset = 0;
+      while (size)
         {
-          if (AOP_TYPE (source) == AOP_IDX && AOP_TYPE (result) == AOP_DIR)
+          if (size >= 2 && hc08_reg_h->isDead && hc08_reg_x->isDead &&
+            (AOP_TYPE (source) == AOP_IMMD || AOP_TYPE (source) == AOP_LIT || IS_S08 && AOP_TYPE (source) == AOP_EXT) &&
+            (AOP_TYPE (result) == AOP_DIR || IS_S08 && AOP_TYPE (result) == AOP_EXT))
             {
-              emitcode ("mov", ",x+,%s", aopAdrStr (AOP (result), offset, false));
-              regalloc_dry_run_cost += 2;
-            }
-          else if (AOP_TYPE (source) == AOP_DIR && AOP_TYPE (result) == AOP_IDX)
-            {
-              emitcode ("mov", "%s,x+", aopAdrStr (AOP (source), offset, false));
-              regalloc_dry_run_cost += 2;
+              loadRegFromAop (hc08_reg_hx, AOP (source), offset);
+              storeRegToAop (hc08_reg_hx, AOP (result), offset);
+              hc08_freeReg (hc08_reg_hx);
+              offset += 2;
+              size -= 2;
             }
           else
-            transferAopAop (AOP (source), offset, AOP (result), offset);
-          offset--;
-          size--;
+            {
+              if (AOP_TYPE (source) == AOP_IDX && AOP_TYPE (result) == AOP_DIR)
+                {
+                  emitcode ("mov", ",x+,%s", aopAdrStr (AOP (result), offset, false));
+                  regalloc_dry_run_cost += 2;
+                }
+              else if (AOP_TYPE (source) == AOP_DIR && AOP_TYPE (result) == AOP_IDX)
+                {
+                  emitcode ("mov", "%s,x+", aopAdrStr (AOP (source), offset, false));
+                  regalloc_dry_run_cost += 2;
+                }
+              else
+                transferAopAop (AOP (source), offset, AOP (result), offset);
+              offset++;
+              size--;
+            }
+        }
+    }
+  else
+    {
+      offset = size - 1;
+      while (size)
+        {
+          if (size >= 2 && hc08_reg_h->isDead && hc08_reg_x->isDead  &&
+            (AOP_TYPE (source) == AOP_IMMD || AOP_TYPE (source) == AOP_LIT ||IS_S08 && AOP_TYPE (source) == AOP_EXT) &&
+            (AOP_TYPE (result) == AOP_DIR || IS_S08 && AOP_TYPE (result) == AOP_EXT))
+            {
+              loadRegFromAop (hc08_reg_hx, AOP (source), offset - 1);
+              storeRegToAop (hc08_reg_hx, AOP (result), offset - 1);
+              offset -= 2;
+              size -= 2;
+            }
+          else
+            {
+              if (AOP_TYPE (source) == AOP_IDX && AOP_TYPE (result) == AOP_DIR)
+                {
+                  emitcode ("mov", ",x+,%s", aopAdrStr (AOP (result), offset, false));
+                  regalloc_dry_run_cost += 2;
+                }
+              else if (AOP_TYPE (source) == AOP_DIR && AOP_TYPE (result) == AOP_IDX)
+                {
+                  emitcode ("mov", "%s,x+", aopAdrStr (AOP (source), offset, false));
+                  regalloc_dry_run_cost += 2;
+                }
+              else
+                transferAopAop (AOP (source), offset, AOP (result), offset);
+              offset--;
+              size--;
+            }
         }
     }
 }
@@ -3398,6 +3511,11 @@ genUminus (iCode * ic)
   bool needpula;
   asmop *result;
 
+  sym_link *resulttype = operandType (IC_RESULT (ic));
+  unsigned topbytemask = (IS_BITINT (resulttype) && SPEC_USIGN (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+  bool maskedtopbyte = (topbytemask != 0xff);
+
   D (emitcode (";     genUminus", ""));
 
   /* assign asmops */
@@ -3422,6 +3540,11 @@ genUminus (iCode * ic)
       needpula = pushRegIfSurv (hc08_reg_a);
       loadRegFromAop (hc08_reg_a, AOP (IC_LEFT (ic)), 0);
       rmwWithReg ("neg", hc08_reg_a);
+      if (maskedtopbyte)
+        {
+          emitcode ("and", "#0x%02x", topbytemask);
+          regalloc_dry_run_cost += 2;
+        }
       hc08_freeReg (hc08_reg_a);
       storeRegToFullAop (hc08_reg_a, AOP (IC_RESULT (ic)), SPEC_USIGN (operandType (IC_LEFT (ic))));
       pullOrFreeReg (hc08_reg_a, needpula);
@@ -3630,8 +3753,6 @@ assignResultValue (operand * oper)
     pullReg (hc08_reg_x);
 }
 
-
-
 /*-----------------------------------------------------------------*/
 /* genIpush - generate code for pushing this gets a little complex */
 /*-----------------------------------------------------------------*/
@@ -3700,6 +3821,35 @@ genIpush (iCode * ic)
     }
 
 release:
+  freeAsmop (IC_LEFT (ic), NULL, ic, true);
+}
+
+/*-----------------------------------------------------------------*/
+/* genPointerPush - generate code for pushing                      */
+/*-----------------------------------------------------------------*/
+static void
+genPointerPush (iCode *ic)
+{
+  operand *left = IC_LEFT (ic);
+
+  D (emitcode (";     genPointerPush", ""));
+
+  aopOp (left, ic, false);
+
+  wassertl (IC_RIGHT (ic), "IPUSH_VALUE_AT_ADDRESS without right operand");
+  wassertl (IS_OP_LITERAL (IC_RIGHT (ic)), "IPUSH_VALUE_AT_ADDRESS with non-literal right operand");
+  wassertl (!operandLitValue (IC_RIGHT(ic)), "IPUSH_VALUE_AT_ADDRESS with non-zero right operand");
+
+  loadRegFromAop (hc08_reg_hx, left->aop, 0);
+  /* so hx now contains the address */
+
+  int size = getSize (operandType (IC_LEFT (ic))->next);
+  while (size--)
+    {
+      loadRegIndexed (hc08_reg_a, size, 0);
+      pushReg (hc08_reg_a, true);
+    }
+
   freeAsmop (IC_LEFT (ic), NULL, ic, true);
 }
 
@@ -3810,6 +3960,49 @@ genSend (set *sendSet)
 }
 
 /*-----------------------------------------------------------------*/
+/* pushbigreturn - emit code to push hidden pointer for struct return */
+/*-----------------------------------------------------------------*/
+static void
+pushbigreturn (operand *result)
+{
+  wassert (result);
+
+  symbol *sym = OP_SYMBOL (result);
+  wassert (sym);
+
+  if (sym->onStack)
+    {
+      /* if it has an offset then we need to compute it */
+      int offset = _G.stackOfs + _G.stackPushes + sym->stack;
+      hc08_useReg (hc08_reg_hx);
+      emitcode ("tsx", "");
+      hc08_dirtyReg (hc08_reg_hx, false);
+      regalloc_dry_run_cost++;
+      while (offset > 127)
+        {
+          emitcode ("aix", "#127");
+          regalloc_dry_run_cost += 2;
+          offset -= 127;
+        }
+      while (offset < -128)
+        {
+          emitcode ("aix", "#-128");
+          regalloc_dry_run_cost += 2;
+          offset += 128;
+        }
+      if (offset)
+        {
+          emitcode ("aix", "#%d", offset);
+          regalloc_dry_run_cost += 2;
+        }
+    }
+  else
+    loadRegFromImm (hc08_reg_hx, sym->rname);
+
+  pushReg (hc08_reg_hx, true);
+}
+
+/*-----------------------------------------------------------------*/
 /* genCall - generates a call statement                            */
 /*-----------------------------------------------------------------*/
 static void
@@ -3828,6 +4021,8 @@ genCall (iCode * ic)
 
   dtype = operandType (IC_LEFT (ic));
   etype = getSpec (dtype);
+  const bool bigreturn = IS_STRUCT (dtype->next);
+
   /* if send set is not empty then assign */
   if (_G.sendSet && !regalloc_dry_run)
     {
@@ -3841,6 +4036,10 @@ genCall (iCode * ic)
         }
       _G.sendSet = NULL;
     }
+
+  // Pass pointer for storing return value
+  if (bigreturn)
+    pushbigreturn (IC_RESULT (ic));
 
   /* make the call */
   if (IS_LITERAL (etype))
@@ -3860,8 +4059,12 @@ genCall (iCode * ic)
   hc08_dirtyReg (hc08_reg_a, false);
   hc08_dirtyReg (hc08_reg_hx, false);
 
+  // Adjust stack pointer for the hidden pointer parameter.
+  if (bigreturn)
+    adjustStack (2);
+
   /* if we need assign a result value */
-  if ((IS_ITEMP (IC_RESULT (ic)) &&
+  else if ((IS_ITEMP (IC_RESULT (ic)) &&
        (OP_SYMBOL (IC_RESULT (ic))->nRegs || OP_SYMBOL (IC_RESULT (ic))->spildir)) || IS_TRUE_SYMOP (IC_RESULT (ic)))
     {
       hc08_useReg (hc08_reg_a);
@@ -4259,6 +4462,14 @@ genRet (iCode * ic)
      move the return value into place */
   aopOp (IC_LEFT (ic), ic, false);
   size = AOP_SIZE (IC_LEFT (ic));
+  const bool bigreturn = IS_STRUCT (operandType (IC_LEFT (ic)));
+
+  if (bigreturn) // todo: implement!
+    {
+      if (!regalloc_dry_run)
+        werror ( E_FUNC_AGGR);
+      goto jumpret;
+    }
 
   if (AOP_TYPE (IC_LEFT (ic)) == AOP_LIT)
     {
@@ -4461,7 +4672,7 @@ genPlusIncr (iCode * ic)
 /* genPlus - generates code for addition                           */
 /*-----------------------------------------------------------------*/
 static void
-genPlus (iCode * ic)
+genPlus (iCode *ic)
 {
   int size, offset = 0;
   char *add;
@@ -4471,6 +4682,10 @@ genPlus (iCode * ic)
   bool delayedstore = false;
   bool mayskip = true;
   bool skip = false;
+  sym_link *resulttype = operandType (IC_RESULT (ic));
+  unsigned topbytemask = (IS_BITINT (resulttype) && SPEC_USIGN (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+  bool maskedtopbyte = (topbytemask != 0xff);
 
   /* special cases :- */
 
@@ -4488,11 +4703,9 @@ genPlus (iCode * ic)
       IC_LEFT (ic) = t;
     }
 
-
-
   /* if I can do an increment instead
      of add then GOOD for ME */
-  if (genPlusIncr (ic) == true)
+  if (!maskedtopbyte && genPlusIncr (ic))
     goto release;
 
   DD (emitcode ("", ";  left size = %d", getDataSize (IC_LEFT (ic))));
@@ -4522,9 +4735,14 @@ genPlus (iCode * ic)
         pullReg (hc08_reg_a);
       else
         loadRegFromAop (hc08_reg_a, leftOp, offset);
-      if (!mayskip || AOP_TYPE (IC_RIGHT (ic)) != AOP_LIT || (byteOfVal (AOP (IC_RIGHT (ic))->aopu.aop_lit, offset) != 0x00) )
+      if (!mayskip || !aopIsLitVal (rightOp, offset, 1, 0x00))
         {
           accopWithAop (add, rightOp, offset);
+          if (!size && maskedtopbyte)
+            {
+              emitcode ("and", "#0x%02x", topbytemask);
+              regalloc_dry_run_cost += 2;
+            }
           mayskip = false;
           skip = false;
         }
@@ -4652,6 +4870,11 @@ genMinus (iCode * ic)
   bool earlystore = false;
   bool delayedstore = false;
 
+  sym_link *resulttype = operandType (IC_RESULT (ic));
+  unsigned topbytemask = (IS_BITINT (resulttype) && SPEC_USIGN (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+  bool maskedtopbyte = (topbytemask != 0xff);
+
   asmop *leftOp, *rightOp;
 
   D (emitcode (";     genMinus", ""));
@@ -4663,7 +4886,7 @@ genMinus (iCode * ic)
   /* special cases :- */
   /* if I can do an decrement instead
      of subtract then GOOD for ME */
-  if (genMinusDec (ic) == true)
+  if (!maskedtopbyte && genMinusDec (ic))
     goto release;
 
   aopOpExtToIdx (AOP (IC_RESULT (ic)), AOP (IC_LEFT (ic)), AOP (IC_RIGHT (ic)));
@@ -4683,6 +4906,11 @@ genMinus (iCode * ic)
       loadRegFromAop (hc08_reg_a, rightOp, offset);
       accopWithAop (sub, leftOp, offset);
       accopWithMisc ("nega", "");
+      if (maskedtopbyte)
+        {
+          emitcode ("and", "#0x%02x", topbytemask);
+          regalloc_dry_run_cost += 2;
+        }
       storeRegToAop (hc08_reg_a, AOP (IC_RESULT (ic)), offset);
       pullOrFreeReg (hc08_reg_a, needpulla);
       goto release;
@@ -4714,6 +4942,12 @@ genMinus (iCode * ic)
           loadRegFromAop (hc08_reg_a, leftOp, offset);
           accopWithAop (sub, rightOp, offset);
         }
+      if (!size && maskedtopbyte)
+        {
+          emitcode ("and", "#0x%02x", topbytemask);
+          regalloc_dry_run_cost += 2;
+        }
+        
       if (size && AOP_TYPE (IC_RESULT (ic)) == AOP_REG && AOP (IC_RESULT (ic))->aopu.aop_reg[offset]->rIdx == A_IDX)
         {
           pushReg (hc08_reg_a, true);
@@ -5884,7 +6118,15 @@ genCmpEQorNE (iCode * ic, iCode * ifx)
       while (size--)
         {
           if (AOP_TYPE (left) == AOP_REG && AOP (left)->aopu.aop_reg[offset]->rIdx == X_IDX)
-            accopWithAop ("cpx", AOP (right), offset);
+            {
+              if (aopIsLitVal (right->aop, offset, 1, 0x00))
+                {
+                  emitcode ("tstx", "");
+                  regalloc_dry_run_cost++;
+                }
+              else
+                accopWithAop ("cpx", AOP (right), offset);
+            }
           else
             {
               if (!(AOP_TYPE (left) == AOP_REG && AOP (left)->aopu.aop_reg[offset]->rIdx == A_IDX))
@@ -5892,7 +6134,13 @@ genCmpEQorNE (iCode * ic, iCode * ifx)
                   needpulla = pushRegIfSurv (hc08_reg_a);
                   loadRegFromAop (hc08_reg_a, AOP (left), offset);
                 }
-              accopWithAop ("cmp", AOP (right), offset);
+              if (aopIsLitVal (right->aop, offset, 1, 0x00))
+                {
+                  emitcode ("tsta", "");
+                  regalloc_dry_run_cost++;
+                }
+              else
+                accopWithAop ("cmp", AOP (right), offset);
               if (!(AOP_TYPE (left) == AOP_REG && AOP (left)->aopu.aop_reg[offset]->rIdx == A_IDX))
                 pullOrFreeReg (hc08_reg_a, needpulla);
               needpulla = false;
@@ -6149,6 +6397,45 @@ isLiteralBit (unsigned long lit)
   return 0;
 }
 
+/*-----------------------------------------------------------------*/
+/* maskByte - apply bit mask to byte of operand                    */
+/*-----------------------------------------------------------------*/
+void maskByte (operand *op, int offset, unsigned mask)
+{
+  mask &= 0xff;
+  if (mask == 0xff)
+    return;
+  wassert (offset < op->aop->size);
+  bool in_a = (op->aop->type == AOP_REG && op->aop->aopu.aop_reg[offset]->rIdx == A_IDX);
+  bool in_x = (op->aop->type == AOP_REG && op->aop->aopu.aop_reg[offset]->rIdx == X_IDX);
+  if (in_a)
+    {
+      emitcode ("and", "#0x%02x", mask);
+      regalloc_dry_run_cost += 2;
+    }
+  else if (in_x && mask == 0x7f)
+    {
+      emitcode ("lslx", "");
+      emitcode ("lsrx", "");
+      regalloc_dry_run_cost += 2;
+    }
+  else if (op->aop->type == AOP_DIR && isLiteralBit (~mask & 0xff))
+    {
+      int bitpos = isLiteralBit (~mask & 0xff) - 1;
+      emitcode ("bclr", "#%d,%s", bitpos & 7, aopAdrStr (op->aop, offset, false));
+      regalloc_dry_run_cost += 3;
+    }
+  else
+    {
+      bool needpula = pushRegIfUsed (hc08_reg_a);
+      loadRegFromAop (hc08_reg_a, op->aop, offset);
+      emitcode ("and", "#0x%02x", mask);
+      regalloc_dry_run_cost += 2;
+      hc08_useReg (hc08_reg_a);
+      storeRegToAop (hc08_reg_a, op->aop, offset);
+      pullOrFreeReg (hc08_reg_a, needpula);
+    }
+}
 
 /*-----------------------------------------------------------------*/
 /* genAnd  - code for and                                          */
@@ -6340,7 +6627,7 @@ genAnd (iCode * ic, iCode * ifx)
 
   if (AOP_TYPE (right) == AOP_LIT)
     {
-      litinv = (~lit) & (((unsigned int) 0xffffffff) >> (8 * (4 - size)));
+      litinv = (~lit) & ((0xffffffffffffffffull) >> (8 * (8 - size)));
       if (sameRegs (AOP (IC_LEFT (ic)), AOP (IC_RESULT (ic))) && (AOP_TYPE (left) == AOP_DIR) && isLiteralBit (litinv))
         {
           bitpos = isLiteralBit (litinv) - 1;
@@ -6360,23 +6647,26 @@ genAnd (iCode * ic, iCode * ifx)
     }
   while (size--)
     {
-      bytemask = (lit >> (offset * 8)) & 0xff;
-
       if (earlystore && offset == 1)
         pullReg (hc08_reg_a);
-      if (AOP_TYPE (right) == AOP_LIT && bytemask == 0)
+      if (aopIsLitVal (left->aop, offset, 1, 0x00) || aopIsLitVal (right->aop, offset, 1, 0x00))
         {
           if (isOperandVolatile (left, false))
             {
               loadRegFromAop (hc08_reg_a, AOP (left), offset);
               hc08_freeReg (hc08_reg_a);
             }
+          if (isOperandVolatile (right, false))
+            {
+              loadRegFromAop (hc08_reg_a, AOP (left), offset);
+              hc08_freeReg (hc08_reg_a);
+            }
           storeConstToAop (0, AOP (result), offset);
         }
-      else if (AOP_TYPE (right) == AOP_LIT && bytemask == 0xff)
-        {
-          transferAopAop (AOP (left), offset, AOP (result), offset);
-        }
+      else if (aopIsLitVal (right->aop, offset, 1, 0xff) && !isOperandVolatile (left, false))
+        transferAopAop (left->aop, offset, result->aop, offset);
+      else if (aopIsLitVal (left->aop, offset, 1, 0xff) && !isOperandVolatile (right, false))
+        transferAopAop (right->aop, offset, result->aop, offset);
       else
         {
           loadRegFromAop (hc08_reg_a, AOP (left), offset);
@@ -6545,11 +6835,9 @@ genOr (iCode * ic, iCode * ifx)
     }
   while (size--)
     {
-      bytemask = (lit >> (offset * 8)) & 0xff;
-
       if (earlystore && offset == 1)
         pullReg (hc08_reg_a);
-      if (AOP_TYPE (right) == AOP_LIT && bytemask == 0xff)
+      if (aopIsLitVal (right->aop, offset, 1, 0xff))
         {
           if (isOperandVolatile (left, false))
             {
@@ -6558,10 +6846,10 @@ genOr (iCode * ic, iCode * ifx)
             }
           transferAopAop (AOP (right), offset, AOP (result), offset);
         }
-      else if (AOP_TYPE (right) == AOP_LIT && bytemask == 0)
-        {
-          transferAopAop (AOP (left), offset, AOP (result), offset);
-        }
+      else if (aopIsLitVal (right->aop, offset, 1, 0x00))
+        transferAopAop (left->aop, offset, result->aop, offset);
+      else if (aopIsLitVal (left->aop, offset, 1, 0x00))
+        transferAopAop (right->aop, offset, result->aop, offset);
       else
         {
           loadRegFromAop (hc08_reg_a, AOP (left), offset);
@@ -6677,7 +6965,8 @@ genXor (iCode * ic, iCode * ifx)
       if (earlystore && offset == 1)
         pullReg (hc08_reg_a);
       loadRegFromAop (hc08_reg_a, AOP (left), offset);
-      accopWithAop ("eor", AOP (right), offset);
+      if (!aopIsLitVal (right->aop, offset, 1, 0x00))
+        accopWithAop ("eor", right->aop, offset);
       storeRegToAop (hc08_reg_a, AOP (result), offset);
       if (AOP_TYPE (result) == AOP_REG && size && AOP (result)->aopu.aop_reg[offset]->rIdx == A_IDX)
         {
@@ -6962,30 +7251,28 @@ genRLC (iCode * ic)
         }
     }
 
-  if ((!hc08_reg_a->isFree) || resultInA)
-    {
-      pushReg (hc08_reg_a, true);
-      needpula = true;
-    }
-
   /* now we need to put the carry into the
      lowest order byte of the result */
-  offset = 0;
-  emitcode ("clra", "");
-  emitcode ("rola", "");
-  regalloc_dry_run_cost += 2;
-  hc08_dirtyReg (hc08_reg_a, false);
   if (resultInA)
     {
-      emitcode ("ora", "1,s");
-      pullNull (1);
-      regalloc_dry_run_cost += 3;
-      hc08_dirtyReg (hc08_reg_a, false);
-      needpula = false;
+      emitcode ("adc", "#0x00");
+      regalloc_dry_run_cost += 2;
     }
   else
-    accopWithAop ("ora", AOP (result), offset);
-  storeRegToAop (hc08_reg_a, AOP (result), offset);
+    {
+      if (!hc08_reg_a->isFree)
+        {
+          pushReg (hc08_reg_a, true);
+          needpula = true;
+        }
+      offset = 0;
+      emitcode ("clra", "");
+      emitcode ("rola", "");
+      regalloc_dry_run_cost += 2;
+      hc08_dirtyReg (hc08_reg_a, false);
+      accopWithAop ("ora", AOP (result), offset);
+      storeRegToAop (hc08_reg_a, AOP (result), offset);
+    }
 
   pullOrFreeReg (hc08_reg_a, needpula);
 
@@ -7146,15 +7433,6 @@ genSwap (iCode * ic)
 
   switch (AOP_SIZE (left))
     {
-    case 1:                    /* swap nibbles in byte */
-      needpulla = pushRegIfSurv (hc08_reg_a);
-      loadRegFromAop (hc08_reg_a, AOP (left), 0);
-      emitcode ("nsa", "");
-      regalloc_dry_run_cost++;
-      hc08_dirtyReg (hc08_reg_a, false);
-      storeRegToAop (hc08_reg_a, AOP (result), 0);
-      pullOrFreeReg (hc08_reg_a, needpulla);
-      break;
     case 2:                    /* swap bytes in a word */
       if (IS_AOP_XA (AOP (left)) && IS_AOP_AX (AOP (result)) ||
         IS_AOP_AX (AOP (left)) && IS_AOP_XA (AOP (result)))
@@ -7190,7 +7468,6 @@ genSwap (iCode * ic)
   freeAsmop (result, NULL, ic, true);
 }
 
-#if 0
 /*-----------------------------------------------------------------*/
 /* AccRol - rotate left accumulator by known count                 */
 /*-----------------------------------------------------------------*/
@@ -7204,38 +7481,61 @@ AccRol (int shCount)
     case 0:
       break;
     case 1:
-      emitcode ("rola", "");    /* 1 cycle */
+      emitcode ("lsla", "");    /* 1 cycle */
+      emitcode ("adc", "#0x00");/* 2 cycles */
+      regalloc_dry_run_cost += 3;
       break;
     case 2:
-      emitcode ("rola", "");    /* 1 cycle */
-      emitcode ("rola", "");    /* 1 cycle */
+      emitcode ("lsla", "");    /* 1 cycle */
+      emitcode ("adc", "#0x00");/* 2 cycles */
+      emitcode ("lsla", "");    /* 1 cycle */
+      emitcode ("adc", "#0x00");/* 2 cycles */
+      regalloc_dry_run_cost += 6;
       break;
     case 3:
-      emitcode ("nsa", "");
-      emitcode ("rora", "");
-      break;
+      emitcode ("nsa", "");     /* 3 cycles */
+      regalloc_dry_run_cost++;
+      goto ror;
     case 4:
       emitcode ("nsa", "");     /* 3 cycles */
+      regalloc_dry_run_cost++;
       break;
     case 5:
       emitcode ("nsa", "");     /* 3 cycles */
-      emitcode ("rola", "");    /* 1 cycle */
+      emitcode ("lsla", "");    /* 1 cycle */
+      emitcode ("adc", "#0x00");/* 2 cycles */
+      regalloc_dry_run_cost += 4;
       break;
     case 6:
       emitcode ("nsa", "");     /* 3 cycles */
-      emitcode ("rola", "");    /* 1 cycle */
-      emitcode ("rola", "");    /* 1 cycle */
+      emitcode ("lsla", "");    /* 1 cycle */
+      emitcode ("adc", "#0x00");/* 2 cycles */
+      emitcode ("lsla", "");    /* 1 cycle */
+      emitcode ("adc", "#0x00");/* 2 cycles */
+      regalloc_dry_run_cost += 7;
       break;
     case 7:
-      emitcode ("nsa", "");     /* 3 cycles */
-      emitcode ("rola", "");    /* 1 cycle */
-      emitcode ("rola", "");    /* 1 cycle */
-      emitcode ("rola", "");    /* 1 cycle */
+ror:
+      emitcode ("lsra", "");     /* 1 cycle */
+      emitcode ("psha", "");     /* 2 cycles */
+      emitcode ("clra", "");     /* 1 cycle */
+      emitcode ("rora", "");     /* 1 cycles */
+      emitcode ("ora", "1, s"); /* 1 cycles */
+      regalloc_dry_run_cost += 6;
+      if (hc08_reg_h->isFree && optimize.codeSize)
+        {
+          emitcode ("pulh", "");      /* 1 byte,  3 cycles */
+          regalloc_dry_run_cost++;
+        }
+      else
+        {
+          emitcode ("ais", "#1"); /* 2 bytes, 2 cycles */
+          regalloc_dry_run_cost += 2;
+        }
       break;
     }
+  hc08_dirtyReg (hc08_reg_a, false);
 }
-#endif
-
 
 /*-----------------------------------------------------------------*/
 /* AccLsh - left shift accumulator by known count                  */
@@ -7604,12 +7904,21 @@ XAccRsh (int shCount, bool sign)
 /* shiftL1Left2Result - shift left one byte from left to result    */
 /*-----------------------------------------------------------------*/
 static void
-shiftL1Left2Result (operand * left, int offl, operand * result, int offr, int shCount)
+shiftL1Left2Result (operand *left, int offl, operand *result, int offr, int shCount)
 {
+  sym_link *resulttype = operandType (result);
+  unsigned bytemask = (IS_BITINT (resulttype) && SPEC_USIGN (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+  bool maskedbyte = (bytemask != 0xff);
+
   bool needpulla = pushRegIfSurv (hc08_reg_a);
   loadRegFromAop (hc08_reg_a, AOP (left), offl);
-  /* shift left accumulator */
-  AccLsh (shCount);
+  AccLsh (shCount); // Shift left accumulator.
+  if (maskedbyte)
+    {
+      emitcode ("and", "#0x%02x", bytemask);
+      regalloc_dry_run_cost += 2;
+    }
   storeRegToAop (hc08_reg_a, AOP (result), offr);
   pullOrFreeReg (hc08_reg_a, needpulla);
 }
@@ -7711,13 +8020,17 @@ genlshOne (operand * result, operand * left, int shCount)
 /* genlshTwo - left shift two bytes by known amount != 0           */
 /*-----------------------------------------------------------------*/
 static void
-genlshTwo (operand * result, operand * left, int shCount)
+genlshTwo (operand *result, operand *left, int shCount)
 {
   int size;
   bool needpulla, needpullx;
 
-  D (emitcode (";     genlshTwo", ""));
+  sym_link *resulttype = operandType (result);
+  unsigned topbytemask = (IS_BITINT (resulttype) && SPEC_USIGN (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+  bool maskedtopbyte = (topbytemask != 0xff);
 
+  D (emitcode (";     genlshTwo", ""));
 
   size = getDataSize (result);
 
@@ -7731,6 +8044,11 @@ genlshTwo (operand * result, operand * left, int shCount)
         {
           loadRegFromAop (hc08_reg_a, AOP (left), 0);
           AccLsh (shCount);
+          if (maskedtopbyte)
+            {
+              emitcode ("and", "#0x%02x", topbytemask);
+              regalloc_dry_run_cost += 2;
+            }
           storeRegToAop (hc08_reg_a, AOP (result), 1);
         }
       storeConstToAop (0, AOP (result), LSB);
@@ -7744,6 +8062,24 @@ genlshTwo (operand * result, operand * left, int shCount)
       needpullx = pushRegIfSurv (hc08_reg_x);
       loadRegFromAop (hc08_reg_xa, AOP (left), 0);
       XAccLsh (shCount);
+      if (maskedtopbyte)
+        {
+          if (topbytemask == 0x7f)
+            {
+              emitcode ("lslx", "");
+              emitcode ("lsrx", "");
+              regalloc_dry_run_cost += 2;
+            }
+          else
+            {
+              emitcode ("psha", "");
+              emitcode ("txa", "");
+              emitcode ("and", "#0x%02x", topbytemask);
+              emitcode ("tax", "");
+              emitcode ("pula", "");
+              regalloc_dry_run_cost += 6;
+            }
+        }
       storeRegToFullAop (hc08_reg_xa, AOP (result), 0);
       pullOrFreeReg (hc08_reg_x, needpullx);
       pullOrFreeReg (hc08_reg_a, needpulla);
@@ -7799,6 +8135,11 @@ static void
 genlshFour (operand * result, operand * left, int shCount)
 {
   int size;
+
+  sym_link *resulttype = operandType (result);
+  unsigned topbytemask = (IS_BITINT (resulttype) && SPEC_USIGN (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+  bool maskedtopbyte = (topbytemask != 0xff);
 
   D (emitcode (";     genlshFour", ""));
 
@@ -7880,6 +8221,8 @@ genlshFour (operand * result, operand * left, int shCount)
       shiftLLong (left, result, LSB);
       if (shCount == 2)
         shiftLLong (result, result, LSB);
+      if (maskedtopbyte)
+        maskByte (result, 3, topbytemask);
     }
   /* 3 <= shCount <= 7, optimize */
   else
@@ -7887,7 +8230,58 @@ genlshFour (operand * result, operand * left, int shCount)
       shiftL2Left2Result (left, MSB24, result, MSB24, shCount);
       shiftRLeftOrResult (left, MSB16, result, MSB24, 8 - shCount);
       shiftL2Left2Result (left, LSB, result, LSB, shCount);
+      if (maskedtopbyte)
+        maskByte (result, 3, topbytemask);
     }
+}
+
+/*-----------------------------------------------------------------*/
+/* genRot1 - generates code for rotation of 8-bit values           */
+/*-----------------------------------------------------------------*/
+static void
+genRot1 (iCode *ic)
+{
+  operand *left = IC_LEFT (ic);
+  operand *right = IC_RIGHT (ic);
+  operand *result = IC_RESULT (ic);
+
+  aopOp (left, ic, false);
+  aopOp (result, ic, false);
+
+  wassert (bitsForType (operandType (left)) == 8);
+  wassert (IS_OP_LITERAL (right));
+
+  int s = operandLitValueUll (right) % 8;
+
+  bool needpulla = pushRegIfSurv (hc08_reg_a);
+  loadRegFromAop (hc08_reg_a, left->aop, 0);
+  AccRol (s);
+  storeRegToAop (hc08_reg_a, result->aop, 0);
+  pullOrFreeReg (hc08_reg_a, needpulla);
+
+  freeAsmop (result, NULL, ic, true);
+  freeAsmop (left, NULL, ic, true);
+}
+
+/*-----------------------------------------------------------------*/
+/* genRot - generates code for rotation                            */
+/*-----------------------------------------------------------------*/
+static void
+genRot (iCode *ic)
+{
+  operand *left = IC_LEFT (ic);
+  operand *right = IC_RIGHT (ic);
+  unsigned int lbits = bitsForType (operandType (left));
+  if (lbits == 8)
+    genRot1 (ic);
+  else if (IS_OP_LITERAL (right) && operandLitValueUll (right) % lbits == 1)
+    genRLC (ic);
+  else if (IS_OP_LITERAL (right) && operandLitValueUll (right) % lbits ==  lbits - 1)
+    genRRC (ic);
+  else if (IS_OP_LITERAL (right) && operandLitValueUll (right) %lbits == lbits / 2)
+    genSwap (ic);
+  else
+    wassertl (0, "Unsupported rotation.");
 }
 
 /*-----------------------------------------------------------------*/
@@ -7937,8 +8331,10 @@ genLeftShiftLiteral (operand * left, operand * right, operand * result, iCode * 
         case 4:
           genlshFour (result, left, shCount);
           break;
+
         default:
           werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "*** ack! mystery literal shift!\n");
+          fprintf (stderr, "Shift by %d\n", size);
           break;
         }
     }
@@ -7950,7 +8346,7 @@ genLeftShiftLiteral (operand * left, operand * right, operand * result, iCode * 
 /* genLeftShift - generates code for left shifting                 */
 /*-----------------------------------------------------------------*/
 static void
-genLeftShift (iCode * ic)
+genLeftShift (iCode *ic)
 {
   operand *left, *right, *result;
   int size, offset;
@@ -7966,11 +8362,17 @@ genLeftShift (iCode * ic)
   left = IC_LEFT (ic);
   result = IC_RESULT (ic);
 
+  sym_link *resulttype = operandType (result);
+  unsigned topbytemask = (IS_BITINT (resulttype) && SPEC_USIGN (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+  bool maskedtopbyte = (topbytemask != 0xff);
+
   aopOp (right, ic, false);
 
   /* if the shift count is known then do it
      as efficiently as possible */
-  if (AOP_TYPE (right) == AOP_LIT)
+  if (AOP_TYPE (right) == AOP_LIT &&
+    (getSize (operandType (result)) == 1 || getSize (operandType (result)) == 2 || getSize (operandType (result)) == 4))
     {
       genLeftShiftLiteral (left, right, result, ic);
       return;
@@ -7991,7 +8393,7 @@ genLeftShift (iCode * ic)
 
   /* now move the left to the result if they are not the
      same */
-  if (IS_AOP_HX (AOP (result)))
+  if (IS_AOP_HX (aopResult) && !aopResult->stacked)
     loadRegFromAop (hc08_reg_hx, AOP (left), 0);
   else if (IS_AOP_AX (AOP (result)) && IS_AOP_XA (AOP (left)) || IS_AOP_XA (AOP (result)) && IS_AOP_AX (AOP (left)))
     {
@@ -8000,9 +8402,9 @@ genLeftShift (iCode * ic)
       regalloc_dry_run_cost++;
       pullReg (hc08_reg_a);
     }
-  else if (!sameRegs (AOP (left), aopResult))
+  else if (!sameRegs (left->aop, aopResult))
     {
-      size = AOP_SIZE (result);
+      int size = AOP_SIZE (result);
       offset = 0;
       while (size--)
         {
@@ -8044,7 +8446,8 @@ genLeftShift (iCode * ic)
   emitcode (countreg == hc08_reg_a ? "tsta" : (countreg ? "tstx" : "tst 1, s"), "");
   regalloc_dry_run_cost += (countreg ? 1 : 3);
 
-  emitBranch ("beq", tlbl1);
+  if (right->aop->type != AOP_LIT || !ulFromVal (right->aop->aopu.aop_lit))
+    emitBranch ("beq", tlbl1);
   if (!regalloc_dry_run)
     emitLabel (tlbl);
 
@@ -8061,10 +8464,35 @@ genLeftShift (iCode * ic)
   if (!regalloc_dry_run)
     emitLabel (tlbl1);
 
+  // After loop, countreg is 0
+  if (countreg)
+    {
+      countreg->isLitConst = 1;
+      countreg->litConst = 0;
+    }
+
   if (!countreg)
     pullNull (1);
   else
     pullOrFreeReg (countreg, needpullcountreg);
+
+  if (maskedtopbyte)
+    {
+      bool in_a = (result->aop->type == AOP_REG && result->aop->aopu.aop_reg[size - 1]->rIdx == A_IDX);
+      bool needpull = false;
+      if (!in_a)
+        {
+          needpull = pushRegIfUsed (hc08_reg_a);
+          loadRegFromAop (hc08_reg_a, result->aop, size - 1);
+        }
+      emitcode ("and", "#0x%02x", topbytemask);
+      regalloc_dry_run_cost += 2;
+      if (!in_a)
+        {
+          storeRegToAop (hc08_reg_a, result->aop, size - 1);
+          pullOrFreeReg (hc08_reg_a, needpull);
+        }
+    }
 
   freeAsmop (result, NULL, ic, true);
   freeAsmop (right, NULL, ic, true);
@@ -8344,7 +8772,6 @@ static void
 genRightShift (iCode * ic)
 {
   operand *right, *left, *result;
-  sym_link *retype;
   int size, offset;
   symbol *tlbl, *tlbl1;
   char *shift;
@@ -8354,11 +8781,6 @@ genRightShift (iCode * ic)
   reg_info *countreg = NULL;
 
   D (emitcode (";     genRightShift", ""));
-
-  /* if signed then we do it the hard way preserve the
-     sign bit moving it inwards */
-  retype = getSpec (operandType (IC_RESULT (ic)));
-  sign = !SPEC_USIGN (retype);
 
   /* signed & unsigned types are treated the same : i.e. the
      signed is NOT propagated inwards : quoting from the
@@ -8371,11 +8793,16 @@ genRightShift (iCode * ic)
   left = IC_LEFT (ic);
   result = IC_RESULT (ic);
 
+  /* if signed then we do it the hard way preserve the
+     sign bit moving it inwards */
+  sign = !SPEC_USIGN (getSpec (operandType (left)));
+
   aopOp (right, ic, false);
 
   /* if the shift count is known then do it
      as efficiently as possible */
-  if (AOP_TYPE (right) == AOP_LIT)
+  if (AOP_TYPE (right) == AOP_LIT &&
+    (getSize (operandType (result)) == 1 || getSize (operandType (result)) == 2 || getSize (operandType (result)) == 4))
     {
       genRightShiftLiteral (left, right, result, ic, sign);
       return;
@@ -8396,7 +8823,7 @@ genRightShift (iCode * ic)
 
   /* now move the left to the result if they are not the
      same */
-  if (IS_AOP_HX (AOP (result)))
+  if (IS_AOP_HX (aopResult) && !aopResult->stacked)
     loadRegFromAop (hc08_reg_hx, AOP (left), 0);
   else if (IS_AOP_AX (AOP (result)) && IS_AOP_XA (AOP (left)) || IS_AOP_XA (AOP (result)) && IS_AOP_AX (AOP (left)))
     {
@@ -8405,9 +8832,9 @@ genRightShift (iCode * ic)
       regalloc_dry_run_cost++;
       pullReg (hc08_reg_a);
     }
-  else if (!sameRegs (AOP (left), aopResult))
+  else if (!sameRegs (left->aop, aopResult))
     {
-      size = AOP_SIZE (result);
+      int size = AOP_SIZE (result);
       offset = 0;
       while (size--)
         {
@@ -8432,6 +8859,7 @@ genRightShift (iCode * ic)
   else if(!IS_AOP_A (AOP (result)) && !IS_AOP_XA (AOP (result)) && !IS_AOP_AX (AOP (result)))
     countreg = hc08_reg_a;
   needpullcountreg = (countreg && pushRegIfSurv (countreg));
+  wassert (right->aop); // This can fail is left and right are the same, resulting in a segfault later (bug #3598).
   if(countreg)
     {
       countreg->isFree = false;
@@ -8449,7 +8877,8 @@ genRightShift (iCode * ic)
   emitcode (countreg == hc08_reg_a ? "tsta" : (countreg ? "tstx" : "tst 1, s"), "");
   regalloc_dry_run_cost += (countreg ? 1 : 3);
 
-  emitBranch ("beq", tlbl1);
+  if (right->aop->type != AOP_LIT || !ulFromVal (right->aop->aopu.aop_lit))
+    emitBranch ("beq", tlbl1);
   if (!regalloc_dry_run)
     emitLabel (tlbl);
 
@@ -8466,6 +8895,13 @@ genRightShift (iCode * ic)
 
   if (!regalloc_dry_run)
     emitLabel (tlbl1);
+
+  // After loop, countreg is 0
+  if (countreg)
+    {
+      countreg->isLitConst = 1;
+      countreg->litConst = 0;
+    }
 
   if (!countreg)
     pullNull (1);
@@ -8500,7 +8936,7 @@ decodePointerOffset (operand * opOffset, int * litOffset, char ** rematOffset)
       if (aop->type == AOP_LIT)
         *litOffset = (int) floatFromVal (aop->aopu.aop_lit);
       else if (aop->type == AOP_IMMD)
-        *rematOffset = aop->aopu.aop_immd.aop_immd1;
+        *rematOffset = aop->aopu.aop_immd;
     }
   else
     wassertl (0, "Pointer get/set with non-constant offset");
@@ -9308,7 +9744,7 @@ genPackBitsImmed (operand * result, operand * left, sym_link * etype, operand * 
   int rlen = 0;                 /* remaining bitfield length */
   unsigned blen;                /* bitfield length */
   unsigned bstr;                /* bitfield starting bit within byte */
-  int litval;                   /* source literal value (if AOP_LIT) */
+  unsigned long long int litval;/* source literal value (if AOP_LIT) */
   unsigned char mask;           /* bitmask within current byte */
   bool needpulla;
   int litOffset = 0;
@@ -9333,7 +9769,7 @@ genPackBitsImmed (operand * result, operand * left, sym_link * etype, operand * 
     {
       if (AOP_TYPE (right) == AOP_LIT)
         {
-          litval = (int) ulFromVal (AOP (right)->aopu.aop_lit);
+          litval = ullFromVal (AOP (right)->aopu.aop_lit);
 
           emitcode ((litval & 1) ? "bset" : "bclr", "#%d,%s", bstr, aopAdrStr (derefaop, 0, false));
           regalloc_dry_run_cost += 2;
@@ -9371,7 +9807,7 @@ genPackBitsImmed (operand * result, operand * left, sym_link * etype, operand * 
         {
           /* Case with a bitfield length <8 and literal source
            */
-          litval = (int) ulFromVal (AOP (right)->aopu.aop_lit);
+          litval = ullFromVal (AOP (right)->aopu.aop_lit);
           litval <<= bstr;
           litval &= (~mask) & 0xff;
 
@@ -9384,7 +9820,7 @@ genPackBitsImmed (operand * result, operand * left, sym_link * etype, operand * 
             }
           if (litval)
             {
-              emitcode ("ora", "#0x%02x", litval);
+              emitcode ("ora", "#0x%02llx", litval);
               regalloc_dry_run_cost += 2;
             }
           hc08_dirtyReg (hc08_reg_a, false);
@@ -9445,7 +9881,7 @@ genPackBitsImmed (operand * result, operand * left, sym_link * etype, operand * 
             }
           if (litval)
             {
-              emitcode ("ora", "#0x%02x", litval);
+              emitcode ("ora", "#0x%02llx", litval);
               regalloc_dry_run_cost += 2;
             }
           hc08_dirtyReg (hc08_reg_a, false);
@@ -9871,7 +10307,6 @@ genAssignLit (operand * result, operand * right)
           assigned[offset] = 1;
           assigned[offset+1] = 1;
         }
-      return true;
     }
 
   remaining = size;
@@ -10056,8 +10491,9 @@ static void
 genCast (iCode * ic)
 {
   operand *result = IC_RESULT (ic);
-  sym_link *rtype = operandType (IC_RIGHT (ic));
   operand *right = IC_RIGHT (ic);
+  sym_link *resulttype = operandType (result);
+  sym_link *righttype = operandType (right);
   int size, offset;
   bool signExtend;
   bool save_a;
@@ -10068,10 +10504,43 @@ genCast (iCode * ic)
   if (operandsEqu (IC_RESULT (ic), IC_RIGHT (ic)))
     return;
 
+  unsigned topbytemask = (IS_BITINT (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8)) ?
+    (0xff >> (8 - SPEC_BITINTWIDTH (resulttype) % 8)) : 0xff;
+
   aopOp (right, ic, false);
   aopOp (result, ic, false);
 
-  if (IS_BOOL (operandType (result)))
+  // Cast to _BitInt can require mask of top byte.
+  if (IS_BITINT (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8) && bitsForType (resulttype) < bitsForType (righttype))
+    {
+      save_a = false;
+      genCopy (result, right);
+      if (result->aop->type != AOP_REG || result->aop->aopu.aop_reg[result->aop->size - 1] != hc08_reg_a)
+        {
+          save_a = result->aop->aopu.aop_reg[0] == hc08_reg_a || !hc08_reg_a->isDead;
+          if (save_a)
+            pushReg(hc08_reg_a, false);
+          loadRegFromAop (hc08_reg_a, result->aop, result->aop->size - 1);
+        }
+      emitcode ("and", "#0x%02x", topbytemask);
+      regalloc_dry_run_cost += 2;
+      if (!SPEC_USIGN (resulttype)) // Sign-extend
+        {
+          symbol *tlbl = regalloc_dry_run ? 0 : newiTempLabel (0);
+          emitcode ("bit", "#0x%02x", 1u << (SPEC_BITINTWIDTH (resulttype) % 8 - 1));
+          if (!regalloc_dry_run)
+            emitcode ("beq", "!tlabel", labelKey2num (tlbl->key));
+          emitcode ("ora", "#0x%02x", ~topbytemask & 0xff);
+          regalloc_dry_run_cost += 6;
+          emitLabel (tlbl);
+        }
+      storeRegToAop (hc08_reg_a, result->aop, result->aop->size - 1);
+      if (save_a)
+        pullReg (hc08_reg_a);
+      goto release;
+    }
+
+  if (IS_BOOL (resulttype))
     {
       bool needpulla = pushRegIfSurv (hc08_reg_a);
       asmopToBool (AOP (right), true);
@@ -10082,19 +10551,21 @@ genCast (iCode * ic)
 
   /* If the result is 1 byte, then just copy the one byte; there is */
   /* nothing special required. */
-  if (AOP_SIZE (result) == 1)
+  if (result->aop->size <= right->aop->size)
     {
-      transferAopAop (AOP (right), 0, AOP (result), 0);
+      wassert (!IS_BITINT (resulttype) || !(SPEC_BITINTWIDTH (resulttype) % 8));
+      genCopy (result, right);
       goto release;
     }
 
-  signExtend = AOP_SIZE (result) > AOP_SIZE (right) && !IS_BOOL (rtype) && IS_SPEC (rtype) && !SPEC_USIGN (rtype);
+  signExtend = AOP_SIZE (result) > AOP_SIZE (right) && !IS_BOOL (righttype) && IS_SPEC (righttype) && !SPEC_USIGN (righttype);
+  bool masktopbyte = IS_BITINT (resulttype) && (SPEC_BITINTWIDTH (resulttype) % 8) && SPEC_USIGN (resulttype);
 
   /* If the result is 2 bytes and in registers, we have to be careful */
   /* to make sure the registers are not overwritten prematurely. */
   if (AOP_SIZE (result) == 2 && AOP (result)->type == AOP_REG)
     {
-      if (IS_AOP_HX (AOP (result)) && (AOP_SIZE (right) == 2))
+      if (IS_AOP_HX (AOP (result)) && AOP_SIZE (right) == 2 && !IS_BITINT (resulttype))
         {
           loadRegFromAop (hc08_reg_hx, AOP (right), 0);
           goto release;
@@ -10117,6 +10588,12 @@ genCast (iCode * ic)
               accopWithMisc ("rola", "");
               accopWithMisc ("clra", "");
               accopWithMisc ("sbc", zero);
+              regalloc_dry_run_cost += 4;
+              if (masktopbyte)
+                {
+                  emitcode ("and", "#0x%02x", topbytemask);
+                  regalloc_dry_run_cost++;
+                }
               storeRegToAop (hc08_reg_a, AOP (result), 1);
               if (save_a)
                 pullReg(hc08_reg_a);
@@ -10124,37 +10601,12 @@ genCast (iCode * ic)
           goto release;
         }
 
-      if (AOP (right)->type == AOP_REG)
-        {
-          wassert (AOP_SIZE (right) == 2);
-          /* Source and destination are the same size; no need for sign */
-          /* extension or zero padding. Just copy in the order that */
-          /* won't prematurely overwrite the source. */
-          if (AOP (result)->aopu.aop_reg[0] == AOP (right)->aopu.aop_reg[1])
-            {
-              transferAopAop (AOP (right), 1, AOP (result), 1);
-              transferAopAop (AOP (right), 0, AOP (result), 0);
-            }
-          else
-            {
-              transferAopAop (AOP (right), 0, AOP (result), 0);
-              transferAopAop (AOP (right), 1, AOP (result), 1);
-            }
-          goto release;
-        }
-      else
-        {
-          /* Source is at least 2 bytes and not in registers; no need */
-          /* for sign extension or zero padding. Just copy. */
-          transferAopAop (AOP (right), 0, AOP (result), 0);
-          transferAopAop (AOP (right), 1, AOP (result), 1);
-          goto release;
-        }
+      wassert (0); // Should have been covered by logic earlier in this function,
     }
 
   wassert (AOP (result)->type != AOP_REG);
-  
-  save_a = !hc08_reg_a->isDead && signExtend;
+
+  save_a = !hc08_reg_a->isDead && (signExtend || topbytemask != 0xff);
   if (save_a)
     pushReg(hc08_reg_a, true);
 
@@ -10199,8 +10651,16 @@ genCast (iCode * ic)
       accopWithMisc ("rola", "");
       accopWithMisc ("clra", "");
       accopWithMisc ("sbc", zero);
+      regalloc_dry_run_cost += 4;
       while (size--)
-        storeRegToAop (hc08_reg_a, AOP (result), offset++);
+        {
+          if (!size && masktopbyte)
+            {
+              emitcode ("and", "#0x%02x", topbytemask);
+              regalloc_dry_run_cost += 2;
+            }
+          storeRegToAop (hc08_reg_a, AOP (result), offset++);
+        }
     }
 
   if (save_a)
@@ -10511,6 +10971,10 @@ genhc08iCode (iCode *ic)
           genIpush (ic);
           break;
 
+    case IPUSH_VALUE_AT_ADDRESS:
+          genPointerPush (ic);
+          break;
+  
     case IPOP:
       /* IPOP happens only when trying to restore a
          spilt live range, if there is an ifx statement
@@ -10609,14 +11073,6 @@ genhc08iCode (iCode *ic)
       hc08_genInline (ic);
       break;
 
-    case RRC:
-      genRRC (ic);
-      break;
-
-    case RLC:
-      genRLC (ic);
-      break;
-
     case GETABIT:
       genGetAbit (ic);
       break;
@@ -10627,6 +11083,10 @@ genhc08iCode (iCode *ic)
 
     case GETWORD:
       genGetWord (ic);
+      break;
+
+    case ROT:
+      genRot (ic);
       break;
 
     case LEFT_OP:
@@ -10692,12 +11152,9 @@ genhc08iCode (iCode *ic)
       genEndCritical (ic);
       break;
 
-    case SWAP:
-      genSwap (ic);
-      break;
-
     default:
       wassertl (0, "Unknown iCode");
+      fprintf (stderr, "ic->op: %d\n", ic->op);
     }
 }
 
@@ -10827,8 +11284,8 @@ genhc08Code (iCode *lic)
 
       regalloc_dry_run_cost = 0;
       genhc08iCode(ic);
-      /*if (options.verboseAsm)
-        emitcode (";", "iCode %d (key %d) total cost: %d\n", ic->seq, ic->key, (int) regalloc_dry_run_cost);*/
+      //if (options.verboseAsm)
+      //  emitcode (";", "iCode %d (key %d) total cost: %d\n", ic->seq, ic->key, (int) regalloc_dry_run_cost);
 
       if (!hc08_reg_a->isFree)
         DD (emitcode ("", "; forgot to free a"));

@@ -10,6 +10,10 @@ else
   GPSIM := $(WINE) gpsim$(EXEEXT)
 endif
 
+EMU = $(GPSIM)
+EMU_FLAGS = -i -s
+EMU_INPUT = -c $(PORTS_DIR)/pic16/gpsim.cmd
+
 ifndef SDCC_BIN_PATH
   ifndef CROSSCOMPILING
     SDCCFLAGS += --nostdinc -I$(top_srcdir)/device/include/pic16 -I$(top_srcdir)/device/non-free/include/pic16 -I$(top_srcdir)
@@ -35,15 +39,15 @@ BINEXT = .cod
 
 EXTRAS = $(PORT_CASES_DIR)/testfwk$(OBJEXT) $(PORT_CASES_DIR)/support$(OBJEXT)
 
-# Rule to link into .ihx
+# Rule to link into .cod
 %$(BINEXT): %$(OBJEXT) $(EXTRAS)
-	-$(SDCC) $(SDCCFLAGS) $(LINKFLAGS) $(EXTRAS) $< -o $@
+	$(SDCC) $(SDCCFLAGS) $(LINKFLAGS) $(EXTRAS) $< -o $@
 
 %$(OBJEXT): %.c
-	-$(SDCC) $(SDCCFLAGS) -c $< -o $@
+	$(SDCC) $(SDCCFLAGS) -c $< -o $@
 
 $(PORT_CASES_DIR)/%$(OBJEXT): $(PORTS_DIR)/$(PORT)/%.c
-	-$(SDCC) $(SDCCFLAGS) -c $< -o $@
+	$(SDCC) $(SDCCFLAGS) -c $< -o $@
 
 .PRECIOUS: gen/pic16/testfwk.o gen/pic16/support.o
 

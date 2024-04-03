@@ -109,15 +109,15 @@ bool uselessDecl = true;
 %token NAKED JAVANATIVE OVERLAY TRAP
 %token <yystr> STRING_LITERAL INLINEASM FUNC
 %token IFX ADDRESS_OF GET_VALUE_AT_ADDRESS SET_VALUE_AT_ADDRESS SPIL UNSPIL GETABIT GETBYTE GETWORD
-%token BITWISEAND UNARYMINUS IPUSH IPUSH_VALUE_AT_ADDRESS IPOP PCALL  ENDFUNCTION JUMPTABLE
-%token RRC RLC
+%token BITWISEAND UNARYMINUS IPUSH IPUSH_VALUE_AT_ADDRESS IPOP PCALL ENDFUNCTION JUMPTABLE
+%token ROT
 %token CAST CALL PARAM NULLOP BLOCK LABEL RECEIVE SEND ARRAYINIT
-%token DUMMY_READ_VOLATILE ENDCRITICAL SWAP INLINE RESTRICT SMALLC RAISONANCE IAR COSMIC SDCCCALL PRESERVES_REGS Z88DK_FASTCALL Z88DK_CALLEE Z88DK_SHORTCALL Z88DK_PARAMS_OFFSET
+%token DUMMY_READ_VOLATILE ENDCRITICAL INLINE RESTRICT SMALLC RAISONANCE IAR COSMIC SDCCCALL PRESERVES_REGS Z88DK_FASTCALL Z88DK_CALLEE Z88DK_SHORTCALL Z88DK_PARAMS_OFFSET
 
 /* C11 */
 %token	ALIGNAS ALIGNOF ATOMIC GENERIC NORETURN STATIC_ASSERT THREAD_LOCAL
 
-/* C2X problem: too many legacy FALSE and TRUE still in SDCC, workaround: prefix by TOKEN_*/
+/* C23 problem: too many legacy FALSE and TRUE still in SDCC, workaround: prefix by TOKEN_*/
 %token TOKEN_FALSE TOKEN_TRUE NULLPTR TYPEOF TYPEOF_UNQUAL SD_BITINT
 %token DECIMAL32 DECIMAL64 DECIMAL128
 
@@ -168,7 +168,7 @@ bool uselessDecl = true;
 
 %%
 
-   /* C2X A.2.1 Expressions */
+   /* C23 A.2.1 Expressions */
 
 primary_expression
    : identifier      { $$ = newAst_VALUE (symbolVal ($1)); }
@@ -183,7 +183,7 @@ predefined_constant
    : TOKEN_FALSE { $$ = newAst_VALUE (constBoolVal (false, true)); }
    | TOKEN_TRUE  { $$ = newAst_VALUE (constBoolVal (true, true)); }
    | NULLPTR     { $$ = newAst_VALUE (constNullptrVal ()); }
-   ; /* add nullptr here if it gets approved for C23 */
+   ;
 
 generic_selection
    : GENERIC '(' assignment_expr ',' generic_assoc_list ')' { $$ = newNode (GENERIC, $3, $5); }
@@ -244,8 +244,8 @@ postfix_expression
      }
    | '(' type_name ')' '{' '}'
      {
-       if (!options.std_c2x)
-         werror(W_EMPTY_INIT_C2X);
+       if (!options.std_c23)
+         werror(W_EMPTY_INIT_C23);
        // if (!options.std_c99)
          werror(E_COMPOUND_LITERALS_C99);
 
@@ -273,12 +273,10 @@ unary_expression
            $$ = newNode ($1, $2, NULL);
        }
    | SIZEOF unary_expression        { $$ = newNode (SIZEOF, NULL, $2); }
-   | SIZEOF '(' type_name ')'            { $$ = newAst_VALUE (sizeofOp ($3)); }
-   | ALIGNOF '(' type_name ')'           { $$ = newAst_VALUE (alignofOp ($3)); }
+   | SIZEOF '(' type_name ')'       { $$ = newAst_VALUE (sizeofOp ($3)); }
+   | ALIGNOF '(' type_name ')'      { $$ = newAst_VALUE (alignofOp ($3)); }
    | OFFSETOF '(' type_name ',' offsetof_member_designator ')' { $$ = offsetofOp($3, $5); }
-   | RLC unary_expression           { $$ = newNode (RLC, $2, NULL); }
-   | RRC unary_expression           { $$ = newNode (RRC, $2, NULL); }
-   | SWAP unary_expression          { $$ = newNode (SWAP, $2, NULL); }
+   | ROT '(' unary_expression ',' unary_expression ')'         { $$ = newNode (ROT, $3, $5); }
    ;
 
 unary_operator
@@ -438,7 +436,7 @@ constant_expr
    : conditional_expr
    ;
 
-   /* C2X A.2.2 Declarations */
+   /* C23 A.2.2 Declarations */
 
 declaration
    : declaration_specifiers ';'
@@ -470,7 +468,7 @@ declaration
          /* add the specifier list to the id */
          symbol *sym , *sym1;
 
-         bool autocandidate = options.std_c2x && IS_SPEC ($1) && SPEC_SCLS($1) == S_AUTO;
+         bool autocandidate = options.std_c23 && IS_SPEC ($1) && SPEC_SCLS($1) == S_AUTO;
 
          for (sym1 = sym = reverseSyms($2);sym != NULL;sym = sym->next) {
              sym_link *lnk = copyLinkChain($1);
@@ -494,7 +492,7 @@ declaration
                  break;
              if (l0 == NULL && l2 == NULL && l1 != NULL)
                werrorfl(sym->fileDef, sym->lineDef, E_TYPE_IS_FUNCTION, sym->name);
-             if (autocandidate && !sym->type && sym->ival && sym->ival->type == INIT_NODE) // C2X auto type inference
+             if (autocandidate && !sym->type && sym->ival && sym->ival->type == INIT_NODE) // C23 auto type inference
                {
                  sym->type = sym->etype = typeofOp (sym->ival->init.node);
                  SPEC_SCLS (lnk) = 0;
@@ -835,10 +833,10 @@ struct_or_union_specifier
           $3->size = compStructSize($1, $3);   /* update size of  */
           promoteAnonStructs ($1, $3);
 
-          if ($3->redefinition) // Since C2X, multiple definitions for struct / union are allowed, if they are compatible and have the same tags. The current standard draft N3047 allows redeclarations of unions to have a different order of the members. We don't. The rule in N3047 is now considered a mistake by many, and will hopefully be changed to the SDCC behaviour via a national body comment for the final version of the standard.
+          if ($3->redefinition) // Since C23, multiple definitions for struct / union are allowed, if they are compatible and have the same tags. The current standard draft N3047 allows redeclarations of unions to have a different order of the members. We don't. The rule in N3047 is now considered a mistake by many, and will hopefully be changed to the SDCC behaviour via a national body comment for the final version of the standard.
             {
               sdef = findSymWithBlock (StructTab, $3->tagsym, currBlockno, NestLevel);
-              bool compatible = options.std_c2x && sdef->tagsym && $3->tagsym && !strcmp (sdef->tagsym->name, $3->tagsym->name);
+              bool compatible = options.std_c23 && sdef->tagsym && $3->tagsym && !strcmp (sdef->tagsym->name, $3->tagsym->name);
               for (symbol *fieldsym1 = sdef->fields, *fieldsym2 = $3->fields; compatible; fieldsym1 = fieldsym1->next, fieldsym2 = fieldsym2->next)
                 {
                   if (!fieldsym1 && !fieldsym2)
@@ -999,7 +997,7 @@ enum_specifier
           csym = findSymWithLevel(enumTab, $2);
           if ((csym && csym->level == $2->level))
             {
-              if (!options.std_c2x || compareType (csym->type, $2->type, true) <= 0)
+              if (!options.std_c23 || compareType (csym->type, $2->type, true) <= 0)
                 {
                   werrorfl($2->fileDef, $2->lineDef, E_DUPLICATE_TYPEDEF, csym->name);
                   werrorfl(csym->fileDef, csym->lineDef, E_PREVIOUS_DEF);
@@ -1060,8 +1058,8 @@ enumerator
           // check if the symbol at the same level already exists
           if ((sym = findSymWithLevel (SymbolTab, $1)) && sym->level == $1->level)
             {
-              // C2X allows redefinitions of enumeration constants with the same value as part of a redeclaration of the same enumerated type.
-              if (!options.std_c2x || ullFromVal (valFromType (sym->type)) != ullFromVal (valFromType ($1->type)))
+              // C23 allows redefinitions of enumeration constants with the same value as part of a redeclaration of the same enumerated type.
+              if (!options.std_c23 || ullFromVal (valFromType (sym->type)) != ullFromVal (valFromType ($1->type)))
                 {
                   werrorfl ($1->fileDef, $1->lineDef, E_DUPLICATE_MEMBER, "enum", $1->name);
                   werrorfl (sym->fileDef, sym->lineDef, E_PREVIOUS_DEF);
@@ -1315,7 +1313,7 @@ function_declarator
        addDecl ($1, FUNCTION, NULL);
 
        // Up to C17, this was a function declarator without a prototype.
-       if (!options.std_c2x)
+       if (!options.std_c23)
          {
            FUNC_NOPROTOTYPE($1->type) = true;
            if (!options.lessPedantic)
@@ -1621,8 +1619,8 @@ initializer
    : assignment_expr                { $$ = newiList(INIT_NODE,$1); }
    | '{' '}'
      {
-       if (!options.std_c2x)
-         werror(W_EMPTY_INIT_C2X);
+       if (!options.std_c23)
+         werror(W_EMPTY_INIT_C23);
        // {} behaves mostly like {0}, so we emulate that, and use the isempty flag for the few cases where there is a difference.
        $$ = newiList(INIT_DEEP, revinit(newiList(INIT_NODE, newAst_VALUE(constIntVal("0")))));
        $$->isempty = true;
@@ -1693,8 +1691,8 @@ static_assert_declaration
    | STATIC_ASSERT '(' constant_expr ')' ';'
                                     {
                                        value *val = constExprValue ($3, true);
-                                       if (!options.std_c2x)
-                                         werror (E_STATIC_ASSERTION_C2X);
+                                       if (!options.std_c23)
+                                         werror (E_STATIC_ASSERTION_C23);
                                        if (!val)
                                          werror (E_CONST_EXPECTED);
                                        else if (!ullFromVal(val))
@@ -1730,8 +1728,8 @@ attribute_specifier_sequence_opt
 attribute_specifier
    : ATTR_START attribute_list ']' ']'
      {
-       if (!options.std_c2x)
-         werror(E_ATTRIBUTE_C2X);
+       if (!options.std_c23)
+         werror(E_ATTRIBUTE_C23);
        $$ = $2;
      }
    ;
@@ -1810,7 +1808,7 @@ balanced_token
    | CONSTANT
    ;
 
-   /* C2X A.2.3 Statements */
+   /* C23 A.2.3 Statements */
 
 statement
    : labeled_statement
@@ -2108,7 +2106,7 @@ jump_statement
    }
    ;
 
-   /* C2X A.2.4 External definitions */
+   /* C23 A.2.4 External definitions */
 
 translation_unit
    : external_declaration
@@ -2157,7 +2155,7 @@ function_definition
                 {
                     if (FUNC_ISCRITICAL ($1->type))
                         inCriticalFunction = 1;
-                    strncpy (function_name, $1->name, sizeof (function_name) - 4);
+                    strncpyz (function_name, $1->name, sizeof (function_name) - 3);
                     memset (function_name + sizeof (function_name) - 4, 0x00, 4);
                 }
         }
@@ -2175,8 +2173,8 @@ function_definition
             $2 = createFunctionDecl($2);
             if ($2)
                 {
-                	if (!strcmp ($2->name, "_sdcc_external_startup")) // The rename (and semantics change happened) in SDCC 4.2.10. Keep this warning for two major releases afterwards.
-                		werror (W__SDCC_EXTERNAL_STARTUP_DEF);
+                    if (!strcmp ($2->name, "_sdcc_external_startup")) // The rename (and semantics change happened) in SDCC 4.2.10. Keep this warning for two major releases afterwards.
+                        werror (W__SDCC_EXTERNAL_STARTUP_DEF);
                     if (FUNC_ISCRITICAL ($2->type))
                         inCriticalFunction = 1;
                     // warn for loss of calling convention for inlined functions.
@@ -2185,7 +2183,7 @@ function_definition
                           FUNC_BANKED ($2->type)         || FUNC_REGBANK ($2->type)          ||
                           FUNC_ISOVERLAY ($2->type)      || FUNC_ISISR ($2->type) ))
                         werror (W_INLINE_FUNCATTR, $2->name);
-                    strncpy (function_name, $2->name, sizeof (function_name) - 4);
+                    strncpyz (function_name, $2->name, sizeof (function_name) - 3);
                     memset (function_name + sizeof (function_name) - 4, 0x00, 4);
                 }
         }

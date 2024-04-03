@@ -203,6 +203,9 @@
 #undef OPT_DISABLE_Z80N
 
 /* XXX */
+#undef OPT_DISABLE_R800
+
+/* XXX */
 #undef OPT_ENABLE_DOC
 
 /* XXX */
@@ -234,9 +237,6 @@
 
 /* XXX */
 #undef PREFIX2DATA_DIR
-
-/* Define as the return type of signal handlers (`int' or `void'). */
-#undef RETSIGTYPE
 
 /* XXX */
 #undef SDCC_DIR_NAME

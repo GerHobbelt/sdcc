@@ -334,6 +334,16 @@ _z80n_init (void)
 }
 
 static void
+_r800_init (void)
+{
+  z80_opts.sub = SUB_R800;
+  asm_addTree (&_asxxxx_z80);
+
+  regsZ80 = z80_regs;
+  z80_init_asmops ();
+}
+
+static void
 _reset_regparm (struct sym_link *ftype)
 {
   _G.regparam.n = 0;
@@ -353,7 +363,7 @@ _reg_parm (sym_link *l, bool reentrant)
         werror (E_Z88DK_FASTCALL_PARAMETER);
     }
 
-  bool is_regarg = z80IsRegArg(_G.regparam.ftype, ++_G.regparam.n, 0);
+  bool is_regarg = z80IsRegArg (_G.regparam.ftype, ++_G.regparam.n, 0);
 
   return (is_regarg ? _G.regparam.n : 0);
 }
@@ -586,7 +596,7 @@ _sm83_rgblink (void)
 
   fclose (lnkfile);
 
-  buffer = buildCmdLine (port->linker.cmd, dstFileName, NULL, NULL, NULL);
+  buffer = buildCmdLine (port->linker.cmd, dstFileName, NULL, NULL, NULL, NULL);
   /* call the linker */
   if (sdcc_system (buffer))
     {
@@ -972,20 +982,29 @@ _hasNativeMulFor (iCode *ic, sym_link *left, sym_link *right)
 
 /* Indicate which extended bit operations this port supports */
 static bool
-hasExtBitOp (int op, int size)
+hasExtBitOp (int op, sym_link *left, int right)
 {
   switch (op)
     {
     case GETABIT:
     case GETBYTE:
     case GETWORD:
-    case RLC:
-    case RRC:
-      return true;
-    case SWAP:
-      return size <= 4;
+      return (true);
+    case ROT:
+      {
+        unsigned int lbits = bitsForType (left);
+        if (lbits % 8)
+          return (false);
+        if (lbits == 8)
+          return (true);
+        if (right % lbits  == 1 || right % lbits == lbits - 1)
+          return (true);
+        if ((getSize (left) <= 2 || getSize (left) == 4) && lbits == right * 2)
+          return (true);
+      }
+      return (false);
     }
-  return false;
+  return (false);
 }
 
 /* Indicate the expense of an access to an output storage class */
@@ -1012,11 +1031,11 @@ oclsExpense (struct memmap *oclass)
 */
 
 static const char *_z80LinkCmd[] = {
-  "sdldz80", "-nf", "$1", NULL
+  "sdldz80", "-nf", "$1", "$L", NULL
 };
 
 static const char *_gbLinkCmd[] = {
-  "sdldgb", "-nf", "$1", NULL
+  "sdldgb", "-nf", "$1", "$L", NULL
 };
 /*
 static const char *_gnuLdCmd[] = {
@@ -1054,6 +1073,7 @@ static const char *const _libs_tlcs90[] = { "tlcs90", NULL, };
 static const char *const _libs_sm83[] = { "sm83", NULL, };
 static const char *const _libs_ez80_z80[] = { "ez80_z80", NULL, };
 static const char *const _libs_z80n[] = { "z80n", NULL, };
+static const char *const _libs_r800[] = { "r800", NULL, };
 
 /* Globals */
 PORT z80_port =
@@ -1137,6 +1157,7 @@ PORT z80_port =
   { 
     -1,                         /* shifts never use support routines */
     true,                       /* use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
   },
   { z80_emitDebuggerSymbol },
   {
@@ -1267,7 +1288,11 @@ PORT z180_port =
   { NULL, NULL },
   1,                            /* ABI revision */
   { -1, 0, 0, 4, 0, 3, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -1394,9 +1419,13 @@ PORT r2k_port =
     1                           /* No fancy alignments supported. */
   },
   { NULL, NULL },
-  0,                            /* ABI revision */
+  1,                            /* ABI revision */
   { -1, 0, 0, 4, 0, 2, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -1524,9 +1553,13 @@ PORT r2ka_port =
     1                           /* No fancy alignments supported. */
   },
   { NULL, NULL },
-  0,                            /* ABI revision */
+  1,                            /* ABI revision */
   { -1, 0, 0, 4, 0, 2, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -1654,9 +1687,13 @@ PORT r3ka_port =
     1                           /* No fancy alignments supported. */
   },
   { NULL, NULL },
-  0,                            /* ABI revision */
+  1,                            /* ABI revision */
   { -1, 0, 0, 4, 0, 2, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -1788,7 +1825,11 @@ PORT sm83_port =
   { NULL, NULL },
   1,                            /* default ABI revision */
   { -1, 0, 0, 2, 0, 4, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -1916,9 +1957,13 @@ PORT tlcs90_port =
     1                           /* No fancy alignments supported. */
    },
   { NULL, NULL },
-  0,                            /* ABI revision */
+  1,                            /* ABI revision */
   { -1, 0, 0, 4, 0, 2, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -2046,9 +2091,13 @@ PORT ez80_z80_port =
     1                           /* No fancy alignments supported. */
   },
   { NULL, NULL },
-  0,                            /* ABI revision */
+  1,                            /* ABI revision */
   { -1, 0, 0, 4, 0, 3, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -2104,7 +2153,7 @@ PORT z80n_port =
 {
   TARGET_ID_Z80N,
   "z80n",
-  "z80n",                       /* Target name */
+  "Z80N",                       /* Target name */
   NULL,                         /* Processor name */
   {
     glue,
@@ -2178,7 +2227,11 @@ PORT z80n_port =
   { NULL, NULL },
   1,                            /* ABI revision */
   { -1, 0, 0, 4, 0, 3, 0 },
-  { -1, FALSE },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
   { z80_emitDebuggerSymbol },
   {
     256,                        /* maxCount */
@@ -2190,6 +2243,140 @@ PORT z80n_port =
   },
   "_",
   _z80n_init,
+  _parseOptions,
+  _z80_like_options,
+  NULL,
+  _finaliseOptions,
+  _setDefaultOptions,
+  z80_assignRegisters,
+  _getRegName,
+  _getRegByName,
+  NULL,
+  _keywords,
+  0,                            /* no assembler preamble */
+  NULL,                         /* no genAssemblerEnd */
+  0,                            /* no local IVT generation code */
+  0,                            /* no genXINIT code */
+  NULL,                         /* genInitStartup */
+  _reset_regparm,
+  _reg_parm,
+  _process_pragma,
+  NULL,
+  _hasNativeMulFor,
+  hasExtBitOp,                  /* hasExtBitOp */
+  oclsExpense,                  /* oclsExpense */
+  TRUE,
+  TRUE,                         /* little endian */
+  0,                            /* leave lt */
+  0,                            /* leave gt */
+  1,                            /* transform <= to ! > */
+  1,                            /* transform >= to ! < */
+  1,                            /* transform != to !(a == b) */
+  0,                            /* leave == */
+  FALSE,                        /* Array initializer support. */
+  0,                            /* no CSE cost estimation yet */
+  _z80_builtins,                /* builtin functions */
+  GPOINTER,                     /* treat unqualified pointers as "generic" pointers */
+  1,                            /* reset labelKey to 1 */
+  1,                            /* globals & local statics allowed */
+  9,                            /* Number of registers handled in the tree-decomposition-based register allocator in SDCCralloc.hpp */
+  PORT_MAGIC
+};
+
+PORT r800_port =
+{
+  TARGET_ID_R800,
+  "r800",
+  "R800",                       /* Target name */
+  NULL,                         /* Processor name */
+  {
+    glue,
+    FALSE,
+    NO_MODEL,
+    NO_MODEL,
+    NULL,                       /* model == target */
+  },
+  {                             /* Assembler */
+    _z80AsmCmd,
+    NULL,
+    "-plosgffwy",               /* Options with debug */
+    "-plosgffw",                /* Options without debug */
+    0,
+    ".asm"
+  },
+  {                             /* Linker */
+    _z80LinkCmd,                //NULL,
+    NULL,                       //LINKCMD,
+    NULL,
+    ".rel",
+    1,
+    _crt,                       /* crt */
+    _libs_r800,                 /* libs */
+  },
+  {                             /* Peephole optimizer */
+    _z80_defaultRules,
+    z80instructionSize,
+    NULL,
+    NULL,
+    NULL,
+    z80notUsed,
+    z80canAssign,
+    z80notUsedFrom,
+    z80symmParmStack,
+    z80canJoinRegs,
+    z80canSplitReg,
+  },
+  /* Sizes: char, short, int, long, long long, near ptr, far ptr, gptr, func ptr, banked func ptr, bit, float, BitInt (in bits) */
+  { 1, 2, 2, 4, 8, 2, 2, 2, 2, 2, 1, 4, 64 },
+  /* tags for generic pointers */
+  { 0x00, 0x40, 0x60, 0x80 },   /* far, near, xstack, code */
+  {
+    "XSEG",
+    "STACK",
+    "CODE",
+    "DATA",
+    NULL,                       /* idata */
+    NULL,                       /* pdata */
+    NULL,                       /* xdata */
+    NULL,                       /* bit */
+    "RSEG (ABS)",
+    "GSINIT",
+    NULL,                       /* overlay */
+    "GSFINAL",
+    "HOME",
+    NULL,                       /* xidata */
+    NULL,                       /* xinit */
+    NULL,                       /* const_name */
+    "CABS (ABS)",               /* cabs_name */
+    "DABS (ABS)",               /* xabs_name */
+    NULL,                       /* iabs_name */
+    "INITIALIZED",              /* name of segment for initialized variables */
+    "INITIALIZER",              /* name of segment for copies of initialized variables in code space */
+    NULL,
+    NULL,
+    1,                          /* CODE  is read-only */
+    false,                      // unqualified pointers cannot point to __sfr.
+    1                           /* No fancy alignments supported. */
+  },
+  { NULL, NULL },
+  1,                            /* ABI revision */
+  { -1, 0, 0, 4, 0, 3, 0 },
+  { 
+    -1,                         /* shifts never use support routines */
+    false,                      /* do not use support routine for int x int -> long multiplication */
+    false,                      /* do not use support routine for unsigned long x unsigned char -> unsigned long long multiplication */
+  },
+  { z80_emitDebuggerSymbol },
+  {
+    256,                        /* maxCount */
+    3,                          /* sizeofElement */
+    {6, 7, 8},                  /* sizeofMatchJump[] - Assumes operand allocated to registers */
+    {6, 9, 15},                 /* sizeofRangeCompare[] - Assumes operand allocated to registers*/
+    1,                          /* sizeofSubtract - Assumes use of a singel inc or dec */
+    9,                          /* sizeofDispatch - Assumes operand allocated to register e or c*/
+  },
+  "_",
+  _r800_init,
   _parseOptions,
   _z80_like_options,
   NULL,

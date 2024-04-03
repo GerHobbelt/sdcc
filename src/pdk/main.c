@@ -220,9 +220,11 @@ _hasNativeMulFor (iCode *ic, sym_link *left, sym_link *right)
 
 /* Indicate which extended bit operations this backend supports */
 static bool
-hasExtBitOp (int op, int size)
+hasExtBitOp (int op, sym_link *left, int right)
 {
-  return (op == GETBYTE || op == SWAP && size == 1);
+  return (op == GETBYTE ||
+    op == ROT && bitsForType (left) == 8 ||
+    op == ROT && !(bitsForType (left) % 8) && right <= 2);
 }
 
 static const char *
@@ -235,11 +237,12 @@ get_model (void)
     $2 is always the output file.
     $3 varies
     $l is the list of extra options that should be there somewhere...
+    $L is the list of extra options that should be passed on the command line...
     MUST be terminated with a NULL.
 */
 static const char *_linkCmd[] =
 {
-  "sdldpdk", "-nf", "\"$1\"", NULL
+  "sdldpdk", "-nf", "\"$1\"", "$L", NULL
 };
 
 /* $3 is replaced by assembler.debug_opts resp. port->assembler.plain_opts */
@@ -254,7 +257,7 @@ PORT pdk13_port =
 {
   TARGET_ID_PDK13,
   "pdk13",
-  "PDK13",                       /* Target name */
+  "Padauk PDK13",                /* Target name */
   0,                             /* Processor name */
   {
     glue,
@@ -310,7 +313,7 @@ PORT pdk13_port =
     64,                         /* bit-precise integer types up to _BitInt (64) */
   },
   /* tags for generic pointers */
-  { 0x00, 0x40, 0x60, 0x80 },   /* far, near, xstack, code */
+  { 0x00, 0x00, 0x00, 0x80 },   /* far, near, xstack, code */
   {
     "XSEG",
     "STACK",
@@ -350,7 +353,7 @@ PORT pdk13_port =
      2,
      1,                         /* sp points to next free stack location */
   },     
-  { -1, false },                /* no int x int -> long multiplication support routine. */
+  { -1, false, false },         /* Neither int x int -> long nor unsigned long x unsigned char -> unsigned long long multiplication support routine. */
   { pdk_emitDebuggerSymbol,
     {
       0,
@@ -425,7 +428,7 @@ PORT pdk14_port =
 {
   TARGET_ID_PDK14,
   "pdk14",
-  "PDK14",                       /* Target name */
+  "Padauk PDK14",                /* Target name */
   0,                             /* Processor name */
   {
     glue,
@@ -479,7 +482,7 @@ PORT pdk14_port =
     64,                         /* bit-precise integer types up to _BitInt (64) */
   },
   /* tags for generic pointers */
-  { 0x00, 0x40, 0x60, 0x80 },   /* far, near, xstack, code */
+  { 0x00, 0x00, 0x00, 0x80 },   /* far, near, xstack, code */
   {
     "XSEG",
     "STACK",
@@ -519,7 +522,7 @@ PORT pdk14_port =
      2,
      1,                         /* sp points to next free stack location */
   },     
-  { -1, false },                /* no int x int -> long multiplication support routine. */
+  { -1, false, false },         /* Neither int x int -> long nor unsigned long x unsigned char -> unsigned long long multiplication support routine. */
   { pdk_emitDebuggerSymbol,
     {
       0,
@@ -594,7 +597,7 @@ PORT pdk15_port =
 {
   TARGET_ID_PDK15,
   "pdk15",
-  "PDK15",                       /* Target name */
+  "Padauk PDK15",                /* Target name */
   0,                             /* Processor name */
   {
     glue,
@@ -648,7 +651,7 @@ PORT pdk15_port =
     64,                         /* bit-precise integer types up to _BitInt (64) */
   },
   /* tags for generic pointers */
-  { 0x00, 0x40, 0x60, 0x80 },   /* far, near, xstack, code */
+  { 0x00, 0x00, 0x00, 0x80 },   /* far, near, xstack, code */
   {
     "XSEG",
     "STACK",
@@ -688,7 +691,7 @@ PORT pdk15_port =
      2,
      1,                         /* sp points to next free stack location */
   },     
-  { -1, false },                /* no int x int -> long multiplication support routine. */
+  { -1, false, false },         /* Neither int x int -> long nor unsigned long x unsigned char -> unsigned long long multiplication support routine. */
   { pdk_emitDebuggerSymbol,
     {
       0,

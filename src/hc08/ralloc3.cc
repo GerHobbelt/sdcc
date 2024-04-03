@@ -343,7 +343,7 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
 
  //std::cout<<"fi;; spcfg with assignments"<<std::endl;
-  const assignment_ps &winner = get_optimal(root);
+  const assignment_ps &winner = get_optimal();
 
 
 
@@ -388,7 +388,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
     check_cfg(control_flow_graph);
     std::cout<<"cfg checked"<<std::endl;
     convert_cfg_to_spcfg(root);
-  
+    assignments.resize(cfg_count-1);
 
   std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);

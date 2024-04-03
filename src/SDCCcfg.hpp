@@ -74,9 +74,9 @@ struct ps_cfg_t{
   varset_t begin_v;
   varset_t end_v;
   varset_t variables;
-  assignment_ps_map assignments;
-
 };
+
+std::vector< assignment_ps_map> assignmenets;
 
 std::vector<ps_cfg_t> ps_cfg_map;
 std::vector<cfg_t> cfg_map;

@@ -130,9 +130,9 @@ static void break_graph_series( vertex begin_node, vertex end_node, cfg_t &cfg_1
   }
   cfg_map.push_back(cfg_1);
   ps_cfg_t right=init_ps_cfg(0, find_vertex_from_node(cfg[*(vi_end-1)],cfg_1),cfg_count,ps_cfg.index);
+  ps_cfg.right=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(right);
-  ps_cfg.right=ps_cfg_count;
   f=vi;
   vi=next;
   for (next = vi; next != vi_end; vi=next) {
@@ -142,9 +142,9 @@ static void break_graph_series( vertex begin_node, vertex end_node, cfg_t &cfg_1
   }
   cfg_map.push_back( cfg_2);
   ps_cfg_t left=init_ps_cfg(0, find_vertex_from_node(cfg[*f],cfg_2),cfg_count,ps_cfg.index);
+  ps_cfg.left=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(left);
-  ps_cfg.left=ps_cfg_count;
 //  std::cout<<"break_graph_series end"<<std::endl;
 }
 
@@ -173,9 +173,9 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
   }
   cfg_map.push_back(cfg_1);
   ps_cfg_t left=init_ps_cfg(0, boost::num_vertices(cfg_1)-1 ,cfg_count,ps_cfg.index);
+  ps_cfg.left=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(left);
-  ps_cfg.left=ps_cfg_count;
   vi=next;
   --vi_end;
   for (next = vi; next != vi_end; vi=next) {
@@ -185,9 +185,9 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
   }
   cfg_map.push_back(cfg_2);
   ps_cfg_t right=init_ps_cfg(0, boost::num_vertices(cfg_2)-1,cfg_count,ps_cfg.index);
+  ps_cfg.right=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(right);
-  ps_cfg.right=ps_cfg_count;
 //  std::cout<<"break_graph_parallel end"<<std::endl;
 
 }
@@ -253,9 +253,10 @@ static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, c
   }
   cfg_map.push_back(cfg_1);
   ps_cfg_t left=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_1), find_vertex_from_node(cfg[*vi],cfg_1),cfg_count,ps_cfg.index);
+    ps_cfg.left=cfg_count;
+
   cfg_count++;
   ps_cfg_map.push_back(left);
-  ps_cfg.left=ps_cfg_count;
   vi=f;
   for(next=vi; next!=vi_end; vi=next){
     ++next;
@@ -264,9 +265,10 @@ static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, c
   }
   cfg_map.push_back(cfg_2);
   ps_cfg_t right=init_ps_cfg(find_vertex_from_node(cfg[*f],cfg_2), find_vertex_from_node(cfg[*(vi_end-1)],cfg_2),cfg_count,ps_cfg.index);
+  ps_cfg.right=cfg_count;
+
   cfg_count++;
   ps_cfg_map.push_back(right);
-  ps_cfg.right=ps_cfg_count;
  // std::cout<<"break_graph_loop end"<<std::endl;
 }
 

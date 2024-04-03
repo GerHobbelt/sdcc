@@ -61,8 +61,6 @@ typedef std::map<f,assignment_ps> assignment_ps_map;
 std::map<f,std::vector<f>> permutation_map;
 
 
-typedef std::vector<assignment_ps_map> series;
-
 struct ps_cfg_t{
 
   vertex begin; //s node
@@ -73,12 +71,10 @@ struct ps_cfg_t{
   int right;
   int index;
   int parent;
-  bool make_series;
   varset_t begin_v;
   varset_t end_v;
   varset_t variables;
   assignment_ps_map assignments;
-  series series_assignments;
 };
 
 std::vector<ps_cfg_t> ps_cfg_map;
@@ -106,8 +102,6 @@ static ps_cfg_t init_ps_cfg( vertex begin_node, vertex end_node, int index, int 
   ps_cfg.begin=begin_node;
   ps_cfg.end=end_node;
   ps_cfg.type=0;
-  ps_cfg.left=-1;
-  ps_cfg.right=-1;
   ps_cfg.index=index;
   ps_cfg.parent=parent;
   ps_cfg.assignments.clear();
@@ -332,6 +326,8 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
   if (*vi == *(vi_end-1)) {
+    pscfg.left=-1;
+    pscfg.right=-1;
     return ;
   }
 

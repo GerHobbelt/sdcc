@@ -61,7 +61,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;../asxxsrc;../../support/util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;WIN32;_CONSOLE;INDEXLIB;MLH_MAP;SDK;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\Debug/asgb.pch</PrecompiledHeaderOutputFile>
@@ -72,6 +71,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -79,7 +79,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\..\bin_vc\$(TargetFileName)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/sdasgb.pdb</ProgramDatabaseFile>
@@ -114,6 +113,7 @@
       <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -121,7 +121,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\..\bin_vc\$(TargetFileName)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\Release/sdasgb.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>

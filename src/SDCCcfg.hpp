@@ -280,7 +280,7 @@ static void check_cfg(cfg_t cfg){
   int num_loop_or_parallel=0;
   for (; vi != vi_end; ++vi) {
     if(boost::in_degree(*vi,cfg)>2 || boost::out_degree(*vi,cfg)>2){
-      throw std::exception("break or continue");
+      throw std::invalid_argument("break or continue");
     }
    if (boost::in_degree(*vi,cfg)==0){
      num_begin++;
@@ -292,19 +292,19 @@ static void check_cfg(cfg_t cfg){
       if( boost::out_degree(*vi,cfg)==1){
          num_loop_or_parallel++;}
       else{
-        throw std::exception("invalid cfg");
+        throw std::invalid_argument("invalid cfg");
       }
     }
    if (boost::out_degree(*vi,cfg)==2){
       if( boost::in_degree(*vi,cfg)==1){
          num_loop_or_parallel--;}
       else{
-        throw std::exception("invalid cfg");
+        throw std::invalid_argument("invalid cfg");
       }
     }
   }
   if(num_begin!=1 || num_end!=1 || num_loop_or_parallel!=0){
-    throw std::exception("invalid cfg");
+    throw std::invalid_argument("invalid cfg");
   }
 
 }

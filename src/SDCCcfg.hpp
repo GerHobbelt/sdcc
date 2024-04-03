@@ -315,7 +315,7 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //convert the original cfg to the root node of ps_cfg
   cfg_t cfg=cfg_map[pscfg.index];
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
-  if (boost::num_vertices(cfg)==1){ {
+  if (boost::num_vertices(cfg)==1){ 
     pscfg.left=-1;
     pscfg.right=-1;
     //std::cout<<"basic block"<<std::endl;

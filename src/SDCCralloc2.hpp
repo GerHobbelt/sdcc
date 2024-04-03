@@ -317,8 +317,8 @@ static void combine_assignment_ps_list_loop(assignment_ps_map &a, assignment_ps_
    f v_n=first_b.variables;
    assignment_ps_map::iterator ita=b.begin();
 
-   if (v_n==first_b.variables){
-   for (;ita!=a.end();++ita){
+   if (v_n==first_a.variables){
+   for (;ita!=b.end();++ita){
        c.emplace(std::make_pair(ita->first,assignment_ps(ita->second.s+a[ita->first].s,ita->second.begin_cost,ita->second.end_cost,va,vb,v_n)));
    }
   // std::cout<<"loop size1 : "<<c.size()<<std::endl;

@@ -291,7 +291,7 @@ static void check_cfg(cfg_t cfg){
     if (boost::in_degree(*vi,cfg)==2){
       if( boost::out_degree(*vi,cfg)==1){
          num_loop_or_parallel++;
-         std::cout<<"current node: n++ "<<*vi<<std::endl;
+        // std::cout<<"current node: n++ "<<*vi<<std::endl;
          }
       else{
         throw std::invalid_argument("invalid begin loop/end parallel");
@@ -300,7 +300,7 @@ static void check_cfg(cfg_t cfg){
    if (boost::out_degree(*vi,cfg)==2){
       if( boost::in_degree(*vi,cfg)==1){
          num_loop_or_parallel--;
-                  std::cout<<"current node: "<<*vi<<std::endl;
+            //      std::cout<<"current node: "<<*vi<<std::endl;
 }
       else{
         throw std::invalid_argument("invalid end loop/begin parallel");
@@ -308,9 +308,9 @@ static void check_cfg(cfg_t cfg){
     }
   }
   if(num_begin!=1 || num_end!=1 || num_loop_or_parallel!=0){
-    std::cout<<"num_begin: "<<num_begin<<std::endl;
-    std::cout<<"num_end: "<<num_end<<std::endl;
-    std::cout<<"num_loop_or_parallel: "<<num_loop_or_parallel<<std::endl;
+   // std::cout<<"num_begin: "<<num_begin<<std::endl;
+   // std::cout<<"num_end: "<<num_end<<std::endl;
+   // std::cout<<"num_loop_or_parallel: "<<num_loop_or_parallel<<std::endl;
     throw std::invalid_argument("invalid cfg");
   }
 
@@ -319,7 +319,6 @@ static void check_cfg(cfg_t cfg){
 static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
   //convert the original cfg to the root node of ps_cfg
   cfg_t cfg=*(pscfg.cfg);
-  check_cfg(cfg);
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
   //pscfg=init_ps_cfg(cfg, *vi, *(vi_end-1));
@@ -423,6 +422,8 @@ static void convert_cfg_to_spcfg(ps_cfg_t &pscfg){
   //cfg_map.clear();
   //ps_cfg_count=0;
   //cfg_count=0;
+  check_cfg(*(pscfg.cfg));
+
   convert_cfg_to_spcfg_one_step(pscfg);
   if(pscfg.left!=-1 || pscfg.right!=-1){
     if (pscfg.left!=-1){

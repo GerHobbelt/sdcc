@@ -30,7 +30,9 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.*/
 #define PACKAGE "sdcc"
 #define LOCALEDIR ""
 #define PREFIX ""
-#define inline  __inline
+#if !defined(_MSC_VER) || (_MSC_VER < 1900)
+#define inline  __inline			// will cause error in MSVC2022
+#endif
 #define SIZEOF_INT			4
 #define SIZEOF_LONG			4
 #define HAVE_TIME_H			1
@@ -50,6 +52,7 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.*/
 /*So, which ones are the standard types? */
 #define ino_t _ino_t
 #define dev_t _dev_t
+#if _MSC_VER < 1900
 #define stat _stat
 #define strdup _strdup
 #define fstat _fstat
@@ -57,6 +60,7 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.*/
 #define close _close
 #define read _read
 #define write _write
+#endif
 
 #define O_APPEND _O_APPEND
 #define O_CREAT  _O_CREAT

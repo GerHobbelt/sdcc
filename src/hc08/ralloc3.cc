@@ -377,7 +377,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   iCode *ic = create_cfg(control_flow_graph, conflict_graph, ebbi);
   //initial_after(control_flow_graph);
 
-  std::cout<<"cfg created"<<std::endl;
+  //std::cout<<"cfg created"<<std::endl;
   ps_cfg_t root;
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);

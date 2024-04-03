@@ -79,15 +79,15 @@ struct ps_cfg_t{
 };
 
   static ps_cfg_t init_ps_cfg( vertex begin_node, vertex end_node, int index, int parent){
-  //ps_cfg.cfg=&cfg;
-  begin=begin_node;
-  end=end_node;
-  type=0;
-  index=index;
-  parent=parent;
-  begin_v=cfg_map[index][begin_node].alive;
-  end_v=cfg_map[index][end_node].alive;
-  std::set_union(ps_cfg.begin_v.begin(),ps_cfg.begin_v.end(),ps_cfg.end_v.begin(),ps_cfg.end_v.end(),std::inserter(variables,variables.begin()));
+  ps_cfg_t pscfg;
+  pscfg.begin=begin_node;
+  pscfg.end=end_node;
+  pscfg.type=0;
+  pscfg.index=index;
+  pscfg.parent=parent;
+  pscfg.begin_v=cfg_map[index][begin_node].alive;
+  pscfg.end_v=cfg_map[index][end_node].alive;
+  std::set_union(ps_cfg.begin_v.begin(),ps_cfg.begin_v.end(),ps_cfg.end_v.begin(),ps_cfg.end_v.end(),std::inserter(pscfg.variables,pscfg.variables.begin()));
 }
 
 std::vector<ps_cfg_t> ps_cfg_map;

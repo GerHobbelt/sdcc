@@ -59,7 +59,12 @@ extern char sizeof_long_long_must_be_8[sizeof (long long) == 8 ? 1 : -1];
 #   define HOST_WIDE_INT long long
 #   define HOST_WIDE_INT_C(X) X ## LL
 # else
+#  if defined(_MSC_VER)
+#   define HOST_WIDE_INT long long
+#   define HOST_WIDE_INT_C(X) X ## LL
+#  else
    #error "Unable to find a suitable type for HOST_WIDE_INT"
+#  endif
 # endif
 #endif
 
@@ -261,7 +266,7 @@ extern HOST_WIDE_INT abs_hwi (HOST_WIDE_INT);
 extern unsigned HOST_WIDE_INT absu_hwi (HOST_WIDE_INT);
 extern HOST_WIDE_INT gcd (HOST_WIDE_INT, HOST_WIDE_INT);
 extern HOST_WIDE_INT pos_mul_hwi (HOST_WIDE_INT, HOST_WIDE_INT);
-extern HOST_WIDE_INT mul_hwi (HOST_WIDE_INT, HOST_WIDE_INT);
+extern HOST_WIDE_INT mul_hwi (HOST_WIDE_INT, HOST_WIDE_INT, bool *overflow);
 extern HOST_WIDE_INT least_common_multiple (HOST_WIDE_INT, HOST_WIDE_INT);
 
 /* Like ctz_hwi, except 0 when x == 0.  */

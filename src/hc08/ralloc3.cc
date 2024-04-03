@@ -388,7 +388,7 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   try{
     check_cfg(control_flow_graph);
     std::cout<<"cfg checked"<<std::endl;
-    convert_cfg_to_spcfg(root);
+    convert_cfg_to_spcfg(ps_cfg_map[0]);
     assignments.resize(cfg_count);
 
   std::cout<<"spcfg created"<<std::endl;

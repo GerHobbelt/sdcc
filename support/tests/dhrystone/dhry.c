@@ -66,7 +66,7 @@ unsigned int _clock(void);
 
 #else
 /** For clock() */
-#include </linux/time.h>
+#include <time.h>
 //#include <types.h>
 #endif
 

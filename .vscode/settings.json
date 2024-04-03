@@ -80,6 +80,7 @@
         "sdccralloc2.hpp": "c",
         "compare": "cpp",
         "iterator": "cpp",
-        "times.h": "c"
+        "times.h": "c",
+        "time.h": "c"
     }
 }

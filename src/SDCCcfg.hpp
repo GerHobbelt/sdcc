@@ -153,7 +153,7 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
   vertex p_s=0;
   for (boost::tie(ei, ei_end) = boost::out_edges(begin_node, cfg); ei != ei_end; ++ei) {
     vertex target = boost::target ( *ei, cfg );
-    if (p_s==0 || target>p_s){
+    if (p_s==begin_node || target>p_s){
       p_s=target;
     }
   }
@@ -171,7 +171,7 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
   ps_cfg.left=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(left);
-  vi=next;
+  vi=p_s;
   --vi_end;
   for (next = vi; next != vi_end; vi=next) {
       ++next;
@@ -190,45 +190,26 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
 static vertex find_parallel_end(cfg_t &cfg){
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end, next;
   boost::tie(vi, vi_end) = boost::vertices(cfg);
-  int count=0;
-  for (next = vi; next != vi_end; vi=next) {
-    ++next;
-    if (boost::in_degree(*vi,cfg)==2 ){
-         boost::graph_traits < cfg_t >::in_edge_iterator ei, ei_end;
-         int flag=0;
-         for (boost::tie(ei, ei_end) = boost::in_edges(*vi, cfg); ei != ei_end; ++ei) {
-             vertex source = boost::source ( *ei, cfg );
-
-             if(source < *vi){
-               flag++;
-             }
-         }
-         if (flag==2){
-            count=count-1;
-            if (count==0){
-              return *vi;
-            }
-         }else{
-            next=next+1;
-            boost::graph_traits < cfg_t >::out_edge_iterator eei, eei_end;
-            vertex l_end=0;
-            for (boost::tie(eei, eei_end) = boost::out_edges(*next, cfg); eei != eei_end; ++eei) {
-              vertex target = boost::target ( *eei, cfg );
-              if( target>l_end){
-                l_end=target;
-              }
-            }
-            while (*next!=l_end){
-              next++;
-            }
-          }
-         
-    }
-    if(boost::out_degree(*vi,cfg)==2){
-      count++;
+  vertex vertex_out=0;
+  boost::graph_traits < cfg_t >::out_edge_iterator ei, ei_end;
+  boost::tie(ei, ei_end) = boost::out_edges(*vi, cfg);
+  for(;ei!=ei_end;++ei){
+    vertex target = boost::target ( *ei, cfg );
+    if (target>vertex_out){
+      vertex_out=target;
     }
   }
-  throw std::invalid_argument("invalid parallel");
+  if(vertex_out==0){
+    throw std::invalid_argument("invalid parallel");
+  }
+  vertex_out--;
+  if(boost::out_degree(vertex_out,cfg)!=1){
+    throw std::invalid_argument("invalid parallel");
+  }
+  boost::tie(ei, ei_end) = boost::out_edges(vertex_out, cfg);
+  vertex target = boost::target ( *ei, cfg );
+  return target;
+  
 }
 
 static void break_graph_loop(vertex begin_node, vertex end_node, cfg_t &cfg_1, cfg_t &cfg_2,ps_cfg_t &ps_cfg){

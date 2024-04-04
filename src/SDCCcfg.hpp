@@ -171,13 +171,16 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
   ps_cfg.left=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(left);
-  vi=next;
   --vi_end;
+  if(next==vi_end){
+    boost::remove_edge(*vi,*vi_end,cfg_2);
+  }else{
+  vi=next;
   for (next = vi; next != vi_end; vi=next) {
       ++next;
       boost::clear_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
       boost::remove_vertex(find_vertex_from_node(cfg[*vi], cfg_2),cfg_2);
-  }
+  }}
   cfg_map.push_back(cfg_2);
   ps_cfg_t right=init_ps_cfg(find_vertex_from_node(cfg[begin_node],cfg_2), find_vertex_from_node(cfg[end_node],cfg_2) ,cfg_count,ps_cfg.index);
   ps_cfg.right=cfg_count;

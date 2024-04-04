@@ -395,9 +395,15 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
   //std::cout<<"get cost"<<std::endl;
+  ps_cfg_map.clear();
+   cfg_map.clear();
+   cfg_count=1;
   return cost;
 }catch(std::exception &e){
     std::cout<<e.what()<<std::endl;
+       ps_cfg_map.clear();
+   cfg_map.clear();
+   cfg_count=1;
    return -1;
   }
 

@@ -444,9 +444,6 @@ static assignment_ps get_optimal(ps_cfg_t &ps_cfg){
          c=i.first;
       }
    }
-   ps_cfg_map.clear();
-   cfg_map.clear();
-   cfg_count=1;
 
    return b;
 }

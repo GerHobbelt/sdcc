@@ -357,6 +357,9 @@ static void convert_cfg_to_spcfg_one_step(ps_cfg_t &pscfg){
 
       return ;
     }else{
+      if((boost::out_degree(*(vi+2),cfg)!=2)){
+        throw std::invalid_argument("invalid cfg while loop graph");
+      }
       std::cout<<"preloop merge break!"<<std::endl;
       boost::graph_traits < cfg_t >::out_edge_iterator eei, eei_end;
       //std::cout<<"series merge break!2"<<std::endl;

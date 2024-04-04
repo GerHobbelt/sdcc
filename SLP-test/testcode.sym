@@ -1,0 +1,49 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Motorola 68HC(S)08 / 68(HC)05)    Page 1
+Hexadecimal [16-Bits]
+
+Symbol Table
+
+    .__.$$$.                                                    =  2710 L
+    .__.ABS.                                                    =  0000 G
+    .__.CPU.                                                    =  0000 L
+    .__.H$L.                                                    =  0001 L
+    ___sdcc_external_startup                                       **** GX
+    __mulint                                                       **** GX
+    __mulint_PARM_2                                                **** GX
+  2 __sdcc_gs_init_startup                                         0000 R
+  2 __sdcc_init_data                                               000C R
+  5 __sdcc_program_startup                                         0000 R
+  5 _main                                                          0005 GR
+  A _main_a_65536_11                                               0000 R
+  8 _main_sloc0_1_0                                                0000 R
+  8 _main_sloc1_1_0                                                0002 R
+  8 _main_sloc2_1_0                                                0004 R
+  8 _main_sloc3_1_0                                                0006 R
+    l_XINIT                                                        **** GX
+    s_XINIT                                                        **** GX
+    s_XISEG                                                        **** GX
+
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Motorola 68HC(S)08 / 68(HC)05)    Page 2
+Hexadecimal [16-Bits]
+
+Area Table
+
+   0 _CODE                                      size    0   flags    0
+   1 HOME                                       size    0   flags   20
+   2 GSINIT0                                    size   1E   flags   20
+   3 GSINIT                                     size    0   flags   20
+   4 GSFINAL                                    size    3   flags   20
+   5 CSEG                                       size   B0   flags   20
+   6 XINIT                                      size    0   flags   20
+   7 CONST                                      size    0   flags   20
+   8 DSEG                                       size    8   flags   10
+   9 OSEG                                       size    0   flags   14
+   A XSEG                                       size    2   flags    0
+   B XISEG                                      size    0   flags    0
+   C CODEIVT                                    size    0   flags    8
+   D CODEIVT0                                   size    2   flags    8
+   E IABS                                       size    0   flags    8
+   F XABS                                       size    0   flags    8
+  10 CABS                                       size    0   flags   28
+

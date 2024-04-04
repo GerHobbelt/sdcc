@@ -1,0 +1,12 @@
+digraph G {
+graph [label="Control-flow-graph for register allocator (function _add)"]
+0[label="0, 0: after: stack_alive: "];
+1[label="1, 1: after: stack_alive: "];
+2[label="2, 13: after: stack_alive: "];
+3[label="3, 14: after: stack_alive: "];
+4[label="4, 15: after: stack_alive: "];
+0->1 ;
+1->2 ;
+2->3 ;
+3->4 ;
+}

@@ -11,3 +11,4 @@ Makefile
 *.rul
 *.depcc
 *.depcxx
+sdcc

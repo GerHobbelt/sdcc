@@ -2220,7 +2220,7 @@ hc08_assignRegisters (ebbIndex * ebbi)
     hc08_ralloc (ebbi);
   
 
-    hc08_ralloc3_cc (ebbi);
+   // hc08_ralloc3_cc (ebbi);
 
 
   

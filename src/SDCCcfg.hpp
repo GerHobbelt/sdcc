@@ -171,7 +171,7 @@ static void break_graph_parallel( vertex begin_node, vertex end_node, cfg_t &cfg
   ps_cfg.left=cfg_count;
   cfg_count++;
   ps_cfg_map.push_back(left);
-  vi=p_s;
+  vi=next;
   --vi_end;
   for (next = vi; next != vi_end; vi=next) {
       ++next;

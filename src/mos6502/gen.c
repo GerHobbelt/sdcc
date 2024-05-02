@@ -1436,8 +1436,6 @@ aopName (asmop * aop)
       sprintf (buf, "?%d", aop->type);
       return buf;
     }
-
-  return "?";
 }
 
 // can we BIT aop ?

@@ -231,7 +231,7 @@ emitcode (const char *inst, const char *fmt, ...)
 
         va_start (ap, fmt);
 
-        lbp = lb = format_opcode (inst, ap);
+        lbp = lb = format_opcode (inst, fmt, ap);
 
         while (isspace ((unsigned char)*lbp))
                 lbp++;
@@ -2542,27 +2542,6 @@ genCmpLe (iCode * ic, iCode * ifx)
 }
 
 /*-----------------------------------------------------------------*/
-/* ifxForOp - returns the icode containing the ifx for operand     */
-/*-----------------------------------------------------------------*/
-static iCode *
-ifxForOp (const operand * op, const iCode * ic)
-{
-        /* if true symbol then needs to be assigned */
-        if (IS_TRUE_SYMOP (op))
-                return NULL;
-
-        /* if this has register type condition and
-           the next instruction is ifx with the same operand
-           and live to of the operand is upto the ifx only then */
-        if (ic->next &&
-            ic->next->op == IFX &&
-            IC_COND (ic->next)->key == op->key &&
-            OP_SYMBOL (op)->liveTo <= ic->next->seq) return ic->next;
-
-        return NULL;
-}
-
-/*-----------------------------------------------------------------*/
 /* genAndOp - for && operation                                     */
 /*-----------------------------------------------------------------*/
 static void
@@ -2924,62 +2903,6 @@ static void
 genXor (iCode * ic, iCode * ifx)
 {
         genBitWise (ic, ifx, AVR_XOR);
-}
-
-/*-----------------------------------------------------------------*/
-/* genInline - write the inline code out                           */
-/*-----------------------------------------------------------------*/
-static void
-genInline (iCode * ic)
-{
-  char *buffer, *bp, *bp1;
-  bool inComment = FALSE;
-
-  _G.inLine += (!options.asmpeep);
-
-  buffer = bp = bp1 = Safe_strdup (IC_INLINE (ic));
-
-  /* emit each line as a code */
-  while (*bp)
-    {
-      switch (*bp)
-        {
-        case ';':
-          inComment = TRUE;
-          ++bp;
-          break;
-
-        case '\n':
-          inComment = FALSE;
-          *bp++ = '\0';
-          emitcode (bp1, "");
-          bp1 = bp;
-          break;
-
-        default:
-          /* Add \n for labels, not dirs such as c:\mydir */
-          if (!inComment && (*bp == ':') && (isspace((unsigned char)bp[1])))
-            {
-              ++bp;
-              *bp = '\0';
-              ++bp;
-              emitcode (bp1, "");
-              bp1 = bp;
-            }
-          else
-            ++bp;
-          break;
-        }
-    }
-  if (bp1 != bp)
-    emitcode (bp1, "");
-
-  Safe_free (buffer);
-
-  /* consumed; we can free it here */
-  dbuf_free (IC_INLINE (ic));
-
-  _G.inLine -= (!options.asmpeep);
 }
 
 /*-----------------------------------------------------------------*/

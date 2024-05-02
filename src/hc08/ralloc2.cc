@@ -25,6 +25,7 @@
 #define CH_SALLOC
 
 #include "SDCCralloc.hpp"
+#include <chrono>
 
 extern "C"
 {
@@ -37,6 +38,35 @@ extern "C"
 #define REG_A 0
 #define REG_X 1
 #define REG_H 2
+
+static void write_into_csv(float c, int i, int time){
+  std::ofstream outputFile("optimalCost.csv", std::ios_base::app);
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << std::string(dstFileName)<<","<< c << "," << time << "," << i << "\n";  // Write a line of text to the file
+    // Close the file
+    outputFile.close();  // Close the file after writing
+
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
+}
+
+static void write_into_csv( int i, int time){
+  std::ofstream outputFile("optimalc_time.csv", std::ios_base::app);
+   if (outputFile.is_open()) {  // Check if the file was successfully opened
+    // Write some text into the file
+    outputFile << std::string(dstFileName)<<","<< time << "," << i << "\n";  // Write a line of text to the file
+    // Close the file
+    outputFile.close();  // Close the file after writing
+
+    std::cout << "Text has been written to the file." << std::endl;  // Display a success message
+  } else {
+    std::cout << "Failed to create the file." << std::endl;  // Display an error message if file creation failed
+  }
+}
+
 
 template <class I_t>
 static void add_operand_conflicts_in_node(const cfg_node &n, I_t &I)
@@ -418,7 +448,7 @@ static bool inst_sane(const assignment &a, unsigned short int i, const G_t &G, c
 
 // Cost function.
 template <class G_t, class I_t>
-static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+static float instruction_cost_1(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
 {
   iCode *ic = G[i].ic;
   float c;
@@ -507,6 +537,120 @@ static float instruction_cost(const assignment &a, unsigned short int i, const G
     }
 }
 
+
+template <class G_t, class I_t>
+static float assign_operand_for_cost_easy(operand *o, const assignment &a, unsigned short int i, const G_t &G, const I_t &I,float c)
+{
+  if(!o || !IS_SYMOP(o))
+    return c;
+  symbol *sym = OP_SYMBOL(o);
+  operand_map_t::const_iterator oi, oi_end;
+  for(boost::tie(oi, oi_end) = G[i].operands.equal_range(OP_SYMBOL_CONST(o)->key); oi != oi_end; ++oi)
+    {
+      var_t v = oi->second;
+      if(a.global[v] >= 0)
+        { 
+          c=c+1;
+        }
+      else
+        {
+          c=c+4;
+        }
+    }
+  return c;
+}
+
+
+template <class G_t, class I_t>
+static float assign_operands_for_cost_easy(const assignment &a, unsigned short int i, const G_t &G, const I_t &I,float c)
+{
+  const iCode *ic = G[i].ic;
+  
+  if(ic->op == IFX)
+    c=assign_operand_for_cost_easy(IC_COND(ic), a, i, G, I,c);
+  else if(ic->op == JUMPTABLE)
+    c=assign_operand_for_cost_easy(IC_JTCOND(ic), a, i, G, I,c);
+  else
+    {
+      c=assign_operand_for_cost_easy(IC_LEFT(ic), a, i, G, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RIGHT(ic), a, i, G, I,c);
+      c=c+assign_operand_for_cost_easy(IC_RESULT(ic), a, i, G, I,c);
+    }
+  return c;
+}
+
+
+// Easy Cost function.
+template <class G_t, class I_t>
+static float instruction_cost(const assignment &a, unsigned short int i, const G_t &G, const I_t &I)
+{
+  iCode *ic = G[i].ic;
+  float c=0;
+
+  if (ic->generated)
+    return(0.0f);
+
+  switch(ic->op)
+    {
+    // Register assignment doesn't matter for these:
+    case FUNCTION:
+    case ENDFUNCTION:
+    case LABEL:
+    case GOTO:
+    case INLINEASM:
+      return(0.0f);
+    case '!':
+    case '~':
+    case UNARYMINUS:
+    case '+':
+    case '-':
+    case '^':
+    case '|':
+    case BITWISEAND:
+    case IPUSH:
+    //case IPOP:
+    case CALL:
+    case PCALL:
+    case RETURN:
+    case '*':
+    case '/':
+    case '%':
+    case '>':
+    case '<':
+    case LE_OP:
+    case GE_OP:
+    case EQ_OP:
+    case NE_OP:
+    case AND_OP:
+    case OR_OP:
+    case GETABIT:
+    case GETBYTE:
+    case GETWORD:
+    case LEFT_OP:
+    case RIGHT_OP:
+    case GET_VALUE_AT_ADDRESS:
+    case '=':
+    case IFX:
+    case ADDRESS_OF:
+    case JUMPTABLE:
+    case CAST:
+    case RECEIVE:
+    case SEND:
+    case DUMMY_READ_VOLATILE:
+    case CRITICAL:
+    case ENDCRITICAL:
+    case SWAP:
+      c=assign_operands_for_cost_easy(a, i, G, I,c); 
+      return(c);
+    default:
+      return(0.0f);
+    }
+}
+
+
+
+
+
 // For early removal of assignments that cannot be extended to valid assignments. This is just a dummy for now, it probably isn't really needed for hc08 due to the low number of registers.
 template <class G_t, class I_t>
 static bool assignment_hopeless(const assignment &a, unsigned short int i, const G_t &G, const I_t &I, const var_t lastvar)
@@ -564,6 +708,10 @@ static void extra_ic_generated(iCode *ic)
     }
 }
 
+
+std::chrono::high_resolution_clock::time_point start;
+std::chrono::high_resolution_clock::time_point end;
+
 template <class T_t, class G_t, class I_t>
 static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 {
@@ -581,22 +729,23 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
   for(boost::tie(e, e_end) = boost::edges(I); e != e_end; ++e)
     add_edge(boost::source(*e, I), boost::target(*e, I), I2);
 
+  start = std::chrono::high_resolution_clock::now();
+
   assignment ac;
   assignment_optimal = true;
   tree_dec_ralloc_nodes(T, find_root(T), G, I2, ac, &assignment_optimal);
-
   const assignment &winner = *(T[find_root(T)].assignments.begin());
-
-#ifdef DEBUG_RALLOC_DEC
-  std::cout << "Winner: ";
+  
+  end = std::chrono::high_resolution_clock::now();
+  auto duration= std::chrono::duration_cast<std::chrono::microseconds>(end - start); 
+  
+  std::cout << "Philip Winner: ";
   for(unsigned int i = 0; i < boost::num_vertices(I); i++)
   {
   	std::cout << "(" << i << ", " << int(winner.global[i]) << ") ";
   }
   std::cout << "\n";
   std::cout << "Cost: " << winner.s << "\n";
-  std::cout.flush();
-#endif
 
   // Todo: Make this an assertion
   if(winner.global.size() != boost::num_vertices(I))
@@ -629,6 +778,8 @@ static bool tree_dec_ralloc(T_t &T, G_t &G, const I_t &I)
 
   for(unsigned int i = 0; i < boost::num_vertices(G); i++)
     set_surviving_regs(winner, i, G, I);
+  write_into_csv(winner.s, 0, duration.count());
+
 
   return(!assignment_optimal);
 }
@@ -651,12 +802,10 @@ iCode *hc08_ralloc2_cc(ebbIndex *ebbi)
 
   guessCounts(ic, ebbi);
 
-  if(options.dump_graphs)
-    dump_cfg(control_flow_graph);
-
-  if(options.dump_graphs)
+  if(options.dump_graphs){
     dump_con(conflict_graph);
-
+    dump_cfg(control_flow_graph);
+  }
   tree_dec_t tree_decomposition;
 
   get_nice_tree_decomposition(tree_decomposition, control_flow_graph);

@@ -195,6 +195,7 @@ struct cfg_node
   operand_map_t operands;
   cfg_alive_t alive;
   cfg_dying_t dying;
+  cfg_alive_t after;
 
   std::set<var_t> stack_alive;
 
@@ -1284,6 +1285,14 @@ static void dump_cfg(const cfg_t &cfg)
       cfg_alive_t::const_iterator v;
       for (v = cfg[i].alive.begin(); v != cfg[i].alive.end(); ++v)
         os << *v << " ";
+      os<< "after: ";
+      for(v = cfg[i].after.begin(); v != cfg[i].after.end(); ++v)
+        os << *v << " ";
+      os<<"stack_alive: ";
+
+      for (auto it = cfg[i].stack_alive.begin(); it != cfg[i].stack_alive.end(); it++) { 
+        os << *it << " ";
+    } 
       name[i] = os.str();
     }
 

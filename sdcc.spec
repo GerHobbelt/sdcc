@@ -41,7 +41,7 @@ MCS51 based microprocessors (8031, 8032, 8051, 8052, etc.), Maxim
 HC08 based (hc08, s08), Zilog Z80 based MCUs (Z80, Z180, SM83,
 Rabbit 2000 / 2000A / 3000A, TLCS-90, eZ80 in Z80 mode, Z80N), the STM8
 and the Padauk PDK14 and PDK15.
-Work is in progress on supportine the Padauk PDK13 and MOS 6502 targets.
+Work is in progress on supporting the Padauk PDK13 and MOS 6502 targets.
 There is unmaintained support for the Microchip PIC16 and PIC18.
 SDCC can be retargeted for other microprocessors.
 
@@ -58,7 +58,7 @@ MCS51 based microprocessors (8031, 8032, 8051, 8052, etc.), Maxim
 HC08 based (hc08, s08), Zilog Z80 based MCUs (Z80, Z180, SM83,
 Rabbit 2000 / 2000A / 3000A, TLCS-90, eZ80 in Z80 mode, Z80N), the STM8
 and the Padauk PDK14 and PDK15.
-Work is in progress on supportine the Padauk PDK13 and MOS 6502 targets.
+Work is in progress on supporting the Padauk PDK13 and MOS 6502 targets.
 There is unmaintained support for the Microchip PIC16 and PIC18.
 SDCC can be retargeted for other microprocessors.
 

@@ -483,9 +483,7 @@ stm8instructionSize(lineNode *pl)
       return(3);
     if(readint(op2start) <= 0xFF)
       return(2+i);
-    else
-      return(3+i);
-    return 4;
+    return(3+i);
   }
 
   /* mov costs 3, 4 or 5 bytes depending on its addressing mode */

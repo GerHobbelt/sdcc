@@ -520,7 +520,6 @@ void pic16_addExtern(const char *name)
 void pic16_callGenericPointerLoad(void)
 {
   char buf[32];
-  symbol *sym;
 
     strcpy(buf, port->fun_prefix);
     strcat(buf, "_gptrload");
@@ -534,7 +533,6 @@ void pic16_callGenericPointerLoad(void)
 void pic16_callGenericPointerRW(int rw, int size)
 {
   char buf[32];
-  symbol *sym;
 
     /* Generic pointer read/write functions read or write up to 4 bytes, larger
      * accesses are broken into multiple calls */

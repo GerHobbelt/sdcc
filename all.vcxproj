@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5339F39B-0A44-4248-972C-F8833B0F5537}</ProjectGuid>
+    <ProjectGuid>{4BB358C6-47E1-4B8F-95FA-9C47C3B4721E}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>

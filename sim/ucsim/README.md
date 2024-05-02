@@ -2,8 +2,6 @@
 
 ## Micro-controller simulator
 
-
-
 ### What is uCsim?
 
 uCsim is a micro-controller simulator. It is extensible to support

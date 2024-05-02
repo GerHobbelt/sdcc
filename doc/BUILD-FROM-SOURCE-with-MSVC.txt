@@ -11,5 +11,5 @@ C:\Program Files\Git\usr\bin
 C:\git-sdk-64\usr\bin
 ```
 
-The first is for a viable gawk.exe, the latter for a viable `flex.exe` and `bison.exe`. This assumes you have installed a full-fledged git-for-windows SDK install. Alternatively you can grab flex + bison from https://github.com/lexxmark/winflexbison/releases/tag/v2.5.25, but then you'll have to rename those win_flex.exe -> flex.exe and win_bison.exe --> bison.exe, next to adding that directory to the PATH environment PATH set.
+The first is for a viable gawk.exe, the latter for a viable `flex.exe` and `bison.exe`. This assumes you have installed a full-fledged git-for-windows SDK install. Alternatively you can grab flex + bison from https://github.com/lexxmark/winflexbison/releases/tag/v2.5.25, but then you'll have to rename those win_flex.exe -> flex.exe and win_bison.exe --> bison.exe, next to adding that directory to the PATH environment path set.
 

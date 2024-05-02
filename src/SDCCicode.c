@@ -877,6 +877,8 @@ operandType (const operand *op)
     default:
       werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "operand type not known");
       exit(EXIT_FAILURE);
+      /*  Just to keep the compiler happy */
+      //return NULL;
     }
 }
 

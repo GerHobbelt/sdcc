@@ -59,7 +59,7 @@ def main():
             print("%s: can't create %s: %s" % (os.path.basename(sys.argv[1]), args[1], strerror), file=sys.stderr)
             return 1
     else:
-        fout = sys.stdout;
+        fout = sys.stdout
 
     areas = []
     modules = []

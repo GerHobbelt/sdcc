@@ -337,18 +337,24 @@ enum {
 #ifdef NDEBUG
 # define assert(expr) (void)0
 #else
-# define assert(expr) ((expr) ? (void)0 : fatal (1, E_INTERNAL_ERROR, __FILE__, __LINE__, #expr))
+# define assert(expr) ((expr) ? (void)0 : fatal (EXIT_FAILURE, E_INTERNAL_ERROR, __FILE__, __LINE__, "%s", #expr))
 #endif
 
-#define wassertl_bt(a,s)   (void)((a) ? 0 : \
-        (werror_bt (E_INTERNAL_ERROR, __FILE__, __LINE__, s), 0))
+#define wassertl_bt(a,s)   ((a) ? (void)0 : \
+        fatal_bt (EXIT_FAILURE, E_INTERNAL_ERROR, __FILE__, __LINE__, "%s", s))
 
 #define wassert_bt(a) wassertl_bt(a, "code generator internal error")
 
+#if defined(__GNUC__) && __GNUC__ >= 3
+#define __NORETURN__ __attribute__((__noreturn__))
+#elif defined(_MSC_VER)
+#define __NORETURN__ __declspec(noreturn)
+#else
+#define __NORETURN__ [[noreturn]]
+#endif
+
 /** Describes the maximum error level that will be logged.  Any level
  *  includes all of the levels listed after it.
- *
- *
  */
 enum _ERROR_LOG_LEVEL {
   /** Everything.  Currently the same as PEDANTIC. */
@@ -412,7 +418,7 @@ int werror (int errNum, ... );
 
 /*
 -------------------------------------------------------------------------------
-werror_bt - like werror(), but als provide a backtrace
+werror_bt - like werror(), but also provide a backtrace
 
 -------------------------------------------------------------------------------
 */
@@ -436,7 +442,18 @@ fatal - Output a standard error message with variable number of arguments and
 -------------------------------------------------------------------------------
 */
 
+__NORETURN__
 void fatal (int exitCode, int errNum, ... );
+
+/*
+-------------------------------------------------------------------------------
+fatal_bt - like fatal(), but also provide a backtrace
+
+-------------------------------------------------------------------------------
+*/
+
+__NORETURN__
+void fatal_bt (int exitCode, int errNum, ...);
 
 /*
 -------------------------------------------------------------------------------

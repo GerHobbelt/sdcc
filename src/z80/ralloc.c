@@ -136,8 +136,8 @@ regWithIdx (int idx)
         }
     }
 
-  wassertl (0, "regWithIdx not found");
-  exit (1);
+	werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "regWithIdx not found: %d", idx);
+	exit(EXIT_FAILURE);
 }
 
 /** Frees a register.

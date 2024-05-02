@@ -1523,11 +1523,13 @@ pic14_printIvalStruct (symbol *sym, sym_link *type, initList *ilist, struct dbuf
           while (sflds && sflds->offset == oldoffset)
             {
               /* FIXME: this breaks bug-1981238 (initialNoPad) */
+#if 1
               DBG_MSG ("WARNING: skip holes disabled");
-              break;
-
+							break;
+#else
               sflds = sflds->next;
               skip_holes++;
+#endif
             }
         }
 

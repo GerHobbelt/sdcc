@@ -305,7 +305,7 @@ void color_stack_var(const var_t v, SI_t &SI, int start, int *ssize)
 template <class SI_t>
 void color_stack_var_greedily(const var_t v, SI_t &SI, int alignment, int *ssize)
 {
-  int start;
+  int start = 0;
   symbol *const sym = SI[v].sym;
   const int size = getSize(sym->type);
  

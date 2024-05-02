@@ -27,6 +27,12 @@
 #ifndef SDCCGENPIC16_H
 #define SDCCGENPIC16_H
 
+/* code generator experimental(?) feature switches (1 = compile-time ENABLED) */
+#define DUMP_DF_GRAPHS 0
+#define USE_PRECALCED_INVALS 1
+#define USE_DATAFLOW_ANALYSIS 0
+#define FORWARD_FLOW_ANALYSIS 1
+
 /* If you change these, you also have to update the library files
  * device/lib/pic16/libsdcc/gptr{get,put}{1,2,3,4}.c */
 #define GPTR_TAG_DATA   0x80

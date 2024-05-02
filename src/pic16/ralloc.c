@@ -950,8 +950,8 @@ pic16_allocRegByName(const char *name, int size, operand *op)
 
   if(!name) {
     fprintf(stderr, "%s - allocating a NULL register\n",__FUNCTION__);
-    exit(1);
-  }
+		exit(EXIT_FAILURE);
+	}
 
   /* First, search the hash table to see if there is a register with this name */
   reg = pic16_dirregWithName(name);
@@ -1084,10 +1084,8 @@ pic16_allocWithIdx (int idx)
 
         if(!dReg) {
 //      return (NULL);
-    //fprintf(stderr,"%s %d - requested register: 0x%x\n",__FUNCTION__,__LINE__,idx);
-            werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-                    "allocWithIdx not found");
-            exit (1);
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "requested register: 0x%x: allocWithIdx not found", idx);
+					exit(EXIT_FAILURE);
         }
   }
 
@@ -1179,9 +1177,9 @@ nFreeRegs (int type)
                  * the for loop below doesn't give valid results. I do not
                  * know why yet. -- VR 10-Jan-2003 */
 
-        return 100;
-
-
+#if !USE_DATAFLOW_ANALYSIS
+	return 100;
+#else
   /* dynamically allocate as many as we need and worry about
    * fitting them into a PIC later */
 
@@ -1192,6 +1190,7 @@ nFreeRegs (int type)
 
         fprintf(stderr, "%s:%d # of free registers= %d\n", __FILE__, __LINE__, nfr);
   return nfr;
+#endif
 }
 
 /*-----------------------------------------------------------------*/
@@ -1468,8 +1467,8 @@ liveRangesWith (bitVect * lrs, int (func) (symbol *, eBBlock *, iCode *),
         {
           werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
                   "liveRangesWith could not find liveRange");
-          exit (1);
-        }
+					exit(EXIT_FAILURE);
+			}
 
       if (func (sym, ebp, ic) && bitVectBitValue (_G.regAssigned, sym->key))
         addSetHead (&rset, sym);
@@ -2627,8 +2626,8 @@ createRegMask (eBBlock ** ebbs, int count)
                 {
                   werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
                           "createRegMask cannot find live range");
-                  exit (0);
-                }
+									exit(EXIT_FAILURE);
+							}
 
               /* if no register assigned to it */
               if (!sym->nRegs || sym->isspilt)

@@ -183,7 +183,7 @@
                                ? (STACK_ERR(0, stack), *stack)      \
                                : *p_##stack                         )
 
-#define STACK_ERR(o, stack)    (fatal(1, E_STACK_VIOLATION, #stack, \
+#define STACK_ERR(o, stack)    (fatal(EXIT_FAILURE, E_STACK_VIOLATION, #stack, \
                                        (o < 0)                      \
                                        ? "underflow"                \
                                        : (o > 0)                    \
@@ -380,10 +380,10 @@ void setParseWithComma (set **, const char *);
 /** An assert() macro that will go out through sdcc's error
     system.
 */
-#define wassertl(a,s)   (void)((a) ? 0 : \
-        (werror (E_INTERNAL_ERROR, __FILE__, __LINE__, s), 0))
+#define wassertl(a,s)   ((a) ? (void)0 : \
+                         fatal (EXIT_FAILURE, E_INTERNAL_ERROR, __FILE__, __LINE__, "%s", s))
 
-#define wassert(a)    wassertl(a,"code generator internal error")
+#define wassert(a)    wassertl(a, "code generator internal error")
 
 enum {
   DUMP_RAW0 = 1,

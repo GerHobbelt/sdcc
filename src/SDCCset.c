@@ -23,6 +23,7 @@
 -------------------------------------------------------------------------*/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "newalloc.h"
 #include "SDCCerr.h"
 #include "SDCCset.h"
@@ -154,8 +155,10 @@ addSet (set ** list, void *item)
 {
   set *lp;
 
-  if (!list)
-    werror (E_INTERNAL_ERROR,__FILE__,__LINE__, "Invalid set.");
+	if (!list) {
+		werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Invalid set.");
+		exit(EXIT_FAILURE);
+	}
 
   /* item added to the tail of the list */
 

@@ -561,7 +561,6 @@ static void extra_ic_generated(iCode *ic)
         return;
     }
 
-cnd:
   OP_SYMBOL(IC_RESULT(ic))->for_newralloc = false;
   OP_SYMBOL(IC_RESULT(ic))->regType = REG_CND;
   ifx->generated = true;

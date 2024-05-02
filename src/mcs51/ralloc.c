@@ -953,7 +953,7 @@ getRegPtrNoSpil ()
   if ((reg = allocReg (REG_GPR)))
     return reg;
 
-  assert (0);
+  assert (! (__func__ ": should never get here."));
 
   /* just to make the compiler happy */
   return 0;
@@ -973,7 +973,7 @@ getRegGprNoSpil ()
     if ((reg = allocReg (REG_PTR)))
       return reg;
 
-  assert (0);
+	assert(!(__func__ ": should never get here."));
 
   /* just to make the compiler happy */
   return 0;
@@ -995,7 +995,7 @@ getRegBitNoSpil ()
   if ((reg = allocReg (REG_GPR)))
     return reg;
 
-  assert (0);
+	assert(!(__func__ ": should never get here."));
 
   /* just to make the compiler happy */
   return 0;

@@ -1408,9 +1408,8 @@ pic16_aopGet (asmop * aop, int offset, bool bit16, bool dname)
 
     }
 
-  fprintf (stderr, "%s:%d unsupported aop->type: %s\n", __FILE__, __LINE__, pic16_AopType (aop->type));
-  werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "aopget got unsupported aop->type");
-  exit (0);
+	werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "aopget got unsupported aop->type: %s", pic16_AopType (aop->type));
+	exit(EXIT_FAILURE);
 }
 
 
@@ -1578,7 +1577,6 @@ pic16_popReleaseTempReg (pCodeOp * pcop, int lock)
 pCodeOp *
 pic16_popGetLabel (int key)
 {
-
   DEBUGpic16_emitcode ("; ***", "%s  key=%d, label offset %d", __FUNCTION__, key, pic16_labelOffset);
 
   if (key > max_key)
@@ -1911,7 +1909,7 @@ pic16_popGet (asmop * aop, int offset)  //, bool bit16, bool dname)
     }
 
   werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "pic16_popGet got unsupported aop->type");
-  exit (0);
+	exit(EXIT_FAILURE);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1939,7 +1937,7 @@ pic16_popGetImmed(asmop *aop, int offset, int overload)
     }
 
   werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "pic16_popGetImmed supported only AOP_PCODE.");
-  exit(0);
+  exit(EXIT_FAILURE);
 }
 
 /*-----------------------------------------------------------------*/
@@ -1948,16 +1946,20 @@ pic16_popGetImmed(asmop *aop, int offset, int overload)
 void
 pic16_aopPut (asmop * aop, char *s, int offset)
 {
-  symbol *lbl;
+#if 1
 
-  return;
+	return;
 
-  DEBUGpic16_emitcode ("; ***", "%s  %d", __FUNCTION__, __LINE__);
+#else
+
+	symbol* lbl;
+
+	DEBUGpic16_emitcode ("; ***", "%s  %d", __FUNCTION__, __LINE__);
 
   if (aop->size && offset > (aop->size - 1))
     {
       werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "pic16_aopPut got offset > aop->size");
-      exit (0);
+      exit (EXIT_FAILURE);
     }
 
   /* will assign value to value */
@@ -2109,10 +2111,11 @@ pic16_aopPut (asmop * aop, char *s, int offset)
 
     default:
       fprintf (stderr, "%s:%d: unknown aop->type = 0x%x\n", __FILE__, __LINE__, aop->type);
-//      werror(E_INTERNAL_ERROR,__FILE__,__LINE__,
-//             "pic16_aopPut got unsupported aop->type");
-//      exit(0);
+      werror(E_INTERNAL_ERROR,__FILE__,__LINE__, "pic16_aopPut got unsupported aop->type");
+      exit(EXIT_FAILURE);
     }
+
+#endif
 
 }
 
@@ -9502,7 +9505,7 @@ genPointerGet (iCode * ic)
 
     default:
       werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "genPointerGet: illegal pointer type");
-
+      exit(EXIT_FAILURE);
     }
 }
 
@@ -10082,6 +10085,7 @@ genPointerSet (iCode * ic)
 
     default:
       werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "genPointerSet: illegal pointer type");
+      exit(EXIT_FAILURE);
     }
 }
 
@@ -11069,14 +11073,16 @@ genCast (iCode * ic)
             default:
               /* this should never happen */
               werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "got unknown pointer type");
-              exit (1);
+              exit(EXIT_FAILURE);
             }
           //pic16_aopPut(AOP(result),l, GPTRSIZE - 1);
           goto release;
         }
 
 
-      assert (0);
+      assert (0);      // not implemented for PIC16?
+
+
       /* just copy the pointers */
       size = AOP_SIZE (result);
       offset = 0;
@@ -11216,7 +11222,8 @@ genReceive (iCode * ic)
       int size = getSize (operandType (IC_RESULT (ic)));
       int offset = pic16_fReturnSizePic - size;
 
-      assert (0);
+      assert (0);           // not implemented for PIC16?
+
       while (size--)
         {
           pic16_emitcode ("push", "%s", (strcmp (fReturn[pic16_fReturnSizePic - offset - 1], "a") ?
@@ -11446,6 +11453,7 @@ genpic16Code (iCode * lic)
           /* note these two are xlated by algebraic equivalence
            * during parsing SDCC.y */
           werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "got '>=' or '<=' shouldn't have come here");
+          exit(EXIT_FAILURE);
           break;
 
         case EQ_OP:

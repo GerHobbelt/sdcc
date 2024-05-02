@@ -268,8 +268,9 @@ DEFSETFUNC (createLoop)
   eBBlock *block;
 
   /* make sure regionStack is empty */
-  while (!STACK_EMPTY (regionStack))
+  while (!STACK_EMPTY (regionStack)) {
     STACK_POP (regionStack);
+  }
 
   /* add the entryBlock */
   addSet (&aloop->regBlocks, ep->to);

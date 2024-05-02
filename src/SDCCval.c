@@ -1989,7 +1989,7 @@ floatFromVal (value * val)
 
   /* we are lost ! */
   werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "floatFromVal: unknown value");
-  return 0;
+  exit(EXIT_FAILURE);
 }
 
 /*------------------------------------------------------------------*/
@@ -2089,7 +2089,7 @@ byteOfVal (value *val, int offset)
 
   /* we are lost ! */
   werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "byteOfVal: unknown value");
-  return 0;
+  exit(EXIT_FAILURE);
 }
 
 /*------------------------------------------------------------------*/
@@ -2163,7 +2163,7 @@ ullFromLit (sym_link * lit)
 
   /* we are lost ! */
   werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "ullFromLit: unknown value");
-  return 0;
+  exit(EXIT_FAILURE);
 }
 
 /*------------------------------------------------------------------*/

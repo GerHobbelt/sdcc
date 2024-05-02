@@ -724,7 +724,7 @@ mergeSpec (sym_link * dest, sym_link * src, const char *name)
     {
 #if 0
       werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "cannot merge declarator");
-      exit (1);
+      exit(EXIT_FAILURE);
 #else
       werror (E_SYNTAX_ERROR, yytext);
       // the show must go on
@@ -1117,8 +1117,9 @@ newPtrDiffLink ()
     return newLongLongLink();
   else
     {
-      assert (0);
-      return NULL;
+		werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : should never reach here");
+		exit(EXIT_FAILURE);
+      //return NULL;
     }
 }
 
@@ -4540,12 +4541,14 @@ typeFromStr (const char *s)
           s++;
           break;
         default:
-          werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "typeFromStr: unknown type");
-          fprintf(stderr, "unknown: %s\n", s);
+          werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "typeFromStr: unknown type: %s", s);
+          exit(EXIT_FAILURE);
           break;
         }
-      if (usign && sign)
-        werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "typeFromStr: both signed and unsigned specified");
+			if (usign && sign) {
+				werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "typeFromStr: both signed and unsigned specified");
+				exit(EXIT_FAILURE);
+			}
       if (IS_SPEC (r) && usign)
         {
           SPEC_USIGN (r) = 1;
@@ -4872,12 +4875,13 @@ validateLink (sym_link * l, const char *macro, const char *args, const char sele
     {
       return l;
     }
-  fprintf (stderr,
+	werror(E_INTERNAL_ERROR, __FILE__, __LINE__, 
            "Internal error: validateLink failed in %s(%s) @ %s:%u:"
-           " expected %s, got %s\n",
+           " expected %s, got %s",
            macro, args, file, line, DECLSPEC2TXT (select), l ? DECLSPEC2TXT (l->xclass) : "null-link");
   exit (EXIT_FAILURE);
-  return l;                     // never reached, makes compiler happy.
+
+  //return l;                     // never reached, makes compiler happy.
 }
 
 /*--------------------------------------------------------------------*/
@@ -4940,7 +4944,7 @@ newEnumType (symbol *enumlist)
       SPEC_LONG (type) = 1;
       SPEC_USIGN (type) = 1;
     }
-  else if (min >= -2147483648 && max <= 2147483647)
+  else if (min >= -2147483648LL && max <= 2147483647LL)
     {
       SPEC_NOUN (type) = V_INT;
       SPEC_LONG (type) = 1;

@@ -2258,9 +2258,8 @@ pCode *newpCode (PIC_OPCODE op, pCodeOp *pcop)
 	}
 
 	fprintf(stderr, "pCode mnemonic error %s,%d\n",__FUNCTION__,__LINE__);
-	exit(1);
-
-	return NULL;
+	exit(EXIT_FAILURE);
+	//return NULL;
 }
 
 /*-----------------------------------------------------------------*/

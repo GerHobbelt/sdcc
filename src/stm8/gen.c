@@ -503,6 +503,7 @@ aopGet(const asmop *aop, int offset)
     }
 
   wassert_bt (0);
+
   return ("dummy");
 }
 
@@ -576,8 +577,10 @@ op8_cost (const asmop *op2, int offset2)
     }
 error:
   fprintf(stderr, "op2 type: %d, offset %d, rIdx %d\n", op2type, offset2, r2Idx);
-  wassert_bt (0);
-  cost (8, 4 * 8);
+
+	wassert_bt (0);
+
+	cost (8, 4 * 8);
 }
 
 /* For 8-bit operations that have only one operand, i.e. tnz */
@@ -614,8 +617,10 @@ op_cost (const asmop *op1, int offset1)
     }
 error:
   fprintf(stderr, "op1 type: %d, offset %d, rIdx %d\n", op1type, offset1, r1Idx);
-  wassert_bt (0);
-  cost (8, 4 * 8);
+
+	wassert_bt (0);
+
+	cost (8, 4 * 8);
 }
 
 /* For cheap 16-bit operations that have only one operand, i.e. incw */
@@ -636,7 +641,8 @@ opw_cost (const asmop *op1, int offset1)
     }
 
   wassert_bt (0);
-  cost (8, 4 * 8);
+
+	cost (8, 4 * 8);
 }
 
 /* For other 16-bit operations that have only one operand, i.e. tnzw */
@@ -657,7 +663,8 @@ opw_cost2 (const asmop *op1, int offset1)
     }
 
   wassert_bt (0);
-  cost (8, 4 * 8);
+
+	cost (8, 4 * 8);
 }
 
 static void
@@ -762,8 +769,10 @@ ld_cost (const asmop *op1, int offset1, const asmop *op2, int offset2)
 error:
   fprintf(stderr, "op1 type: %d, offset %d, rIdx %d\n", op1type, offset1, r1Idx);
   fprintf(stderr, "op2 type: %d, offset %d, rIdx %d\n", op2type, offset2, r2Idx);
-  wassert_bt (0);
-  cost (8, 4 * 8);
+
+	wassert_bt (0);
+
+	cost (8, 4 * 8);
 }
 
 static void
@@ -2460,12 +2469,13 @@ skip_byte:
     {
       if (!regalloc_dry_run)
         {
-          wassertl_bt (0, "genCopy failed to completely copy operands.");
-          fprintf (stderr, "%d bytes left.\n", size);
+  				fprintf (stderr, "genCopy failed to completely copy operands: %d bytes left.\n", size);
           fprintf (stderr, "left type %d source type %d\n", result->type, source->type);
-          for (i = 0; i < n ; i++)
+          for (i = 0; i < n ; i++) {
             fprintf (stderr, "Byte %d, result in reg %d, source in reg %d. %s assigned.\n", i, result->aopu.bytes[roffset + i].in_reg ? result->aopu.bytes[roffset + i].byteu.reg->rIdx : -1, source->aopu.bytes[soffset + i].in_reg ? source->aopu.bytes[soffset + i].byteu.reg->rIdx : -1, assigned[i] ? "" : "not");
-        }
+			   	}
+					wassertl_bt(0, "genCopy failed to completely copy operands.");
+			}
       cost (180, 180);
     }
 }

@@ -621,8 +621,9 @@ isPairInUse (PAIR_ID id, const iCode * ic)
     }
   else
     {
-      wassertl (0, "Only implemented for DE and BC");
-      return TRUE;
+		werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Only implemented for DE and BC");
+		exit(EXIT_FAILURE);
+		//return TRUE;
     }
 }
 
@@ -640,8 +641,9 @@ isPairDead (PAIR_ID id, const iCode * ic)
     case PAIR_IY:
       return isRegDead (IYH_IDX, ic) && isRegDead (IYL_IDX, ic);
     default:
-      wassertl (0, "Only implemented for DE, BC, HL and IY");
-      return FALSE;
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Only implemented for DE, BC, HL and IY");
+			exit(EXIT_FAILURE);
+			//return FALSE;
     }
 }
 
@@ -942,9 +944,9 @@ ld_cost (const asmop *op1, int offset1, const asmop *op2, int offset2, bool coun
               return ((aopInReg (op1, 0, A_IDX) || op1type == AOP_DUMMY) ? 1 : 2);
             }
         default:
-          fprintf (stderr, "ld_cost op1: AOP_REG, op2: %d\n", (int) (op2type));
-          wassert (0);
-        }
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : ld_cost op1: AOP_REG, op2: %d\n", (int) (op2type));
+					exit(EXIT_FAILURE);
+			}
     case AOP_SFR:
       if (count)
         cost2 (2, 11, 10, 0, 0, 0, 3, 3); // out (n), a
@@ -968,9 +970,9 @@ ld_cost (const asmop *op1, int offset1, const asmop *op2, int offset2, bool coun
         case AOP_EXSTK:
           return (16);
         default:
-          printf ("ld_cost op1: AOP_IY, op2: %d\n", (int) (op2type));
-          wassert (0);
-        }
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : ld_cost op1: AOP_IY, op2: %d\n", (int) (op2type));
+					exit(EXIT_FAILURE);
+			}
     case AOP_STK:
       switch (op2type)
         {
@@ -1015,9 +1017,9 @@ ld_cost (const asmop *op1, int offset1, const asmop *op2, int offset2, bool coun
             cost2 (3, 19, 15, 10, 0, 10, 4, 5); // ld d(ix), a
           return (3 + ld_cost (ASMOP_A, 0, op2, offset2, count));
         default:
-          printf ("ld_cost op1: AOP_STK, op2: %d\n", (int) (op2type));
-          wassert (0);
-        }
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : ld_cost op1: AOP_STK, op2: %d\n", (int) (op2type));
+					exit(EXIT_FAILURE);
+			}
     case AOP_HL:
       if (count)
         cost2 (3, 10, 9, 6, 12, 6, 3, 3); // ld hl, #nn
@@ -1065,18 +1067,18 @@ ld_cost (const asmop *op1, int offset1, const asmop *op2, int offset2, bool coun
             }
           return (11);
         default:
-          printf ("ld_cost op1: AOP_HL, op2: %d", (int) (op2type));
-          wassert (0);
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : ld_cost op1: AOP_HL, op2: %d", (int) (op2type));
+					exit(EXIT_FAILURE);
         }
     case AOP_LIT:
     case AOP_IMMD:
-      wassertl (0, "Trying to assign a value to a literal");
-      break;
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : Trying to assign a value to a literal");
+			exit(EXIT_FAILURE);
     default:
-      printf ("ld_cost op1: %d\n", (int) (op1type));
-      wassert (0);
-    }
-  return (12);                   // Fallback
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : ld_cost op1: %d\n", (int) (op1type));
+			exit(EXIT_FAILURE);
+		}
+  //return (12);                   // Fallback
 }
 
 static void
@@ -1469,8 +1471,8 @@ getPairName (asmop *aop)
           break;
         }
     }
-  wassertl (0, "Tried to get the pair name of something that isn't a pair");
-  return NULL;
+	werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Tried to get the pair name of something that isn't a pair");
+	exit(EXIT_FAILURE);
 }
 
 /** Returns TRUE if the registers used in aop form a pair (BC, DE, HL) */
@@ -1493,7 +1495,6 @@ isUnsplitable (const asmop * aop)
     default:
       return FALSE;
     }
-  return FALSE;
 }
 
 static void
@@ -2420,9 +2421,9 @@ aopGetLitWordLong (const asmop *aop, int offset, bool with_hash)
 
     default:
       dbuf_destroy (&dbuf);
-      fprintf (stderr, "aop->type: %d\n", aop->type);
-      wassertl (0, "aopGetLitWordLong got unsupported aop->type");
-      exit (0);
+
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "aopGetLitWordLong got unsupported aop->type: %d", aop->type);
+			exit(EXIT_FAILURE);
     }
   return dbuf_c_str (&dbuf);
 }
@@ -3323,10 +3324,10 @@ aopGet (asmop *aop, int offset, bool bit16)
 
         default:
           dbuf_destroy (&dbuf);
-          fprintf (stderr, "aop->type: %d\n", aop->type);
-          wassertl (0, "aopGet got unsupported aop->type");
-          exit (0);
-        }
+
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "aopGet got unsupported aop->type: %d\n", aop->type);
+					exit(EXIT_FAILURE);
+				}
     }
   return dbuf_c_str (&dbuf);
 }
@@ -3383,7 +3384,7 @@ aopPut (asmop *aop, const char *s, int offset)
   if (aop->size && offset > (aop->size - 1))
     {
       werror_bt (E_INTERNAL_ERROR, __FILE__, __LINE__, "aopPut got offset > aop->size");
-      exit (0);
+      exit (EXIT_FAILURE);
     }
 
   // PENDING
@@ -3590,7 +3591,7 @@ aopPut (asmop *aop, const char *s, int offset)
       dbuf_destroy (&dbuf); fprintf (stderr, "AOP_DIR: %d\n",AOP_DIR);
       fprintf (stderr, "aop->type: %d\n", aop->type);
       werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "aopPut got unsupported aop->type");
-      exit (0);
+      exit (EXIT_FAILURE);
     }
   dbuf_destroy (&dbuf);
 }
@@ -4001,9 +4002,9 @@ commitPair (asmop *aop, PAIR_ID id, const iCode *ic, bool dont_destroy) // Obsol
               cheapMove (aop, 1, ASMOP_IYH, 0, true);
               break;
             default:
-              wassertl (0, "Unknown pair id in commitPair()");
-              fprintf (stderr, "pair %s\n", _pairs[id].name);
-            }
+							werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Unknown pair id in commitPair(): pair %s\n", _pairs[id].name);
+							exit(EXIT_FAILURE);
+					}
         }
     }
 }

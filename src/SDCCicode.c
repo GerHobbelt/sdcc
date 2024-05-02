@@ -875,10 +875,8 @@ operandType (const operand *op)
       return op->svt.typeOperand;
 
     default:
-      werror (E_INTERNAL_ERROR, __FILE__, __LINE__, " operand type not known ");
-      assert (0);               /* should never come here */
-      /*  Just to keep the compiler happy */
-      return (sym_link *) 0;
+      werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "operand type not known");
+      exit(EXIT_FAILURE);
     }
 }
 
@@ -1571,8 +1569,8 @@ operandOperation (operand * left, operand * right, int op, sym_link * type)
       break;
 
     default:
-      werror (E_INTERNAL_ERROR, __FILE__, __LINE__, " operandOperation invalid operator ");
-      assert (0);
+      werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "operandOperation invalid operator");
+      exit(EXIT_FAILURE);
     }
 
   return retval;
@@ -1939,8 +1937,10 @@ setOperandType (operand * op, sym_link * type)
               SPEC_OCLS (op->svt.symOperand->etype) = reg;
             }
         }
-      else
-        werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "attempt to modify type of source");
+      else {
+          werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "attempt to modify type of source");
+          exit(EXIT_FAILURE);
+        }
       return;
 
     case TYPE:

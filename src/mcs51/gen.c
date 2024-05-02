@@ -1572,8 +1572,8 @@ aopGetUsesAcc (const asmop* aop, int offset)
       return FALSE;
     default:
       /* Error case --- will have been caught already */
-      wassert (0);
-      return FALSE;
+			assert(!(__func__ ": should never get here."));
+			return FALSE;
     }
 }
 
@@ -1787,8 +1787,8 @@ aopPutUsesAcc (const asmop* aop, const char *s, int offset)
       return FALSE;
     default:
       /* Error case --- will have been caught already */
-      wassert (0);
-      return FALSE;
+			assert(!(__func__ ": should never get here."));
+			return FALSE;
     }
 }
 
@@ -2014,6 +2014,7 @@ loadDptrFromOperand (operand *op, bool loadBToo)
               else
                 {
                   wassertl (FALSE, "need pointerCode");
+
                   emitcode (";", "mov b,???");
                   /* genPointerGet and genPointerSet originally did different
                    ** things for this case. Both seem wrong.

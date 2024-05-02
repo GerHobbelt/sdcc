@@ -360,8 +360,8 @@ dwWriteAddress (const char * label, int offset, char * comment)
       dwWriteWord (label, offset, comment);
       break;
     default:
-      werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-              "unsupported port->debugger.dwarf.addressSize");
+      werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "unsupported port->debugger.dwarf.addressSize");
+      exit(EXIT_FAILURE);
     }
 }
 
@@ -430,8 +430,8 @@ dwWriteAddressDelta (char * label1, char * label2)
       dwWriteWordDelta (label1, label2);
       break;
     default:
-      werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-              "unsupported port->debugger.dwarf.addressSize");
+      werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "unsupported port->debugger.dwarf.addressSize");
+      exit(EXIT_FAILURE);
     }
 }
 
@@ -1035,9 +1035,8 @@ dwWriteAttr (dwattr * ap)
         break;
         
       default:
-        werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-                "unsupported DWARF form");
-        exit (1);
+        werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "unsupported DWARF form");
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -1100,9 +1099,8 @@ dwSizeofAttr (dwattr * ap)
         return 4;
         
       default:
-        werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-                "unsupported DWARF form");
-        exit (1);
+        werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "unsupported DWARF form");
+      exit(EXIT_FAILURE);
     }
     
 }
@@ -2362,9 +2360,8 @@ dwTagFromType (sym_link * type, dwtag * parent)
               break;
               
             default:
-              werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-                      "unknown DCL_TYPE");
-              exit (1);
+              werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "unknown DCL_TYPE");
+              exit(EXIT_FAILURE);
             }
         }
       else
@@ -2558,12 +2555,9 @@ dwTagFromType (sym_link * type, dwtag * parent)
                 case V_SBIT:
                 case V_DOUBLE:
                 default:
-                  
-                  werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-                      "unhandled base type");
+                  werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "unhandled base type");
                   printTypeChain (type, NULL);
-                  exit (1);
-  
+                  exit(EXIT_FAILURE);
                 }
             }
         }

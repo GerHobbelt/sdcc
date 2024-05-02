@@ -693,6 +693,7 @@ vwerror (int errNum, va_list marker)
   struct dbuf_s dbuf;
   char *errmsg;
   char *oldmsg;
+  int ret;
 
   if (_SDCCERRG.out == NULL)
     {
@@ -714,9 +715,9 @@ vwerror (int errNum, va_list marker)
 
   dbuf_init(&dbuf, 200);
   
-  if ((ErrTab[errNum].errType >= _SDCCERRG.logLevel) && (!ErrTab[errNum].disabled))
+  if (errNum == E_INTERNAL_ERROR || ((ErrTab[errNum].errType >= _SDCCERRG.logLevel) && (!ErrTab[errNum].disabled)))
     {
-      if (ErrTab[errNum].errType >= ERROR_LEVEL_ERROR || _SDCCERRG.werror)
+      if (ErrTab[errNum].errType >= ERROR_LEVEL_ERROR || _SDCCERRG.werror || errNum == E_INTERNAL_ERROR)
         fatalError++;
 
       if (filename && lineno)
@@ -761,7 +762,28 @@ vwerror (int errNum, va_list marker)
           break;
         }
 
-      dbuf_vprintf (&dbuf, ErrTab[errNum].errText, marker);
+			if (errNum == E_INTERNAL_ERROR) {
+				/* we expect internal errors to carry additional info sometimes, as a printf message wrapped in a printf message:
+				 * produce the formatted internal error message string first, so we can feed that one into the final message. */
+				struct dbuf_s dmsg;
+				const char* srcfile;
+				int srcline;
+				const char* m;
+
+				dbuf_init(&dmsg, 200);
+				srcfile = va_arg(marker, const char*);  // __FILE__
+				srcline = va_arg(marker, int);					// __LINE__
+				m = va_arg(marker, const char*);        // "literal message string, printf format"
+				dbuf_vprintf(&dmsg, m, marker);         // rest of VARARGS is for that message!
+
+				dbuf_printf(&dbuf, ErrTab[errNum].errText, srcfile, srcline, dbuf_c_str(&dmsg));
+
+				dbuf_destroy(&dmsg);
+			}
+			else {
+				dbuf_vprintf(&dbuf, ErrTab[errNum].errText, marker);
+			}
+
       errmsg = dbuf_detach_c_str (&dbuf);
       for (oldmsg = setFirstItem (_SDCCERRG.log); oldmsg; oldmsg = setNextItem (_SDCCERRG.log))
         if (strcmp (errmsg, oldmsg) == 0)
@@ -771,13 +793,15 @@ vwerror (int errNum, va_list marker)
           }
       addSetHead (&_SDCCERRG.log, errmsg);
       fprintf (_SDCCERRG.out, "%s\n", errmsg);
-      return 1;
+      ret = 1;
     }
   else
     {
       /* Below the logging level, drop. */
-      return 0;
+      ret = 0;
     }
+  dbuf_destroy(&dbuf);
+  return ret;
 }
 
 /* -------------------------------------------------------------------------------
@@ -796,7 +820,7 @@ werror (int errNum, ...)
 }
 
 /* -------------------------------------------------------------------------------
-werror_bt - like werror(), but als provide a backtrace
+werror_bt - like werror(), but also provide a backtrace
  * -------------------------------------------------------------------------------
  */
 int
@@ -844,19 +868,50 @@ werrorfl (char *newFilename, int newLineno, int errNum, ...)
 }
 
 /* -------------------------------------------------------------------------------
+ * vfatal - Output a standard error message with variable number of arguments and
+ *         call exit()
+ * -------------------------------------------------------------------------------
+ */
+__NORETURN__ void
+vfatal(int exitCode, int errNum, va_list marker)
+{
+	vwerror(errNum, marker);
+
+	exit(exitCode);
+}
+
+/* -------------------------------------------------------------------------------
  * fatal - Output a standard error message with variable number of arguments and
  *         call exit()
  * -------------------------------------------------------------------------------
  */
-void
+__NORETURN__ void
 fatal (int exitCode, int errNum, ...)
 {
   va_list marker;
   va_start (marker, errNum);
-  vwerror (errNum, marker);
+  vfatal (exitCode, errNum, marker);
   va_end (marker);
+}
 
-  exit (exitCode);
+/* -------------------------------------------------------------------------------
+fatal_bt - like fatal(), but also provide a backtrace
+ * -------------------------------------------------------------------------------
+ */
+__NORETURN__ void
+fatal_bt(int exitCode, int errNum, ...)
+{
+#ifdef HAVE_BACKTRACE_SYMBOLS_FD
+	void* callstack[16];
+	int frames = backtrace(callstack, 16);
+	fprintf(stderr, "Backtrace:\n");
+	backtrace_symbols_fd(callstack, frames, STDERR_FILENO);
+#endif
+
+	va_list marker;
+	va_start(marker, errNum);
+	vfatal(exitCode, errNum, marker);
+	va_end(marker);
 }
 
 /* -------------------------------------------------------------------------------

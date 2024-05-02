@@ -1413,8 +1413,8 @@ aopGetUsesAcc (operand * oper, int offset)
       return FALSE;
     default:
       /* Error case --- will have been caught already */
-      wassert (0);
-      return FALSE;
+			assert(!(__func__ ": should never get here."));
+			return FALSE;
     }
 }
 
@@ -1691,8 +1691,8 @@ aopPutUsesAcc (operand * oper, const char *s, int offset)
       return FALSE;
     default:
       /* Error case --- will have been caught already */
-      wassert (0);
-      return FALSE;
+			assert(!(__func__ ": should never get here."));
+			return FALSE;
     }
 }
 

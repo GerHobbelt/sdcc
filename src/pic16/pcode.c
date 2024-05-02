@@ -29,6 +29,7 @@
 #include "main.h"
 #include "pcode.h"
 #include "pcodeflow.h"
+#include "gen.h"
 #include "ralloc.h"
 #include "device.h"
 
@@ -37,8 +38,6 @@ extern char *pic16_aopGet (struct asmop *aop, int offset, bool bit16, bool dname
 #if defined(__BORLANDC__) || defined(_MSC_VER)
 #define inline
 #endif
-
-#define DUMP_DF_GRAPHS 0
 
 /****************************************************************/
 /****************************************************************/
@@ -197,7 +196,7 @@ int isBanksel(pCode *pc);
 extern int inWparamList(char *s);
 
 /** data flow optimization helpers **/
-#if defined (DUMP_DF_GRAPHS) && DUMP_DF_GRAPHS > 0
+#if DUMP_DF_GRAPHS > 0
 static void pic16_vcg_dump (FILE *of, pBlock *pb);
 static void pic16_vcg_dump_default (pBlock *pb);
 #endif
@@ -3562,7 +3561,7 @@ void pic16_pcode_test(void)
 
     if(!(pFile = fopen(buffer, "w" ))) {
       werror(E_OUTPUT_FILE_OPEN_ERR, buffer, strerror(errno));
-      exit(1);
+      exit(EXIT_FAILURE);
     }
 
     fprintf(pFile,"pcode dump\n\n");
@@ -3672,10 +3671,8 @@ pCode *pic16_newpCode (PIC_OPCODE op, pCodeOp *pcop)
     return (pCode *)pci;
   }
 
-  fprintf(stderr, "pCode mnemonic error %s,%d\n",__FUNCTION__,__LINE__);
-  exit(1);
-
-  return NULL;
+	werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "pCode mnemonic error");
+  exit(EXIT_FAILURE);
 }
 
 /*-----------------------------------------------------------------*/
@@ -4211,8 +4208,8 @@ pCodeOp *pic16_newpCodeOpWild(int id, pCodeWildBlock *pcwb, pCodeOp *subtype)
   pCodeOp *pcop;
 
   if(!pcwb || !subtype) {
-    fprintf(stderr, "Wild opcode declaration error: %s-%d\n",__FILE__,__LINE__);
-    exit(1);
+		werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Wild opcode declaration error");
+		exit(EXIT_FAILURE);
   }
 
   pcop = Safe_alloc(sizeof(pCodeOpWild));
@@ -4237,9 +4234,9 @@ pCodeOp *pic16_newpCodeOpWild2(int id, int id2, pCodeWildBlock *pcwb, pCodeOp *s
   pCodeOp *pcop;
 
         if(!pcwb || !subtype || !subtype2) {
-                fprintf(stderr, "Wild opcode declaration error: %s-%d\n",__FILE__,__LINE__);
-                exit(1);
-        }
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Wild opcode declaration error");
+					exit(EXIT_FAILURE);
+				}
 
         pcop = Safe_alloc(sizeof(pCodeOpWild));
         pcop->type = PO_WILD;
@@ -4326,10 +4323,9 @@ pCodeOp *pic16_newpCodeOpReg(int rIdx)
     r = pic16_findFreeReg(REG_GPR);
 
     if(!r) {
-        fprintf(stderr, "%s:%d Could not find a free GPR register\n",
-                __FUNCTION__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Could not find a free GPR register");
+			exit(EXIT_FAILURE);
+		}
   }
 
   PCOR(pcop)->rIdx = rIdx;
@@ -4531,9 +4527,9 @@ void pic16_emitDB(int c, char ptype, void *p)
         l = strlen(DBd.buffer);
 
         if (sizeof(DBd.buffer) <= l) {
-                fprintf(stderr, "%s() -- Error: Size of DBd.buffer too small. (%zu <= %zu)\n", __func__, sizeof(DBd.buffer), l);
-                exit(1);
-        }
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Error in %s(): Size of DBd.buffer too small. (%zu <= %zu)\n", __func__, sizeof(DBd.buffer), l);
+					exit(EXIT_FAILURE);
+				}
 
         SNPRINTF(DBd.buffer + l, sizeof(DBd.buffer) - l, "%s0x%02x", ((DBd.count > 0) ? ", " : ""), c & 0xff);
 
@@ -4558,9 +4554,9 @@ void pic16_emitDS(const char *s, char ptype, void *p)
         l = strlen(DBd.buffer);
 
         if (sizeof(DBd.buffer) <= l) {
-                fprintf(stderr, "%s() -- Error: Size of DBd.buffer too small. (%zu <= %zu)\n", __func__, sizeof(DBd.buffer), l);
-                exit(1);
-        }
+					werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Error in %s(): Size of DBd.buffer too small. (%zu <= %zu)\n", __func__, sizeof(DBd.buffer), l);
+					exit(EXIT_FAILURE);
+				}
 
         SNPRINTF(DBd.buffer + l, sizeof(DBd.buffer) - l, "%s%s", ((DBd.count > 0) ? ", " : ""), s);
 
@@ -5010,10 +5006,10 @@ char *pic16_pCode2str(char *str, size_t size, pCode *pc)
 
 #if 0
     if(isPCI(pc) && (PCI(pc)->pci_magic != PCI_MAGIC)) {
-        fprintf(stderr, "%s:%d: pCodeInstruction initialization error in instruction %s, magic is %x (default: %x)\n",
-                __FILE__, __LINE__, PCI(pc)->mnemonic, PCI(pc)->pci_magic, PCI_MAGIC);
-        //              exit(EXIT_FAILURE);
-    }
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "pCodeInstruction initialization error in instruction %s, magic is %x (default: %x)",
+                PCI(pc)->mnemonic, PCI(pc)->pci_magic, PCI_MAGIC);
+			exit(EXIT_FAILURE);
+		}
 #endif
 
     switch(pc->type) {
@@ -5353,9 +5349,9 @@ static void unlinkpCodeFromBranch(pCode *pcl , pCode *pc)
   if(pcl->type == PC_OPCODE || pcl->type == PC_INLINE || pcl->type == PC_ASMDIR)
     b = PCI(pcl)->label;
   else {
-    fprintf(stderr, "LINE %d. can't unlink from non opcode.\n",__LINE__);
-    exit(1);
-  }
+		werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Can't unlink from non opcode.");
+		exit(EXIT_FAILURE);
+	}
 
   //fprintf (stderr, "%s \n",__FUNCTION__);
   //pcl->print(stderr,pcl);
@@ -6416,7 +6412,6 @@ int pic16_isPCinFlow(const pCode *pc, const pCode *pcflow)
 /* position == 1: insert after pc                                  */
 /* position == 2: like 0 but previous was a skip instruction       */
 /*-----------------------------------------------------------------*/
-pCodeOp *pic16_popGetLabel(unsigned int key);
 extern int pic16_labelOffset;
 
 static void insertBankSwitch(unsigned char position, pCode *pc)
@@ -7690,7 +7685,7 @@ static void AnalyzeFlow(int level)
         if (pic16_options.opt_flags & OF_OPTIMIZE_DF) {
                 for(pb = the_pFile->pbHead; pb; pb = pb->next) {
                         pic16_createDF (pb);
-#if defined (DUMP_DF_GRAPHS) && DUMP_DF_GRAPHS > 0
+#if DUMP_DF_GRAPHS > 0
                         pic16_vcg_dump_default (pb);
 #endif
                         //pic16_destructDF (pb);
@@ -8336,11 +8331,10 @@ static set *register_usage(pBlock *pb)
         if(r2->rIdx == r1->rIdx) {
           newreg = pic16_findFreeReg(REG_GPR);
 
-
           if(!newreg) {
-            DFPRINTF((stderr,"Bummer, no more registers.\n"));
-            exit(1);
-          }
+						werror(E_INTERNAL_ERROR, __FILE__, __LINE__, "Bummer, no more registers."));
+						exit(EXIT_FAILURE);
+					}
 
           DFPRINTF((stderr,"Cool found register collision nIdx=%d moving to %d\n",
                   r1->rIdx, newreg->rIdx));
@@ -9367,12 +9361,15 @@ static unsigned int df_findall_otherflow = 0;
 static unsigned int df_findall_in_vals = 0;
 
 static void pic16_df_stats () {
-  return;
-  if (pic16_debug_verbose || pic16_pcode_verbose) {
+#if !USE_DATAFLOW_ANALYSIS
+	return;
+#else
+	if (pic16_debug_verbose || pic16_pcode_verbose) {
     fprintf (stderr, "PIC16: dataflow analysis removed %u instructions (%u bytes)\n", pic16_df_removed_pcodes, pic16_df_saved_bytes);
     fprintf (stderr, "findAll: same flow %u (%u in_vals), other flow %u\n", df_findall_sameflow, df_findall_in_vals, df_findall_otherflow);
     //pic16_df_removed_pcodes = pic16_df_saved_bytes = 0;
   }
+#endif
 }
 
 /* Remove a pCode iff possible:
@@ -9425,7 +9422,6 @@ static int pic16_safepCodeUnlink (pCode *pc, char *comment) {
     default:
       return 0;
     }
-    return 0;
   }
 
   /* if previous instruction is a skip -- do not remove */
@@ -10142,7 +10138,6 @@ static int defmapFindAll (symbol_t sym, pCode *pc, defmap_t **chain) {
   res = defmapFindDef (map, sym, pc);
   //if (res) fprintf (stderr, "found def in own flow @ pc %p\n", res->pc);
 
-#define USE_PRECALCED_INVALS 1
 #if USE_PRECALCED_INVALS
   if (!res && PCI(pc)->pcflow->in_vals) {
     res = defmapFindDef (PCI(pc)->pcflow->in_vals, sym, NULL);
@@ -10167,10 +10162,9 @@ static int defmapFindAll (symbol_t sym, pCode *pc, defmap_t **chain) {
     return 1;
   }
 
-#endif
+#else // !USE_PRECALCED_INVALS
 
-#define FORWARD_FLOW_ANALYSIS 1
-#if defined FORWARD_FLOW_ANALYSIS && FORWARD_FLOW_ANALYSIS
+#if FORWARD_FLOW_ANALYSIS
   /* no definition found in pc's flow preceeding pc */
   todo = newStack ();
   done = newStack ();
@@ -10272,7 +10266,7 @@ static int defmapFindAll (symbol_t sym, pCode *pc, defmap_t **chain) {
       } // while
     }
 
-#endif
+#endif // FORWARD_FLOW_ANALYSIS
 
   /* clean up done stack */
   while (!stackIsEmpty(done)) {
@@ -10299,6 +10293,9 @@ static int defmapFindAll (symbol_t sym, pCode *pc, defmap_t **chain) {
   //fprintf (stderr, "%u definitions for sym %s at %p found\n", n_defs, strFromSym(sym), pc);
   df_findall_otherflow++;
   return n_defs;
+
+#endif // USE_PRECALCED_INVALS
+
 }
 
 /* ======================================================================== */
@@ -10559,8 +10556,6 @@ static int pic16_symIsSpecial (symbol_t sym) {
           /* no special effects known */
           return 0;
   } // switch
-
-  return 0;
 }
 
 /* Check whether a register should be considered local (to the current function) or not. */
@@ -12009,7 +12004,8 @@ static void pic16_createDF (pBlock *pb) {
 /* ======================================================================== */
 /* === VCG DUMPER ROUTINES ================================================ */
 /* ======================================================================== */
-#if defined (DUMP_DF_GRAPHS) && DUMP_DF_GRAPHS > 0
+#if DUMP_DF_GRAPHS > 0
+
 hTab *dumpedNodes = NULL;
 
 /** Dump VCG header into of. */
@@ -12273,6 +12269,7 @@ static void pic16_vcg_dump_default (pBlock *pb) {
   pic16_vcg_close (of);
   fclose (of);
 }
-#endif
+
+#endif   // DUMP_DF_GRAPHS > 0
 
 /*** END of helpers for pCode dataflow optimizations ***/

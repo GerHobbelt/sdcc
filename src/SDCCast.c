@@ -978,9 +978,11 @@ processParms (ast * func, value * defParm, ast ** actParm, int *parmNumber,     
 
   if (FUNC_NOPROTOTYPE (functype))
     {
-      // Todo: implement this! Idea: build a temporarty function type that can be used for processFuncArgs, which then can be used here.
-      wassertl (0, "Setting of register parameter vs. other parameter not yet implemented for functions without prototype.");
-      return 0;
+      // Todo: implement this! Idea: build a temporary function type that can be used for processFuncArgs, which then can be used here.
+
+		werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : Setting of register parameter vs. other parameter not yet implemented for functions without prototype.");
+		exit(EXIT_FAILURE);
+		//return 0;
     }
 
   /* if defined parameters ended but actual has not & */
@@ -1816,8 +1818,9 @@ constExprTree (ast *cexpr)
 #endif
       return FALSE;
     case EX_LINK:
-      wassertl (0, "unexpected link in expression tree");
-      return FALSE;
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : unexpected link in expression tree");
+			exit(EXIT_FAILURE);
+			//return FALSE;
     case EX_OP:
       if (cexpr->opval.op == ARRAYINIT)
         {
@@ -2014,12 +2017,15 @@ isLoopCountable (ast * initExpr, ast * condExpr, ast * loopExpr, symbol ** sym, 
       /* check for += */
       if (loopExpr->opval.op == ADD_ASSIGN)     /* seems to never happen, createRMW() absorbed */
         {
-          wassertl (0, "obsolete opcode in tree");
-
+#if 1
+				werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : obsolete opcode in tree");
+				exit(EXIT_FAILURE);
+#else
           if (IS_AST_SYM_VALUE (loopExpr->left) &&
               isSymbolEqual (*sym, AST_SYMBOL (loopExpr->left)) &&
               IS_AST_LIT_VALUE (loopExpr->right) && AST_ULONG_VALUE (loopExpr->right) == 1)
             return TRUE;
+#endif
         }
     }
 
@@ -5360,8 +5366,9 @@ decorateType (ast *tree, RESULT_TYPE resultType, bool reduceTypeAllowed)
     case TYPEOF:
     case TYPEOF_UNQUAL:
       {
-        wassert (0);
-        return 0;
+			werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : should never reach here");
+			exit(EXIT_FAILURE);
+        //return 0;
       }
       /*------------------------------------------------------------------*/
       /*----------------------------*/
@@ -8513,8 +8520,8 @@ offsetofOp_rec (sym_link *type, ast *snd, sym_link **result_type)
       return newNode ('+', o, newNode ('*', newAst_VALUE (valueFromLit (getSize (tmp->next))), snd->right));
     }
 
-  wassertl (0, "this should never have happened");
-  exit (1);
+	werror(E_INTERNAL_ERROR, __FILE__, __LINE__, __func__ " : this should never have happened");
+  exit (EXIT_FAILURE);
 }
 
 ast *

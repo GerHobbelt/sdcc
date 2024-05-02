@@ -299,7 +299,8 @@ aopGet(const asmop *aop, int offset)
       return (buffer);
     }
 
-  wassert_bt (0);
+  wassert_bt (!(__func__ ": should never get here."));
+
   return ("dummy");
 }
 

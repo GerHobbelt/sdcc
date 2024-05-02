@@ -1602,7 +1602,7 @@ FBYNAME (canJoinRegs)
       return FALSE;
     }
 
-  int dstKey;
+  int dstKey = -1;
   int i;
   for (i = strlen (cmdLine)-1; i >= 0 && ISCHARSPACE (cmdLine[i]); --i)
     ;
@@ -2134,7 +2134,7 @@ FBYNAME (operandsLitOrSym)
 /*-----------------------------------------------------------------*/
 FBYNAME (removeParentheses)
 {
-  int dstKey;
+  int dstKey = -1;
   int i;
   
   // Find space previous to last operand
@@ -2363,7 +2363,7 @@ FBYNAME (immdInRange)
 {
   char r[64], operator[24];
   const char *op;
-  long i, j, k, h, low, high, left_l, right_l, order;
+  long i, j, k, h = -1, low = -1, high = -1, left_l = -1, right_l = -1, order;
 
   for (i = order = 0; order < 6;)
     {

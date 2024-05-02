@@ -1,12 +1,12 @@
 # Simple Makefile for dhrystone and sdcc
 TOPDIR = ../../..
 
-PROC = z80
+PROC = hc08
 
 CC = $(TOPDIR)/bin/sdcc
 
 # -DNOENUM is here to make the results more predictable
-CFLAGS += -DREG= -DNOSTRUCTASSIGN -DNOENUM -V -m$(PROC) --profile --dumpall --stack-auto
+CFLAGS += -DREG= -DNOSTRUCTASSIGN -DNOENUM -V -m$(PROC) --profile --dump-graphs --stack-auto
 
 OBJ = dhry.o
 

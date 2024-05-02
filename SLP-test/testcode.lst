@@ -1,0 +1,250 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ISO C Compiler 
+                              3 ; Version 4.2.14 # (Linux)
+                              4 ;--------------------------------------------------------
+                              5 	.module testcode
+                              6 	.optsdcc -mhc08
+                              7 	
+                              8 	.area HOME    (CODE)
+                              9 	.area GSINIT0 (CODE)
+                             10 	.area GSINIT  (CODE)
+                             11 	.area GSFINAL (CODE)
+                             12 	.area CSEG    (CODE)
+                             13 	.area XINIT   (CODE)
+                             14 	.area CONST   (CODE)
+                             15 	.area DSEG    (PAG)
+                             16 	.area OSEG    (PAG, OVR)
+                             17 	.area XSEG
+                             18 	.area XISEG
+                             19 	.area	CODEIVT (ABS)
+   FFFFFFFE                      20 	.org	0xfffe
+   FFFFFFFEr00r00                21 	.dw	__sdcc_gs_init_startup
+                             22 
+                             23 	.area GSINIT0
+   0000                      24 __sdcc_gs_init_startup:
+   0000 45 80 00      [ 3]   25 	ldhx	#0x8000
+   0003 94            [ 2]   26 	txs
+   0004 CDr00r00      [ 5]   27 	jsr	___sdcc_external_startup
+   0007 27 03         [ 3]   28 	beq	__sdcc_init_data
+   0009 CCr00r00      [ 3]   29 	jmp	__sdcc_program_startup
+   000C                      30 __sdcc_init_data:
+                             31 ; _hc08_genXINIT() start
+   000C 45 00 00      [ 3]   32         ldhx #0
+   000F                      33 00001$:
+   000F 65r00r00      [ 3]   34         cphx #l_XINIT
+   0012 27 0A         [ 3]   35         beq  00002$
+   0014 D6r00r00      [ 4]   36         lda  s_XINIT,x
+   0017 D7r00r00      [ 4]   37         sta  s_XISEG,x
+   001A AF 01         [ 2]   38         aix  #1
+   001C 20 F1         [ 3]   39         bra  00001$
+   001E                      40 00002$:
+                             41 ; _hc08_genXINIT() end
+                             42 	.area GSFINAL
+   0000 CCr00r00      [ 3]   43 	jmp	__sdcc_program_startup
+                             44 
+                             45 	.area CSEG
+   0000                      46 __sdcc_program_startup:
+   0000 CDr00r05      [ 5]   47 	jsr	_main
+   0003 20 FE         [ 3]   48 	bra	.
+                             49 ;--------------------------------------------------------
+                             50 ; Public variables in this module
+                             51 ;--------------------------------------------------------
+                             52 	.globl _main
+                             53 ;--------------------------------------------------------
+                             54 ; ram data
+                             55 ;--------------------------------------------------------
+                             56 	.area DSEG    (PAG)
+   0000                      57 _main_sloc0_1_0:
+   0000                      58 	.ds 2
+   0002                      59 _main_sloc1_1_0:
+   0002                      60 	.ds 2
+   0004                      61 _main_sloc2_1_0:
+   0004                      62 	.ds 2
+   0006                      63 _main_sloc3_1_0:
+   0006                      64 	.ds 2
+                             65 ;--------------------------------------------------------
+                             66 ; overlayable items in ram
+                             67 ;--------------------------------------------------------
+                             68 ;--------------------------------------------------------
+                             69 ; absolute ram data
+                             70 ;--------------------------------------------------------
+                             71 	.area IABS    (ABS)
+                             72 	.area IABS    (ABS)
+                             73 ;--------------------------------------------------------
+                             74 ; absolute external ram data
+                             75 ;--------------------------------------------------------
+                             76 	.area XABS    (ABS)
+                             77 ;--------------------------------------------------------
+                             78 ; initialized external ram data
+                             79 ;--------------------------------------------------------
+                             80 	.area XISEG
+                             81 ;--------------------------------------------------------
+                             82 ; extended address mode data
+                             83 ;--------------------------------------------------------
+                             84 	.area XSEG
+   0000                      85 _main_a_65536_11:
+   0000                      86 	.ds 2
+                             87 ;--------------------------------------------------------
+                             88 ; global & static initialisations
+                             89 ;--------------------------------------------------------
+                             90 	.area HOME    (CODE)
+                             91 	.area GSINIT  (CODE)
+                             92 	.area GSFINAL (CODE)
+                             93 	.area GSINIT  (CODE)
+                             94 ;--------------------------------------------------------
+                             95 ; Home
+                             96 ;--------------------------------------------------------
+                             97 	.area HOME    (CODE)
+                             98 	.area HOME    (CODE)
+                             99 ;--------------------------------------------------------
+                            100 ; code
+                            101 ;--------------------------------------------------------
+                            102 	.area CSEG    (CODE)
+                            103 ;------------------------------------------------------------
+                            104 ;Allocation info for local variables in function 'main'
+                            105 ;------------------------------------------------------------
+                            106 ;sloc0                     Allocated with name '_main_sloc0_1_0'
+                            107 ;sloc1                     Allocated with name '_main_sloc1_1_0'
+                            108 ;sloc2                     Allocated with name '_main_sloc2_1_0'
+                            109 ;sloc3                     Allocated with name '_main_sloc3_1_0'
+                            110 ;a                         Allocated with name '_main_a_65536_11'
+                            111 ;b                         Allocated to registers x h 
+                            112 ;n                         Allocated to registers 
+                            113 ;------------------------------------------------------------
+                            114 ;testcode.c:4: int main(){
+                            115 ;	-----------------------------------------
+                            116 ;	 function main
+                            117 ;	-----------------------------------------
+                            118 ;	Register assignment might be sub-optimal.
+                            119 ;	Stack space usage: 0 bytes.
+   0005                     120 _main:
+                            121 ;testcode.c:5: int a = 1;
+   0005 45 00 01      [ 3]  122 	ldhx	#0x0001
+   0008 35*00         [ 4]  123 	sthx	*_main_sloc0_1_0
+                            124 ;testcode.c:6: int b = 10;
+   000A AE 0A         [ 2]  125 	ldx	#0x0a
+   000C 35*02         [ 4]  126 	sthx	*_main_sloc1_1_0
+                            127 ;testcode.c:8: while (n > 0) {
+   000E 6E 00*04      [ 4]  128 	mov	#0x00,*_main_sloc2_1_0
+   0011 6E 64*05      [ 4]  129 	mov	#0x64,*(_main_sloc2_1_0 + 1)
+   0014                     130 00101$:
+                            131 ;testcode.c:9: a = a*3+ b;
+   0014 B6*00         [ 3]  132 	lda	*_main_sloc0_1_0
+   0016 C7r00r00      [ 4]  133 	sta	__mulint_PARM_2
+   0019 B6*01         [ 3]  134 	lda	*(_main_sloc0_1_0 + 1)
+   001B C7r00r01      [ 4]  135 	sta	(__mulint_PARM_2 + 1)
+                            136 ;testcode.c:10: b = a*4 + 5*b+ 1;
+   001E 89            [ 2]  137 	pshx
+   001F A6 03         [ 2]  138 	lda	#0x03
+   0021 5F            [ 1]  139 	clrx
+   0022 CDr00r00      [ 5]  140 	jsr	__mulint
+   0025 89            [ 2]  141 	pshx
+   0026 8A            [ 2]  142 	pulh
+   0027 88            [ 2]  143 	pulx
+   0028 87            [ 2]  144 	psha
+   0029 B6*02         [ 3]  145 	lda	*_main_sloc1_1_0
+   002B C7r00r00      [ 4]  146 	sta	__mulint_PARM_2
+   002E B6*03         [ 3]  147 	lda	*(_main_sloc1_1_0 + 1)
+   0030 C7r00r01      [ 4]  148 	sta	(__mulint_PARM_2 + 1)
+   0033 86            [ 2]  149 	pula
+                            150 ;testcode.c:9: a = a*3+ b;
+   0034 87            [ 2]  151 	psha
+   0035 89            [ 2]  152 	pshx
+   0036 8B            [ 2]  153 	pshh
+   0037 A6 05         [ 2]  154 	lda	#0x05
+   0039 5F            [ 1]  155 	clrx
+   003A CDr00r00      [ 5]  156 	jsr	__mulint
+   003D B7*07         [ 3]  157 	sta	*(_main_sloc3_1_0 + 1)
+   003F BF*06         [ 3]  158 	stx	*_main_sloc3_1_0
+   0041 8A            [ 2]  159 	pulh
+   0042 88            [ 2]  160 	pulx
+   0043 86            [ 2]  161 	pula
+   0044 BB*03         [ 3]  162 	add	*(_main_sloc1_1_0 + 1)
+   0046 87            [ 2]  163 	psha
+   0047 8B            [ 2]  164 	pshh
+   0048 86            [ 2]  165 	pula
+   0049 B9*02         [ 3]  166 	adc	*_main_sloc1_1_0
+   004B 97            [ 1]  167 	tax
+                            168 ;testcode.c:8: while (n > 0) {
+   004C 4F            [ 1]  169 	clra
+   004D B0*05         [ 3]  170 	sub	*(_main_sloc2_1_0 + 1)
+   004F 4F            [ 1]  171 	clra
+   0050 B2*04         [ 3]  172 	sbc	*_main_sloc2_1_0
+   0052 86            [ 2]  173 	pula
+   0053 90 2B         [ 3]  174 	bge	00103$
+                            175 ;testcode.c:9: a = a*3+ b;
+   0055 BF*00         [ 3]  176 	stx	*_main_sloc0_1_0
+   0057 B7*01         [ 3]  177 	sta	*(_main_sloc0_1_0 + 1)
+                            178 ;testcode.c:10: b = a*4 + 5*b+ 1;
+   0059 87            [ 2]  179 	psha
+   005A B6*01         [ 3]  180 	lda	*(_main_sloc0_1_0 + 1)
+   005C BE*00         [ 3]  181 	ldx	*_main_sloc0_1_0
+   005E 48            [ 1]  182 	lsla
+   005F 59            [ 1]  183 	rolx
+   0060 48            [ 1]  184 	lsla
+   0061 59            [ 1]  185 	rolx
+   0062 89            [ 2]  186 	pshx
+   0063 8A            [ 2]  187 	pulh
+   0064 97            [ 1]  188 	tax
+   0065 86            [ 2]  189 	pula
+   0066 87            [ 2]  190 	psha
+   0067 9F            [ 1]  191 	txa
+   0068 BB*07         [ 3]  192 	add	*(_main_sloc3_1_0 + 1)
+   006A 97            [ 1]  193 	tax
+   006B 8B            [ 2]  194 	pshh
+   006C 86            [ 2]  195 	pula
+   006D B9*06         [ 3]  196 	adc	*_main_sloc3_1_0
+   006F 87            [ 2]  197 	psha
+   0070 8A            [ 2]  198 	pulh
+   0071 86            [ 2]  199 	pula
+   0072 AF 01         [ 2]  200 	aix	#1
+   0074 35*02         [ 4]  201 	sthx	*_main_sloc1_1_0
+                            202 ;testcode.c:11: n = n-1;
+   0076 89            [ 2]  203 	pshx
+   0077 55*04         [ 4]  204 	ldhx	*_main_sloc2_1_0
+   0079 AF FF         [ 2]  205 	aix	#-1
+   007B 35*04         [ 4]  206 	sthx	*_main_sloc2_1_0
+   007D 88            [ 2]  207 	pulx
+   007E 20 94         [ 3]  208 	bra	00101$
+   0080                     209 00103$:
+                            210 ;testcode.c:13: a = a*3+ b;
+   0080 CFr00r00      [ 4]  211 	stx	_main_a_65536_11
+   0083 C7r00r01      [ 4]  212 	sta	(_main_a_65536_11 + 1)
+                            213 ;testcode.c:14: b = a*4 + 5*b+ 1;
+   0086 87            [ 2]  214 	psha
+   0087 C6r00r01      [ 4]  215 	lda	(_main_a_65536_11 + 1)
+   008A CEr00r00      [ 4]  216 	ldx	_main_a_65536_11
+   008D 48            [ 1]  217 	lsla
+   008E 59            [ 1]  218 	rolx
+   008F 48            [ 1]  219 	lsla
+   0090 59            [ 1]  220 	rolx
+   0091 89            [ 2]  221 	pshx
+   0092 8A            [ 2]  222 	pulh
+   0093 97            [ 1]  223 	tax
+   0094 86            [ 2]  224 	pula
+   0095 87            [ 2]  225 	psha
+   0096 9F            [ 1]  226 	txa
+   0097 BB*07         [ 3]  227 	add	*(_main_sloc3_1_0 + 1)
+   0099 97            [ 1]  228 	tax
+   009A 8B            [ 2]  229 	pshh
+   009B 86            [ 2]  230 	pula
+   009C B9*06         [ 3]  231 	adc	*_main_sloc3_1_0
+   009E 87            [ 2]  232 	psha
+   009F 8A            [ 2]  233 	pulh
+   00A0 86            [ 2]  234 	pula
+   00A1 AF 01         [ 2]  235 	aix	#1
+                            236 ;testcode.c:15: return a + b;
+   00A3 9F            [ 1]  237 	txa
+   00A4 CBr00r01      [ 4]  238 	add	(_main_a_65536_11 + 1)
+   00A7 87            [ 2]  239 	psha
+   00A8 8B            [ 2]  240 	pshh
+   00A9 86            [ 2]  241 	pula
+   00AA C9r00r00      [ 4]  242 	adc	_main_a_65536_11
+   00AD 97            [ 1]  243 	tax
+   00AE 86            [ 2]  244 	pula
+                            245 ;testcode.c:16: }
+   00AF 81            [ 4]  246 	rts
+                            247 	.area CSEG    (CODE)
+                            248 	.area CONST   (CODE)
+                            249 	.area XINIT   (CODE)
+                            250 	.area CABS    (ABS,CODE)

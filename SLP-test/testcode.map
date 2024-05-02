@@ -1,0 +1,136 @@
+ASxxxx Linker V03.00/V05.40 + sdld,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+CABS                                00000000    00000000 =           0. bytes (ABS,CON,CODE)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+C:   00000000  l_CABS                          
+C:   00000000  l_CODEIVT                       
+C:   00000000  l_CONST                         
+C:   00000000  l_GSINIT                        
+C:   00000000  l_HOME                          
+C:   00000000  l_IABS                          
+C:   00000000  l_OSEG                          
+C:   00000000  l_XABS                          
+C:   00000000  l_XINIT                         
+C:   00000000  l_XISEG                         
+C:   00000000  l__CODE                         
+C:   00000000  s_CABS                          
+C:   00000000  s_CODEIVT                       
+C:   00000000  s_CODEIVT0                      
+C:   00000000  s_IABS                          
+C:   00000000  s_XABS                          
+C:   00000000  s__CODE                         
+C:   00000002  l_CODEIVT0                      
+C:   00000003  l_GSFINAL                       
+C:   00000004  l_XSEG                          
+C:   00000008  l_DSEG                          
+C:   0000001E  l_GSINIT0                       
+C:   00000080  s_DSEG                          
+C:   00000088  s_OSEG                          
+C:   00000088  s_XSEG                          
+C:   0000008C  s_XISEG                         
+C:   000000DF  l_CSEG                          
+C:   00008000  s_GSINIT0                       
+C:   00008000  s_HOME                          
+C:   0000801E  s_GSFINAL                       
+C:   0000801E  s_GSINIT                        
+C:   00008021  s_CSEG                          
+C:   00008100  s_CONST                         
+C:   00008100  s_XINIT                         
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+CODEIVT0                            00000000    00000002 =           2. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00/V05.40 + sdld,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           _startup
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+GSINIT0                             00008000    0000001E =          30. bytes (REL,CON,CODE)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00/V05.40 + sdld,  page 5.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+GSFINAL                             0000801E    00000003 =           3. bytes (REL,CON,CODE)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00/V05.40 + sdld,  page 6.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+CSEG                                00008021    000000DF =         223. bytes (REL,CON,CODE)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+C:   00008026  _main                              testcode
+C:   000080D1  __mulint                           _mulint
+C:   000080FE  ___sdcc_external_startup           _startup
+ASxxxx Linker V03.00/V05.40 + sdld,  page 7.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+DSEG                                00000080    00000008 =           8. bytes (REL,CON,PAG)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00/V05.40 + sdld,  page 8.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+XSEG                                00000088    00000004 =           4. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     0000008A  __mulint_PARM_2                    _mulint
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 9.
+
+Files Linked                              [ module(s) ]
+
+testcode.rel                              [ testcode ]
+
+
+Libraries Linked                          [ object file ]
+
+/usr/local/bin/../share/sdcc/lib/hc08/hc08.lib
+                                          [ _mulint.rel ]
+/usr/local/bin/../share/sdcc/lib/hc08/hc08.lib
+                                          [ _startup.rel ]
+
+ASxxxx Linker V03.00/V05.40 + sdld,  page 10.
+
+User Base Address Definitions
+
+HOME = 0x8000
+DSEG = 0x0080
+
+

@@ -334,12 +334,12 @@ static float get_ps_optimal_cst(ps_cfg_t &root, const I_t &I)
   //std::cout<<"end pos created"<<std::endl;
   //std::cout<<"permutation size: "<<permutation_map.size()<<std::endl;
  // std::cout<<"I2 created"<<std::endl;
- initial_basic_block(root,I2);
+// initial_basic_block(root,I2);
    auto start = std::chrono::high_resolution_clock::now();
 
   //initial_basic_block(root,I2);
   //std::cout<<"initial basic block"<<std::endl;
-  generate_spcfg(root);
+  generate_spcfg(root,I2);
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast< std::chrono::microseconds>(stop - start);
 
@@ -381,22 +381,29 @@ float hc08_ralloc3_cc(ebbIndex *ebbi)
   boost::graph_traits<cfg_t>::vertex_iterator vi, vi_end;
   boost::tie(vi, vi_end) = boost::vertices(control_flow_graph);
   cfg_map.push_back(control_flow_graph);
-  std::cout<<"cfg created"<<std::endl;
+ // std::cout<<"cfg created"<<std::endl;
+   dump_cfg(control_flow_graph);
   ps_cfg_t root=init_ps_cfg(*vi,*(vi_end-1),0,-1);
   ps_cfg_map.push_back(root);
-  std::cout<<"root created"<<std::endl;
+ // std::cout<<"root created"<<std::endl;
   try{
     check_cfg(control_flow_graph);
-    std::cout<<"cfg checked"<<std::endl;
+  //  std::cout<<"cfg checked"<<std::endl;
     convert_cfg_to_spcfg(root);
   
 
   std::cout<<"spcfg created"<<std::endl;
   float cost= get_ps_optimal_cst(root,conflict_graph);
   //std::cout<<"get cost"<<std::endl;
+  ps_cfg_map.clear();
+   cfg_map.clear();
+   cfg_count=1;
   return cost;
 }catch(std::exception &e){
     std::cout<<e.what()<<std::endl;
+       ps_cfg_map.clear();
+   cfg_map.clear();
+   cfg_count=1;
    return -1;
   }
 

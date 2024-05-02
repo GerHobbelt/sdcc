@@ -1801,6 +1801,7 @@ pic16glue ()
     if(mainf && IFFUNC_HASBODY(mainf->type)) {
       unsigned long ramsize = pic16 ? pic16->RAMsize : 0x200;
       symbol *sym;
+			reg_info* reg;
 
       reg = newReg (REG_SFR, PO_SFR_REGISTER, ramsize-1, "_sram_end", 0, 0, NULL);
       addSet (&pic16_fix_udata, reg);

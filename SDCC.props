@@ -1,11 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>C:\Local\boost_1_64_0;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)../../../scripts/boost/include;$(SolutionDir)../boost;$(SolutionDir)../boost/libs/algorithm/include;$(SolutionDir)../boost/libs/any/include;$(SolutionDir)../boost/libs/array/include;$(SolutionDir)../boost/libs/asio/include;$(SolutionDir)../boost/libs/assert/include;$(SolutionDir)../boost/libs/atomic/include;$(SolutionDir)../boost/libs/bind/include;$(SolutionDir)../boost/libs/chrono/include;$(SolutionDir)../boost/libs/concept_check/include;$(SolutionDir)../boost/libs/config/include;$(SolutionDir)../boost/libs/container/include;$(SolutionDir)../boost/libs/container_hash/include;$(SolutionDir)../boost/libs/core/include;$(SolutionDir)../boost/libs/crc/include;$(SolutionDir)../boost/libs/date_time/include;$(SolutionDir)../boost/libs/detail/include;$(SolutionDir)../boost/libs/dll/include;$(SolutionDir)../boost/libs/fiber/include;$(SolutionDir)../boost/libs/filesystem/include;$(SolutionDir)../boost/libs/function/include;$(SolutionDir)../boost/libs/fusion/include;$(SolutionDir)../boost/libs/integer/include;$(SolutionDir)../boost/libs/io/include;$(SolutionDir)../boost/libs/iterator/include;$(SolutionDir)../boost/libs/lexical_cast/include;$(SolutionDir)../boost/libs/locale/include;$(SolutionDir)../boost/libs/lockfree/include;$(SolutionDir)../boost/libs/log/include;$(SolutionDir)../boost/libs/logic/include;$(SolutionDir)../boost/libs/move/include;$(SolutionDir)../boost/libs/mp11/include;$(SolutionDir)../boost/libs/mp11/include/;$(SolutionDir)../boost/libs/mpl/include;$(SolutionDir)../boost/libs/multiprecision/include;$(SolutionDir)../boost/libs/numeric/conversion/include;$(SolutionDir)../boost/libs/optional/include;$(SolutionDir)../boost/libs/parameter/include;$(SolutionDir)../boost/libs/phoenix/include;$(SolutionDir)../boost/libs/predef/include;$(SolutionDir)../boost/libs/preprocessor/include;$(SolutionDir)../boost/libs/program_options/include;$(SolutionDir)../boost/libs/proto/include;$(SolutionDir)../boost/libs/range/include;$(SolutionDir)../boost/libs/ratio/include;$(SolutionDir)../boost/libs/regex/include;$(SolutionDir)../boost/libs/smart_ptr/include;$(SolutionDir)../boost/libs/static_assert/include;$(SolutionDir)../boost/libs/system/include;$(SolutionDir)../boost/libs/test/include;$(SolutionDir)../boost/libs/thread/include;$(SolutionDir)../boost/libs/throw_exception/include;$(SolutionDir)../boost/libs/type_index/include;$(SolutionDir)../boost/libs/type_traits/include;$(SolutionDir)../boost/libs/typeof/include;$(SolutionDir)../boost/libs/utility/include;$(SolutionDir)../boost/libs/uuid/include;$(SolutionDir)../boost/libs/winapi/include;$(IncludePath)</IncludePath>
     <ExecutablePath>C:\Programs\GnuWin32\bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+<!--
+warning C4100: 'ic': unreferenced formal parameter
+warning C4244: '=': conversion from 'unsigned int' to 'bool', possible loss of data
+... and lots like that one
+warning C4459: declaration of 'reg' hides global declaration     <- happens way too often to my taste, but alas
+warning C4456: declaration of 'offset' hides previous local declaration
+warning C4389: '!=': signed/unsigned mismatch
+warning C4245: 'initializing': conversion from 'int' to 'unsigned char', signed/unsigned mismatch
+warning C4018: '<': signed/unsigned mismatch
+warning C4310: cast truncates constant value
+warning C4201: nonstandard extension used: nameless struct/union
+warning C4267: '=': conversion from 'size_t' to 'var_t', possible loss of data
+warning C4189: 'dying_H': local variable is initialized but not referenced
+warning C4706: assignment within conditional expression
+warning C4127: conditional expression is constant
+warning C4457: declaration of 'type' hides function parameter
+boost\libs\xpressive\include\boost\xpressive\detail\core\matcher\simple_repeat_matcher.hpp(71,95): warning C4458: declaration of 'width' hides class member
+warning C4305: '+=': truncation from 'double' to 'float'
+warning C4505: 'var_from_operand': unreferenced function with internal linkage has been removed
+-->	
+      <DisableSpecificWarnings>4505;4305;4458;4457;4127;4706;4189;4267;4201;4310;4018;4245;4389;4456;4459;4244;4100;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_CRT_SECURE_NO_DEPRECATE;_CRT_INTERNAL_NONSTDC_NAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_CRT_SECURE_NO_DEPRECATE;_CRT_INTERNAL_NONSTDC_NAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_CRT_SECURE_NO_DEPRECATE;_CRT_INTERNAL_NONSTDC_NAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

@@ -351,17 +351,18 @@ changequote({{{,}}})dnl
 #include <signal.h>
 #include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #if !defined (MAP_ANONYMOUS) && defined (MAP_ANON)
 # define MAP_ANONYMOUS MAP_ANON
 #endif
 
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
 /* This mess was copied from the GNU getpagesize.h.  */
 #ifndef HAVE_GETPAGESIZE
-# ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-# endif
-
 /* Assume that all systems that can run configure have sys/param.h.  */
 # ifndef HAVE_SYS_PARAM_H
 #  define HAVE_SYS_PARAM_H 1
@@ -661,22 +662,22 @@ int main()
 
   fd = open("conftestdata$$", O_RDONLY);
   if (fd < 0)
-    exit(1);
+    return 1;
 
   if (fstat (fd, &st))
-    exit(2);
+    return 2;
 
   x = (char*)mmap(0, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
   if (x == (char *) -1)
-    exit(3);
+    return 3;
 
   if (x[0] != '1' || x[1] != ' ' || x[2] != '1' || x[3] != ' ')
-    exit(4);
+    return 4;
 
   if (munmap(x, st.st_size) < 0)
-    exit(5);
+    return 5;
 
-  exit(0);
+  return 0;
 }], ac_cv_func_mmap_file=yes, ac_cv_func_mmap_file=no,
 ac_cv_func_mmap_file=no)])
 if test $ac_cv_func_mmap_file = yes; then

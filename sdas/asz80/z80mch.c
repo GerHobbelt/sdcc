@@ -520,8 +520,7 @@ static const char *ez80Page[7] = {
  * Process a machine op.
  */
 VOID
-machine(mp)
-struct mne *mp;
+machine(struct mne *mp)
 {
         int op, t1, t2, t3;
         struct expr e1, e2;
@@ -2024,10 +2023,7 @@ struct mne *mp;
  * return(esp->e_mode)
  */
 int
-genop(pop, op, esp, f)
-int pop, op;
-struct expr *esp;
-int f;
+genop(int pop, int op, struct expr *esp, int f)
 {
         int t1;
 
@@ -2068,8 +2064,7 @@ int f;
  * IX and IY prebyte check
  */
 int
-gixiy(v)
-int v;
+gixiy(int v)
 {
         if (v == IX) {
                 v = HL;
@@ -2091,9 +2086,7 @@ int v;
  * .IL/.LIL and .IS/.SIS checks
  */
 VOID
-glilsis(sfx, esp)
-int sfx;
-struct expr *esp;
+glilsis(int sfx, struct expr *esp)
 {
 
 // Pokus napsat zapis parametru 16/24-bit 'jinak'...
@@ -2112,8 +2105,7 @@ struct expr *esp;
  * Branch/Jump PCR Mode Check
  */
 int
-mchpcr(esp)
-struct expr *esp;
+mchpcr(struct expr *esp)
 {
         if (esp->e_base.e_ap == dot.s_area) {
                 return(1);
@@ -2137,7 +2129,7 @@ struct expr *esp;
  * Machine dependent initialization
  */
 VOID
-minit()
+minit(void)
 {
         /*
          * Byte Order

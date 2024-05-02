@@ -204,8 +204,7 @@ struct area *zpg;
  * Process a machine op.
  */
 VOID
-machine(mp)
-struct mne *mp;
+machine(struct mne *mp)
 {
 	int op, t1, t2, type;
 	struct expr e1, e2, e3;
@@ -710,8 +709,7 @@ struct mne *mp;
  * Branch/Jump PCR Mode Check
  */
 int
-mchpcr(esp)
-struct expr *esp;
+mchpcr(struct expr *esp)
 {
 	if (esp->e_base.e_ap == dot.s_area) {
 		return(1);
@@ -735,7 +733,7 @@ struct expr *esp;
  * Machine specific initialization.
  */
 VOID
-minit()
+minit(void)
 {
 	/*
 	 * Byte Order

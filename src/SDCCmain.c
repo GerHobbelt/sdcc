@@ -36,6 +36,7 @@
 #include "SDCCerr.h"
 #include "SDCCmacro.h"
 #include "SDCCargs.h"
+#include "port.h"
 
 #ifdef _WIN32
 #include <process.h>

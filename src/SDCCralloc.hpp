@@ -323,7 +323,7 @@ static bool liverange_connected(const cfg_t &cfg, var_t v)
 {
   std::vector<bool> life(boost::num_vertices(cfg));
   int num_life = 0;
-  int last_life;
+  int last_life = 0;
 
   for(int i = 0; i < boost::num_vertices (cfg); i++)
     if(std::find(cfg[i].alive.begin(), cfg[i].alive.end(), v) != cfg[i].alive.end())

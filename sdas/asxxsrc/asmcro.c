@@ -116,8 +116,7 @@
  *              macro structures created.
  */
 int
-mcrprc(code)
-int code;
+mcrprc(int code)
 {
         struct mcrdef *np,*nq;
         struct macrofp *nfp;
@@ -722,8 +721,7 @@ getxstr(char *id)
  */
 
 VOID
-macro(np)
-struct mcrdef * np;
+macro(struct mcrdef * np)
 {
         struct macrofp *nfp;
         struct strlst *str;
@@ -846,9 +844,7 @@ struct mcrdef * np;
  */
 
 struct mcrdef *
-newdef(code, id)
-int code;
-char *id;
+newdef(int code, char *id)
 {
         struct mne *mp;
 
@@ -910,8 +906,7 @@ char *id;
  */
 
 struct mcrdef *
-nlookup(id)
-char *id;
+nlookup(char *id)
 {
         struct mcrdef * np;
 
@@ -1078,8 +1073,7 @@ fgetm(char *ptr, int len, FILE *fp)
  */
 
 VOID
-macroscn(nfp)
-struct  macrofp *nfp;
+macroscn(struct macrofp *nfp)
 {
         int c;
         char id[NINPUT];
@@ -1140,9 +1134,7 @@ struct  macrofp *nfp;
  */
 
 int
-macrosub(id, nfp)
-char *id;
-struct  macrofp *nfp;
+macrosub(char *id, struct macrofp *nfp)
 {
         char *p;
         char xrgstr[NINPUT*2];
@@ -1361,8 +1353,7 @@ mhunk()
  */
  
 char *
-mstring(str)
-char *str;
+mstring(char *str)
 {
         int  len;
         char *p;
@@ -1416,8 +1407,7 @@ char *str;
  */
  
 char *
-mstruct(n)
-int n;
+mstruct(int n)
 {
         int  bofst;
         char *p;
@@ -1467,7 +1457,7 @@ int n;
  */
  
 VOID
-mcrinit()
+mcrinit(void)
 {
         mls.s_addr = 10000;
 

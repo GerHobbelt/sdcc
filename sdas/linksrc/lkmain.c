@@ -478,7 +478,7 @@ main(int argc, char *argv[])
  */
 
 int
-intsiz()
+intsiz(void)
 {
         return(sizeof(a_uint));
 }
@@ -510,8 +510,7 @@ intsiz()
  */
 
 VOID
-lkexit(i)
-int i;
+lkexit(int i)
 {
         lkfclose();
 #if NOICE
@@ -562,7 +561,7 @@ int i;
  */
 
 VOID
-link_main()
+link_main(void)
 {
         char c;
 
@@ -931,7 +930,7 @@ map(void)
  */
 
 int
-parse()
+parse(void)
 {
         int c;
         int sv_type;
@@ -1206,7 +1205,7 @@ parse()
  */
 
 VOID
-doparse()
+doparse(void)
 {
         cfp = NULL;
         sfp = NULL;
@@ -1257,7 +1256,7 @@ doparse()
  */
 
 VOID
-bassav()
+bassav(void)
 {
         if (basep == NULL) {
                 basep = (struct base *)
@@ -1303,7 +1302,7 @@ bassav()
  */
 
 VOID
-gblsav()
+gblsav(void)
 {
         if (globlp == NULL) {
                 globlp = (struct globl *)
@@ -1353,7 +1352,7 @@ gblsav()
  */
 
 VOID
-setgbl()
+setgbl(void)
 {
         int v;
         struct sym *sp;
@@ -1522,8 +1521,7 @@ afile(char *fn, char *ft, int wf)
  */
 
 int
-fndidx(str)
-char *str;
+fndidx(char *str)
 {
         char *p1, *p2;
 
@@ -1562,8 +1560,7 @@ char *str;
  */
 
 int
-fndext(str)
-char * str;
+fndext(char * str)
 {
         char *p1, *p2;
 
@@ -1603,7 +1600,7 @@ char * str;
  */
 
 VOID
-iramsav()
+iramsav(void)
 {
   unget(getnb());
   if (ip && *ip)
@@ -1616,7 +1613,7 @@ iramsav()
 
 /*Similar to iramsav but for xram memory*/
 VOID
-xramsav()
+xramsav(void)
 {
   unget(getnb());
   if (ip && *ip)
@@ -1627,7 +1624,7 @@ xramsav()
 
 /*Similar to iramsav but for code memory*/
 VOID
-codesav()
+codesav(void)
 {
   unget(getnb());
   if (ip && *ip)
@@ -1659,7 +1656,7 @@ codesav()
  */
 
 VOID
-iramcheck()
+iramcheck(void)
 {
   register unsigned int last_addr;
   register struct area *ap;

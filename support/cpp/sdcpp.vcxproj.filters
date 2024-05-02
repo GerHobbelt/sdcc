@@ -37,76 +37,43 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="c-incpath.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="c-ppoutput.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cppdefault.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="options.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="opts-common.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="opts.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="prefix.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sdcpp-diagnostic.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sdcpp-opts.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sdcpp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="version.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="libcpp\charset.c">
+    <ClCompile Include="libcpp\charset.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\directives.c">
+    <ClCompile Include="libcpp\directives.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\errors.c">
+    <ClCompile Include="libcpp\errors.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\expr.c">
+    <ClCompile Include="libcpp\expr.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\files.c">
+    <ClCompile Include="libcpp\files.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\identifiers.c">
+    <ClCompile Include="libcpp\identifiers.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\init.c">
+    <ClCompile Include="libcpp\init.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\lex.c">
+    <ClCompile Include="libcpp\lex.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\line-map.c">
+    <ClCompile Include="libcpp\line-map.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\macro.c">
+    <ClCompile Include="libcpp\macro.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\mkdeps.c">
+    <ClCompile Include="libcpp\mkdeps.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\symtab.c">
+    <ClCompile Include="libcpp\symtab.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
-    <ClCompile Include="libcpp\traditional.c">
+    <ClCompile Include="libcpp\traditional.cc">
       <Filter>Source Files\libcpp</Filter>
     </ClCompile>
     <ClCompile Include="..\sdbinutils\libiberty\concat.c">
@@ -159,6 +126,25 @@
     </ClCompile>
     <ClCompile Include="win32\dirent.c">
       <Filter>Source Files\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="../../support/cpp/gcc/incpath.cc" />
+    <ClCompile Include="gcc\c-family\c-ppoutput.cc">
+      <Filter>Source Files\libcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="gcc\cppdefault.cc">
+      <Filter>Source Files\libcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="options.cc">
+      <Filter>Source Files\libcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="gcc\opts-common.cc">
+      <Filter>Source Files\libcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="gcc\opts.cc">
+      <Filter>Source Files\libcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="gcc\prefix.cc">
+      <Filter>Source Files\libcpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

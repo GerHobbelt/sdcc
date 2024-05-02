@@ -1,0 +1,6 @@
+/.vs/
+
+# MSVC projects/solution 
+/bin_vc/
+/obj/
+*.user

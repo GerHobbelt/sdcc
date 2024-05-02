@@ -1,5 +1,5 @@
-
 # uCsim
+
 ## Micro-controller simulator
 
 
@@ -71,7 +71,7 @@ simulators. They include:
 
 ### External tools
 
-uCsim is not well supported (yet) by external tools. But some exists
+uCsim is not well supported (yet) by external tools. But some exist
 already.
 
 ** SerialView **

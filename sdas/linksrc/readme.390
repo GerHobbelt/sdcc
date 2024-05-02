@@ -41,7 +41,7 @@ The linker supports (through a variety of evil hacks) 19 bit ACALL/AJMP
 relocations and 24 bit LCALL/LJMP/DPTR relocations. These changes should be
 invisible to the user.
 
-The linker can now also generated extended linear address records in the
+The linker can now also generate extended linear address records in the
 Intel hex output format. This is necessary for any areas located above the
 64K mark. This is enabled by the "-r" linker flag, and is disabled by
 default (but the linker will throw a warning if an extended address is

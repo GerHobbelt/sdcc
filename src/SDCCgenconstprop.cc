@@ -1,4 +1,4 @@
-// (c) 2023 Philipp Klaus Krause, philipp@colecovision.eu
+// (c) 2023-2024 Philipp Klaus Krause, philipp@colecovision.eu
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -102,7 +102,7 @@ create_cfg_genconstprop (cfg_t &cfg, iCode *start_ic, ebbIndex *ebbi)
 }
 
 struct valinfo
-getTypeValinfo (sym_link *type)
+getTypeValinfo (sym_link *type, bool loose)
 {
   struct valinfo v;
   v.anything = true;
@@ -167,6 +167,8 @@ getTypeValinfo (sym_link *type)
       v.anything = false;
       v.max = 0x7fffffffffffffffull >> (64 - bitsForType (type));
       v.min = -v.max - 1;
+      if (loose && IS_CHAR (type))
+        v.max = 0xffffffffffffffffull >> (64 - bitsForType (type)); // Use upper limit of unsigned type here, since sometimes, SDCC generates incorrect AST (using signed char, where there should be unsigned char) trying to avoid the costs of integer promotion.
       v.knownbitsmask = ~(0xffffffffffffffffull >> (64 - bitsForType (type)));
       v.knownbits = 0;
     }
@@ -220,7 +222,7 @@ getOperandValinfo (const iCode *ic, const operand *op)
       return (v);
     }
   else
-    return (getTypeValinfo (type));
+    return (getTypeValinfo (type, true));
 }
 
 static bool
@@ -328,13 +330,13 @@ valinfoUpdate (struct valinfo *v)
     return;
 
   // Update bits from min/max.
-  if (v->min == v->max)
+  if (v->min == v->max) // Fixed value.
     {
       v->knownbitsmask = ~0ull;
       v->knownbits = v->min;
       return;
     }
-  for (int i = 0; i < 62; i++)
+  for (int i = 0; i < 62; i++) // Leading zeroes.
     {
       if (v->min >= 0 && v->max < (1ll << i))
         {
@@ -582,24 +584,29 @@ valinfoGetABit (struct valinfo *result, const struct valinfo &left, const struct
 static void
 valinfoLeft (struct valinfo *result, const struct valinfo &left, const struct valinfo &right)
 {
-  if (!left.anything && !right.anything && right.min == right.max && right.max < 64)
+  if (!left.anything && !right.anything && right.min == right.max && right.max < 62)
     {
       result->nothing = left.nothing || right.nothing;
-      struct valinfo rv;
-      rv.nothing = result->nothing;
-      rv.anything = false;
-      rv.min = left.min;
-      rv.max = left.max;
+      long long min, max;
+      min = left.min;
+      max = left.max;
       for(long long r = right.max; r; r--)
         {
-          if (rv.min < 0 || rv.max > (1ll << 61))
+          if (min < 0 || max > (1ll << 61))
             return;
-          rv.min <<= 1;
-          rv.max <<= 1;
+          min <<= 1;
+          max <<= 1;
         }
-      rv.knownbitsmask = (left.knownbitsmask << right.max) | ~(~0ull << right.max);
-      rv.knownbits = left.knownbits << right.max;
-      *result = rv;
+      if (!result->anything)
+      	max = std::min (result->max, max);
+      result->anything = false;
+      result->min = min;
+      result->max = max;
+    }
+  if(!right.anything && right.min > 0 && right.min < 63)
+    {
+      result->knownbitsmask |= ~(~0ull << right.min);
+      result->knownbits &= (~0ull << right.min);
     }
 }
 
@@ -607,14 +614,14 @@ static void
 valinfoRight (struct valinfo *result, const struct valinfo &left, const struct valinfo &right)
 {
   if (!left.anything && !right.anything &&
-    left.min >= 0 && right.min >= 0 && right.min <= 60)
+    left.min >= 0 && right.min >= 0 && right.min <= 61)
     {
-      result->anything = false;
       result->nothing = left.nothing || right.nothing;
       result->min = 0;
       auto max = (left.max >> right.min);
-      if (max <= result->max)
+      if (result->anything || max <= result->max)
         result->max = max;
+      result->anything = false;
       if (right.min == right.max)
         {
           result->knownbitsmask = left.knownbitsmask >> right.min;
@@ -626,7 +633,7 @@ valinfoRight (struct valinfo *result, const struct valinfo &left, const struct v
 static void
 valinfoCast (struct valinfo *result, sym_link *targettype, const struct valinfo &right)
 {
-  *result = getTypeValinfo (targettype);
+  *result = getTypeValinfo (targettype, false);
   if (right.nothing)
     result->nothing = true;
   else if (!right.anything && (IS_INTEGRAL (targettype) || IS_GENPTR (targettype)) && 
@@ -756,17 +763,26 @@ recompute_node (cfg_t &G, unsigned int i, ebbIndex *ebbi, std::pair<std::queue<u
       G[*out] = *ic->valinfos;
 
       if (resultsym)
-        resultvalinfo = getTypeValinfo (operandType (IC_RESULT (ic)));
+        resultvalinfo = getTypeValinfo (operandType (IC_RESULT (ic)), true);
 
 #ifdef DEBUG_GCP_ANALYSIS
-      if (localchange)
-        std::cout << "Recompute node " << i << " ic " << ic->key << "\n";std::cout << "getTypeValinfo: resultvalinfo anything " << resultvalinfo.anything << " knownbitsmask 0x" << std::hex << resultvalinfo.knownbitsmask << std::dec << "\n";
+      if (localchange && resultsym)
+        {
+          std::cout << "Recompute node " << i << " ic " << ic->key << "\n";
+          std::cout << "getTypeValinfo: resultvalinfo anything " << resultvalinfo.anything << " knownbitsmask 0x" << std::hex << resultvalinfo.knownbitsmask << std::dec << " min " << resultvalinfo.min << "\n";
+        }
 #endif
+
+      if (end_it_quickly) // Just use the very rough approximation from the type info only to speed up analysis.
+        {
+          if (left && !(IS_INTEGRAL (operandType (left)) && bitsForType (operandType (left)) < 64 && IS_OP_LITERAL (left)))
+            leftvalinfo = getTypeValinfo (operandType (left), true);
+          if (right && !(IS_INTEGRAL (operandType (right)) && bitsForType (operandType (right)) < 64 && IS_OP_LITERAL (right)))
+            rightvalinfo = getTypeValinfo (operandType (right), true);
+        }
 
       if (!localchange) // Input didn't change. No need to recompute result.
         resultsym = 0;
-      else if (end_it_quickly) // Just use the very rough approximation from the type info only to speed up analysis.
-        ;
       else if (IS_OP_VOLATILE (IC_RESULT (ic))) // No point trying to find out what we write to a volatile operand. At the next use, it could be anything, anyway.
         ;
       else if (ic->op == '!')
@@ -867,7 +883,7 @@ recompute_node (cfg_t &G, unsigned int i, ebbIndex *ebbi, std::pair<std::queue<u
         {
           valinfoUpdate (&resultvalinfo);
 #ifdef DEBUG_GCP_ANALYSIS
-          std::cout << "resultvalinfo anything " << resultvalinfo.anything << " knownbitsmask 0x" << std::hex << resultvalinfo.knownbitsmask << " knownbits 0x" << resultvalinfo.knownbits << std::dec << " min " << resultvalinfo.min << "\n";
+          std::cout << "resultvalinfo anything " << resultvalinfo.anything << " knownbitsmask 0x" << std::hex << resultvalinfo.knownbitsmask << " knownbits 0x" << resultvalinfo.knownbits << std::dec << " min " << resultvalinfo.min << " max " << resultvalinfo.max << "\n";
 #endif
           if (!ic->resultvalinfo)
             ic->resultvalinfo = new struct valinfo;
@@ -890,7 +906,7 @@ recomputeValinfos (iCode *sic, ebbIndex *ebbi, const char *suffix)
   std::cout << "recomputeValinfos at " << (currFunc ? currFunc->name : "[NOFUNC]") << "\n"; std::cout.flush();
 #endif
 
-  unsigned int max_rounds = 1000; // Rapidly end analysis once this number of rounds has been exceeded.
+  unsigned long max_rounds = 8000; // Rapidly end analysis once this number of rounds has been exceeded.
 
   cfg_t G;
 
@@ -909,7 +925,7 @@ recomputeValinfos (iCode *sic, ebbIndex *ebbi, const char *suffix)
     }
 
   // Forward pass to get first approximation.
-  for (unsigned int round = 0; !todo.first.empty (); round++)
+  for (unsigned long round = 0; !todo.first.empty (); round++)
     {
       // Take next node that needs updating.
       unsigned int i = todo.first.front ();
@@ -1102,7 +1118,7 @@ optimizeNarrowOpNet (iCode *ic)
           iCode *uic = (iCode *)hTabItemWithKey (iCodehTab, key);
           if (!uic)
             bitVectUnSetBit (OP_USES (op), key); // Looks like some earlier optimization didn't clean up properly. Do it now.
-          else if (uic->op == CAST)
+          else if (uic->op == CAST && !IS_FLOAT (operandType (uic->result)))
             valinfo_union (&v, getOperandValinfo (uic, uic->right));
           else if (uic->op == EQ_OP || uic->op == NE_OP || uic->op == '<' || uic->op == LE_OP || uic->op == '>' || uic->op == GE_OP)
             {

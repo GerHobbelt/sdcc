@@ -566,7 +566,7 @@ static bool Ainst_ok(const assignment &a, unsigned short int i, const G_t &G, co
     return(true);
 
   // Can use non-destructive cp on == and < (> might swap operands).
-  if((ic->op == EQ_OP || ic->op == '<' && SPEC_USIGN(getSpec(operandType(left))) && SPEC_USIGN(getSpec(operandType(right)))) &&
+  if((ic->op == EQ_OP || (ic->op == '<' || ic->op == '>') && SPEC_USIGN(getSpec(operandType(left))) && SPEC_USIGN(getSpec(operandType(right)))) &&
     getSize(operandType(IC_LEFT(ic))) == 1 && ifxForOp (IC_RESULT(ic), ic) && operand_in_reg(left, REG_A, ia, i, G) &&
     (IS_OP_LITERAL (right) || operand_in_reg(right, REG_C, ia, i, G) || operand_in_reg(right, REG_B, ia, i, G) || operand_in_reg(right, REG_E, ia, i, G) || operand_in_reg(right, REG_D, ia, i, G) || operand_in_reg(right, REG_H, ia, i, G) || operand_in_reg(right, REG_L, ia, i, G)))
     return(true);
@@ -774,7 +774,7 @@ static bool HLinst_ok(const assignment &a, unsigned short int i, const G_t &G, c
   if(IS_SM83 && POINTER_GET(ic) && !(result_only_HL || getSize(operandType(right)) == 1))
     return(false);
 
-  if((IS_SM83 || IY_RESERVED) && (IS_TRUE_SYMOP(left) || IS_TRUE_SYMOP(right)))
+  if((IS_SM83 || IY_RESERVED) && (IS_TRUE_SYMOP(left) && (!IS_PARM(left) || exstk) || IS_TRUE_SYMOP(right) && (!IS_PARM(right) || exstk)))
     return(false);
 
   if((IS_SM83 || IY_RESERVED) && IS_TRUE_SYMOP(result) && getSize(operandType(IC_RESULT(ic))) > 2)
@@ -790,7 +790,7 @@ static bool HLinst_ok(const assignment &a, unsigned short int i, const G_t &G, c
 
   if(ic->op == '-' && getSize(operandType(result)) == 2 && IS_TRUE_SYMOP (left) && IS_TRUE_SYMOP (right) && result_only_HL)
     return(true);
-    
+
   if(exstk &&
      (operand_on_stack(result, a, i, G) + operand_on_stack(left, a, i, G) + operand_on_stack(right, a, i, G) >= 2) &&
      (result && IS_SYMOP(result) && getSize(operandType(result)) >= 2 || !result_only_HL))

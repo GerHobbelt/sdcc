@@ -1,3 +1,80 @@
+2024-03-31 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/z80/ralloc2.cc,
+	  src/z80/gen.c:
+	  Improve code generation for z80 comparisons.
+	* src/SDCClospre.cc,
+	  src/SDCClospre.hpp:
+	  Improve lospre debug output.
+
+2024-03-29 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/z80/gen.c,
+	  src/stm8/ralloc.c,
+	  src/pdk/ralloc.c,
+	  src/z80/ralloc.c:
+	  Enable more register packing optimizations.
+
+2024-03-28 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/z80/peeph.def:
+	  Optimize out some more intermediate pop/push.
+	* src/z80/gen.c:
+	  Fine-tune djnz optimization hint.
+
+2024-03-27 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/SDCCgenconstprop.cc:
+	  Fix an issue introduced in yesterday's fix for bug #3720.
+
+2024-03-26 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/z80/gen.c:
+	  Fix an optimization hint inversion bug that prevented use of djnz.
+
+2024-03-26 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/SDCCgenconstprop.cc,
+	  src/SDCCsymt.c:
+	  Fix bug #3720.
+	* src/z80/gen.c:
+	  Allow for some more flexibility in the handling of register arguments.
+
+2024-03-25 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/SDCCgenconstprop.cc:
+	  Improve generalized constant propagation analysis accuracy.
+	* src/stm8/peep.c,
+	  src/z80/peep.c:
+	  Fix a peephole optimizer issue in the handling of register parameters to calls through function pointers when a symbol had the same name as a register.
+
+2024-03-23 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/SDCCgenconstprop.cc,
+	  support/regression/tests/bug-3717.c:
+	  Fix bug #3717.
+
+2024-03-23 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/SDCCgenconstprop.cc,
+	  src/pdk/gen.c:
+	  Improve generalized constant propagation analysis accuracy.
+
+2024-03-18 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/z80/ralloc2.cc:
+	  Improve use of hl for --reserve-regs-iy.
+
+2024-03-17 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/stm8/peeph.def:
+	  Optimize out some tnz(w).
+
+2024-03-16 Philipp Klaus Krause <philipp@colecovision.eu>
+
+	* src/stm8/peeph.def:
+	  Simplify some stm8 pushw, common at beginning of function.
+
 2024-03-03 Benedikt Freisen <b.freisen AT gmx.net>
 
 	* src/SDCCgenconstprop.cc:

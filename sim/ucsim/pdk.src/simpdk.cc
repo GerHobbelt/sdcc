@@ -29,11 +29,12 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <strings.h>
 
 // prj
-#include "globals.h"
 
 // local
+#include "glob.h"
+#include "pdk16cl.h"
+
 #include "simpdkcl.h"
-#include "pdkcl.h"
 
 
 cl_simpdk::cl_simpdk(class cl_app *the_app):
@@ -46,7 +47,8 @@ cl_simpdk::mk_controller(void)
   int i;
   const char *typ= 0;
   class cl_optref type_option(this);
-
+  class cl_uc *u;
+  
   type_option.init();
   type_option.use("cpu_type");
   i= 0;
@@ -64,9 +66,20 @@ cl_simpdk::mk_controller(void)
   switch (cpus_pdk[i].type)
     {
     case CPU_PDK13:
+      u= new cl_pdk(&cpus_pdk[i], this);
+      return u;
     case CPU_PDK14:
+      u= new cl_pdk(&cpus_pdk[i], this);
+      return u;
     case CPU_PDK15:
-      return(new cl_pdk(&cpus_pdk[i], this));
+      u= new cl_pdk(&cpus_pdk[i], this);
+      return u;
+    case CPU_PDK16:
+      u= new cl_pdk(&cpus_pdk[i], this);
+      return u;
+    case CPU_PDKX:
+      u= new cl_pdk(&cpus_pdk[i], this);
+      return u;
     default:
       fprintf(stderr, "Unknown processor type\n");
       return NULL;

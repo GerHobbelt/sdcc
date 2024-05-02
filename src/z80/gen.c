@@ -4,7 +4,7 @@
   Copyright (C) 1998, Sandeep Dutta . sandeep.dutta@usa.net
   Copyright (C) 1999, Jean-Louis VERN.jlvern@writeme.com
   Copyright (C) 2000, Michael Hope <michaelh@juju.net.nz>
-  Copyright (C) 2011-2023, Philipp Klaus Krause pkk@spth.de, philipp@informatik.uni-frankfurt.de, krauseph@informatik.uni-freiburg.de)
+  Copyright (C) 2011-2024, Philipp Klaus Krause pkk@spth.de, philipp@informatik.uni-frankfurt.de, krauseph@informatik.uni-freiburg.de)
   Copyright (C) 2021-2022, Sebastian 'basxto' Riedel <sdcc@basxto.de>
 
   This program is free software; you can redistribute it and/or modify it
@@ -340,7 +340,7 @@ cost2 (unsigned int bytes, unsigned int z80_states /* also z80n */, unsigned int
     regalloc_dry_run_cost_states += z80_states * regalloc_dry_run_state_scale;
   else if (IS_Z180)
     regalloc_dry_run_cost_states += z180_states * regalloc_dry_run_state_scale;
-  else if (IS_R2K || IS_R2KA || IS_R3KA)
+  else if (IS_RAB)
     regalloc_dry_run_cost_states += r2k_clocks * regalloc_dry_run_state_scale;
   else if (IS_SM83)
     regalloc_dry_run_cost_states += sm83_cycles * regalloc_dry_run_state_scale;
@@ -1512,7 +1512,7 @@ spillPairReg (const char *regname)
       switch (*regname)
         {
         case 'h':
-        case 'l':emit2("; spillPairReg hl");
+        case 'l':
           spillPair (PAIR_HL);
           break;
         case 'd':
@@ -1878,7 +1878,7 @@ operandsEqu (operand * op1, operand * op2)
 /* sameRegs - two asmops have the same registers                   */
 /*-----------------------------------------------------------------*/
 static bool
-sameRegs (asmop * aop1, asmop * aop2)
+sameRegs (const asmop *aop1, const asmop *aop2)
 {
   int i;
 
@@ -1888,7 +1888,7 @@ sameRegs (asmop * aop1, asmop * aop2)
   if (aop1 == aop2)
     return TRUE;
 
-  if (! regalloc_dry_run && // Todo: Check if always enabling this even for dry runs tends to result in better code.
+  if (!regalloc_dry_run && // Todo: Check if always enabling this even for dry runs tends to result in better code.
     (aop1->type == AOP_STK && aop2->type == AOP_STK ||
     aop1->type == AOP_EXSTK && aop2->type == AOP_EXSTK))
     return (aop1->aopu.aop_stk == aop2->aopu.aop_stk);
@@ -4493,7 +4493,7 @@ skip_byte:
       const bool e_free = de_dead && (result->regs[E_IDX] < roffset || !assigned[result->regs[E_IDX] - roffset]);
       const bool d_free = de_dead && (result->regs[D_IDX] < roffset || !assigned[result->regs[D_IDX] - roffset]);
       const bool de_free = e_free && d_free;
- 
+
       if (assigned[i])
         {
           i++;
@@ -6116,8 +6116,8 @@ static void genSend (const iCode *ic)
 {
   aopOp (IC_LEFT (ic), ic, FALSE, FALSE);
   
-  /* Caller saves, and this is the first iPush. */
-  // Scan ahead until we find the function that we are pushing parameters to.
+  /* Caller saves, and this is the first push/send. */
+  // Scan ahead until we find the function that we are pushing/sending parameters to.
   const iCode *walk;
   for (walk = ic->next; walk; walk = walk->next)
     {
@@ -6134,11 +6134,12 @@ static void genSend (const iCode *ic)
   wassert (argreg);
 
   // The register argument shall not overwrite a still-needed (i.e. as further parameter or function for the call) value.
-  for (int i = 0; i < argreg->size; i++)
-    if (!isRegDead (argreg->aopu.aop_reg[i]->rIdx, ic))
-      for (iCode *walk2 = ic->next; walk2; walk2 = walk2->next)
+  if (!aopSame (argreg, 0, ic->left->aop, 0, argreg->size))
+    for (int i = 0; i < argreg->size; i++)
+      if (!isRegDead (argreg->aopu.aop_reg[i]->rIdx, ic))
+        for (iCode *walk2 = ic->next; walk2; walk2 = walk2->next)
           {
-            if (walk2->op != CALL && IC_LEFT (walk2) && IS_ITEMP (IC_LEFT (walk2)))
+            if (walk2->op != CALL && walk2->left && IS_ITEMP (walk2->left))
               UNIMPLEMENTED;
 
             if (walk2->op == CALL || walk2->op == PCALL)
@@ -8815,7 +8816,18 @@ genMinus (const iCode *ic, const iCode *ifx)
           cheapMove (ic->result->aop, 0, ic->left->aop, 0, isRegDead (A_IDX, ic));
           emit3 (A_DEC, ic->result->aop, 0);
           if (!IS_SM83 && aopInReg (ic->result->aop, 0, B_IDX) && IC_TRUE (ifx)) // This jump can likely be optimized to djnz.
-            cost (-1, -1.0f);
+            {
+              // cost2 can't handle negative costs, so we do this manually.
+              regalloc_dry_run_cost_bytes--; 
+              if (IS_Z80 || IS_Z80N || IS_Z180)
+                regalloc_dry_run_cost_states += -3.0 * regalloc_dry_run_state_scale;
+              else if (IS_RAB)
+                regalloc_dry_run_cost_states += -2.0 * regalloc_dry_run_state_scale;
+              else if (IS_TLCS90)
+                regalloc_dry_run_cost_states += +2.0 * regalloc_dry_run_state_scale; // For the TLCS-90, djnz is slower (typically still worth it for code size, though).
+              else if (IS_EZ80_Z80 || IS_R800)
+                regalloc_dry_run_cost_states += -1.0 * regalloc_dry_run_state_scale;
+            }
         }
       else
         {
@@ -8904,12 +8916,12 @@ genMultOneChar (const iCode * ic)
   symbol *tlbl1, *tlbl2;
   bool savedB = false;
 
-  asmop *result = IC_RESULT (ic)->aop;
+  asmop *result = ic->result->aop;
   int resultsize = result->size;
 
-  if (IC_LEFT (ic)->aop->size > 1 || IC_RIGHT (ic)->aop->size > 2)
+  if (ic->left->aop->size > 1 || ic->right->aop->size > 2)
     wassertl (0, "Large multiplication is handled through support function calls.");
-    
+
   if (IS_SM83)
     {
       wassertl (0, "Multiplication is handled through support function calls on sm83");
@@ -9619,6 +9631,7 @@ genCmp (operand * left, operand * right, operand * result, iCode * ifx, int sign
   bool result_in_carry = FALSE;
   int a_always_byte = -1;
   bool started = false;
+  bool inv = false;
 
   /* if left & right are bit variables */
   if (left->aop->type == AOP_CRY && right->aop->type == AOP_CRY)
@@ -9668,7 +9681,15 @@ genCmp (operand * left, operand * right, operand * result, iCode * ifx, int sign
         (right->aop->type == AOP_LIT || right->aop->type == AOP_REG && right->aop->aopu.aop_reg[offset]->rIdx != IYL_IDX && right->aop->aopu.aop_reg[offset]->rIdx != IYH_IDX || right->aop->type == AOP_STK))
         {
           emit3 (A_CP, ASMOP_A, right->aop);
-          result_in_carry = TRUE;
+          result_in_carry = true;
+          goto release;
+        }
+      else if (ifx && size == 1 && !sign && aopInReg (right->aop, 0, A_IDX) && left->aop->type == AOP_LIT && ullFromVal (left->aop->aopu.aop_lit) < 255)
+        {
+          emit3 (A_CP, ASMOP_A, left->aop);
+          emit2 ("cp a, !immedbyte", ullFromVal (left->aop->aopu.aop_lit) + 1);
+          result_in_carry = true;
+          inv = true;
           goto release;
         }
         
@@ -9810,7 +9831,7 @@ genCmp (operand * left, operand * right, operand * result, iCode * ifx, int sign
           goto fix;
         }
 
-      if (IS_SM83 && sign && right->aop->type != AOP_LIT)
+      if (IS_SM83 && sign && right->aop->type != AOP_LIT && !aopInReg (left->aop, offset, A_IDX))
         {
           cheapMove (ASMOP_A, 0, right->aop, size - 1, true);
           cheapMove (ASMOP_E, 0, ASMOP_A, 0, true);
@@ -9898,7 +9919,7 @@ genCmp (operand * left, operand * right, operand * result, iCode * ifx, int sign
           size -= 2;
           offset += 2;
         }
-      else if (left->aop->type == AOP_LIT)
+      else if (left->aop->type == AOP_LIT && !aopInReg (right->aop, offset, A_IDX) && isRegDead (A_IDX, ic))
         {
           bool pushed_hl = false;
           if (byteOfVal (left->aop->aopu.aop_lit, offset) == 0x00)
@@ -9971,7 +9992,7 @@ genCmp (operand * left, operand * right, operand * result, iCode * ifx, int sign
               size--;
               offset++;
             }
-          else if (right->aop->type != AOP_STL)
+          else if (right->aop->type != AOP_STL && !aopInReg (right->aop, offset, A_IDX))
             {
               if (!left_already_in_a)
                 cheapMove (ASMOP_A, 0, left->aop, offset, true);
@@ -10041,6 +10062,7 @@ fix:
 release:
   if (result->aop->type == AOP_CRY && result->aop->size)
     {
+      wassert (!inv);
       if (!result_in_carry)
         {
           /* Shift the sign bit up into carry */
@@ -10057,6 +10079,7 @@ release:
         {
           if (!result_in_carry)
             {
+              wassert (!inv);
               if (!IS_SM83)
                 genIfxJump (ifx, "m");
               else
@@ -10066,10 +10089,11 @@ release:
                 }
             }
           else
-            genIfxJump (ifx, "c");
+            genIfxJump (ifx, inv ? "nc" : "c");
         }
       else
         {
+          wassert (!inv);
           if (!result_in_carry)
             {
               /* Shift the sign bit up into carry */
@@ -10881,6 +10905,13 @@ genAnd (const iCode * ic, iCode * ifx)
               if (!regalloc_dry_run)
                 emit2 ("tst a, %s", aopGet (right->aop, 0, FALSE));
               cost2 (3, 11, 9, 0, 0, 0, 3, 0);
+              sizel--;
+              offset++;
+            }
+          else if (!isRegDead (A_IDX, ic) && bytelit == 0x0ff && !aopInReg (left->aop, offset, A_IDX) && left->aop->type == AOP_REG && !aopInReg (left->aop, offset, IYL_IDX) && !aopInReg (left->aop, offset, IYH_IDX))
+            {
+              emit3_o (A_RLC, left->aop, offset, 0, 0);
+              emit3_o (A_RRC, left->aop, offset, 0, 0);
               sizel--;
               offset++;
             }

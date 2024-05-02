@@ -1,7 +1,7 @@
 /*
- * Simulator of microcontrollers (regspdk.h)
+ * Simulator of microcontrollers (pdk16cl.h)
  *
- * Copyright (C) 1999,99 Drotos Daniel, Talker Bt.
+ * Copyright (C) @@S@@,@@Y@@ Drotos Daniel, Talker Bt.
  * 
  * To contact author send email to drdani@mazsola.iit.uni-miskolc.hu
  *
@@ -25,9 +25,29 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
-#ifndef REGPDK_HEADER
-#define REGPDK_HEADER
+#ifndef PDK16CL_HEADER
+#define PDK16CL_HEADER
+
+#include "pdk15cl.h"
+#include "memcl.h"
+
+
+class cl_fpp16: public cl_fpp15
+{
+ public:
+  cl_fpp16(int aid, class cl_pdk *the_puc, class cl_sim *asim);
+  cl_fpp16(int aid, class cl_pdk *the_puc, struct cpu_entry *IType, class cl_sim *asim);
+  virtual int init(void);
+  virtual const char *id_string(void);
+  //virtual void reset(void);
+  virtual int m_mask(void) { return 0x1ff; }
+  virtual int io_mask(void) { return 0x3f; }
+  virtual int rom_mask(void) { return 0x1fff; }
+  virtual struct dis_entry *dis_tbl(void);
+  virtual int execute(unsigned int code);
+};
+
 
 #endif
 
-/* End of pdk.src/regspdk.h */
+/* End of pdk.src/pdk16cl.h */

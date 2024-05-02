@@ -78,6 +78,9 @@
       <Project>{c14982c0-731b-46a0-9dd2-845e3811cf18}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="sdas\as8xcxxx\sdas390.vcxproj">
+      <Project>{13410a29-b3a6-4f10-8345-39d5293f3d9a}</Project>
+    </ProjectReference>
     <ProjectReference Include="sdas\asgb\asgb.vcxproj">
       <Project>{37192eef-c964-4598-a8bd-4395df7ef5bf}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -96,13 +99,42 @@
       <Project>{6e94db45-345e-4697-98da-6c72237d6eca}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="src\avr\avr.vcxproj">
+      <Project>{493caaa0-fccc-455f-9127-706b20c3d4c9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\ds390\ds390.vcxproj">
+      <Project>{14a8a991-bad6-49eb-84fb-6f6cf12b436d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\hc08\hc08.vcxproj">
+      <Project>{6fa87476-0fab-4518-9845-12efebbce03f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\mcs51\mcs51.vcxproj">
+      <Project>{9facdb81-be66-42d0-95f5-ea2fa3b09065}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\mos6502\mos6502.vcxproj">
+      <Project>{6fa87476-0fab-4518-9845-12efe1111110}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\pdk\pdk.vcxproj">
+      <Project>{6fa87476-0fab-4518-9845-12efe0001234}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\pic14\pic14.vcxproj">
+      <Project>{b96e942e-39f5-4c7c-97fd-a095de6847c6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\pic16\pic16.vcxproj">
+      <Project>{7e09a25e-1c9d-438d-85db-8535f134890d}</Project>
+    </ProjectReference>
     <ProjectReference Include="src\sdcc.vcxproj">
       <Project>{f9485499-151b-4886-935c-7d687c4a0549}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="support\cpp\sdcpp.vcxproj">
-      <Project>{57bcb0f8-ef4a-4688-9b36-55a8f6dc93bf}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    <ProjectReference Include="src\stm8\stm8.vcxproj">
+      <Project>{0ba12b9f-bcd6-4c08-9992-69b4fb32d335}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\z80\z80.vcxproj">
+      <Project>{7444a72f-c7c6-4f90-9a62-2d46240b52db}</Project>
+    </ProjectReference>
+    <ProjectReference Include="src\z80\z80a.vcxproj">
+      <Project>{02d1ef3d-f584-4f1e-9b45-6cf0dbf76076}</Project>
     </ProjectReference>
     <ProjectReference Include="support\makebin\makebin.vcxproj">
       <Project>{b823d5b9-6b5a-4cc8-af07-ddfe8c8e3488}</Project>

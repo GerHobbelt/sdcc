@@ -1149,9 +1149,7 @@ adb_bit(a_uint v, int i)
  */
 
 a_uint
-adb_lo(v, i)
-a_uint  v;
-int     i;
+adb_lo(a_uint v. int i)
 {
         a_uint j;
         int m, n;
@@ -1195,9 +1193,7 @@ int     i;
  */
 
 a_uint
-adb_hi(v, i)
-a_uint  v;
-int     i;
+adb_hi(a_uint v, int i)
 {
         a_uint j;
         int m, n;
@@ -1239,9 +1235,7 @@ int     i;
  */
 
 a_uint
-adb_24_bit(v, i)
-a_uint v;
-int i;
+adb_24_bit(a_uint v, int i)
 {
         a_uint j;
 
@@ -1288,9 +1282,7 @@ int i;
  */
 
 a_uint
-adb_24_hi(v, i)
-a_uint v;
-int i;
+adb_24_hi(a_uint v, int i)
 {
         a_uint j;
 
@@ -1338,9 +1330,7 @@ int i;
  */
 
 a_uint
-adb_24_mid(v, i)
-a_uint v;
-int i;
+adb_24_mid(a_uint v, int i)
 {
         a_uint j;
 
@@ -1381,9 +1371,7 @@ int i;
  */
 
 a_uint
-adb_24_lo(v, i)
-a_uint v;
-int i;
+adb_24_lo(a_uint v, int i)
 {
         a_uint j;
 
@@ -1431,10 +1419,7 @@ int i;
  */
 
 int
-vpdkinst(inst, addr, ver)
-int inst;
-int addr;
-int ver;
+vpdkinst(int inst, int addr, int ver)
 {
         switch (ver) {
         case 13: /* PDK 13 */

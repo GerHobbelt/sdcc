@@ -13214,7 +13214,9 @@ gen51Code (iCode * lic)
           break;
 
         default:
-          ic = ic;
+          /* This should never happen, right? */
+          fprintf (stderr, "*** Probable error: unsupported op 0x%x (%c) in %s @ %d\n", ic->op, ic->op, __FILE__, __LINE__);
+          wassertl (0, "Unknown iCode");
         }
     }
 

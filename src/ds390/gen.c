@@ -1943,6 +1943,7 @@ loadDptrFromOperand (operand * op, bool loadBToo)
               else
                 {
                   wassertl (FALSE, "need pointerCode");
+
                   emitcode (";", "mov b,???");
                   /* genPointerGet and genPointerSet originally did different
                    ** things for this case. Both seem wrong.
@@ -14591,7 +14592,7 @@ gen390Code (iCode * lic)
         default:
           /* This should never happen, right? */
           fprintf (stderr, "*** Probable error: unsupported op 0x%x (%c) in %s @ %d\n", ic->op, ic->op, __FILE__, __LINE__);
-          ic = ic;
+          wassertl (0, "Unknown iCode");
         }
     }
 

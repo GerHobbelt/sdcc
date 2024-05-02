@@ -37,14 +37,14 @@ extern int allocInfo;
    CODE GENERATION for a specific MCU . some of the
    routines may be reusable, will have to see */
 
-static char *zero = "0x00";
-static char *one = "0x01";
-static char *spname;
+static const char *zero = "0x00";
+static const char *one = "0x01";
+static char *spname = NULL;
 
-char *fReturnAVR[] = { "r16", "r17", "r18", "r19" };
+const char *fReturnAVR[] = { "r16", "r17", "r18", "r19" };
 unsigned fAVRReturnSize = 4;    /* shared with ralloc.c */
-char **fAVRReturn = fReturnAVR;
-static char *larray[4] = { ">", "<", "hlo8", "hhi8" };
+const char **fAVRReturn = fReturnAVR;
+static const char *larray[4] = { ">", "<", "hlo8", "hhi8" };
 
 static struct {
         short xPushed;
@@ -231,7 +231,7 @@ emitcode (const char *inst, const char *fmt, ...)
 
         va_start (ap, fmt);
 
-        lbp = lb = format_opcode (inst, ap);
+        lbp = lb = format_opcode (inst, fmt, ap);
 
         while (isspace ((unsigned char)*lbp))
                 lbp++;
@@ -376,9 +376,8 @@ getFreePtr (iCode * ic, asmop ** aopp, bool result, bool zonly)
         }
 
         /* other wise this is true end of the world */
-        werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-                "getFreePtr should never reach here");
-        exit (0);
+        werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "getFreePtr should never reach here");
+        exit (EXIT_FAILURE);
 }
 
 /*-----------------------------------------------------------------*/
@@ -1001,7 +1000,7 @@ aopGet (asmop * aop, int offset)
 
         werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
                 "aopget got unsupported aop->type");
-        exit (0);
+        exit (EXIT_FAILURE);
 }
 
 /*-----------------------------------------------------------------*/
@@ -1015,7 +1014,7 @@ aopPut (asmop * aop, char *s, int offset)
         if (aop->size && offset > (aop->size - 1)) {
                 werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
                         "aopPut got offset > aop->size");
-                exit (0);
+                exit (EXIT_FAILURE);
         }
 
         /* will assign value to value */
@@ -1125,7 +1124,7 @@ aopPut (asmop * aop, char *s, int offset)
         default:
                 werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
                         "aopPut got unsupported aop->type");
-                exit (0);
+                exit (EXIT_FAILURE);
         }
 
 }
@@ -1646,6 +1645,7 @@ genPcall (iCode * ic)
            required */
         if (ic->parmBytes) {
                 int i;
+								assert(spname);
                 if (ic->parmBytes > 3) {
                         emitcode ("mov", "a,%s", spname);
                         emitcode ("add", "a,#0x%02x",
@@ -3914,7 +3914,7 @@ genMemPointerGet (operand * left, operand * result, iCode * ic, iCode *pi)
         } else {
                 werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
                         "pointer not in correct register");
-                exit (0);
+                exit (EXIT_FAILURE);
         }
 
         aopOp (result, ic, FALSE);
@@ -4410,7 +4410,7 @@ genMemPointerSet (operand * right, operand * result, iCode * ic, iCode *pi)
         } else {
                 werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
                         "pointer not in correct register");
-                exit (0);
+                exit (EXIT_FAILURE);
         }
         /* if bitfield then unpack the bits */
         if (IS_BITVAR (retype))
@@ -4592,9 +4592,9 @@ genPointerSet (iCode * ic, iCode *pi)
                 break;
 
         default:
-          werror (E_INTERNAL_ERROR, __FILE__, __LINE__,
-                  "genPointerSet: illegal pointer type");
-        }
+          werror (E_INTERNAL_ERROR, __FILE__, __LINE__, "genPointerSet: illegal pointer type");
+					exit(EXIT_FAILURE);
+				}
 
 }
 
@@ -4970,7 +4970,7 @@ genCast (iCode * ic)
                         if (gpVal == -1)
                         {
                             // pointerTypeToGPByte will have bitched.
-                            exit(1);
+                            exit(EXIT_FAILURE);
                         }
 
                         sprintf(gpValStr, "#0x%x", gpVal);

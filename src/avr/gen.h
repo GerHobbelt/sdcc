@@ -76,9 +76,9 @@ asmop;
 void genAVRCode (iCode *);
 void avr_emitDebuggerSymbol (const char *);
 
-extern char *fReturn8051[];
-extern char *fReturn390[];
+extern const char *fReturn8051[];
+extern const char *fReturn390[];
 extern unsigned fAVRReturnSize;
-extern char **fAVRReturn;
+extern const char **fAVRReturn;
 
 #endif

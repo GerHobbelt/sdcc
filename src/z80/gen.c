@@ -15505,7 +15505,7 @@ genJumpTab (const iCode *ic)
   symbol *jtab = NULL;
   operand *jtcond = IC_JTCOND (ic);
   bool pushed_pair = FALSE;
-  PAIR_ID pair;
+  PAIR_ID pair = PAIR_INVALID;
 
   aopOp (jtcond, ic, FALSE, FALSE);
 

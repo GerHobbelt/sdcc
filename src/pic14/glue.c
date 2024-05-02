@@ -317,7 +317,7 @@ pic14_constructAbsMap (struct dbuf_s *oBuf)
       if (aliases && elementsInSet (aliases))
         {
           symbol *sym, *isym = NULL;
-          int size = 0, isize;
+          int size = 0, isize = 0;
           DBG_MSG ("address 0x%04X has %d symbols", addr, elementsInSet (aliases));
           DBG_ENTRY ();
           /* Make sure there is no initialized value at this location! */

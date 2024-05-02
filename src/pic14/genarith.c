@@ -1116,7 +1116,7 @@ void genMinus (iCode *ic)
         int size, opsize, offset = 0, same=0;
         unsigned long lit = 0L;
         int isLit;
-        symbol *lbl_comm, *lbl_next;
+        symbol *lbl_comm, *lbl_next = NULL;
         asmop *left, *right, *result;
 
         FENTRY;

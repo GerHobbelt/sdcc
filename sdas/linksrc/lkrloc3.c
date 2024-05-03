@@ -1149,7 +1149,7 @@ adb_bit(a_uint v, int i)
  */
 
 a_uint
-adb_lo(a_uint v. int i)
+adb_lo(a_uint v, int i)
 {
         a_uint j;
         int m, n;

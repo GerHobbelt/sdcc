@@ -402,9 +402,11 @@ cl_i8020::disassc(t_addr addr, chars *comment)
 	{
 	  i++;
 	  temp= "";
-	  switch (b[i])
+#if 0
+		switch (b[i])
 	    {
 	    }
+#endif
 	  if (comment && temp.nempty())
 	    comment->append(temp);
 	}

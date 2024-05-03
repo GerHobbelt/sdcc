@@ -10,9 +10,13 @@
  *
  */
 
+#include "ddconfig.h"
+
 #include <sys/types.h>
 #include <iostream>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>   /* header for waitpid() and various macros */
+#endif
 #include <signal.h>     /* header for signal functions */
 #include <stdlib.h>
 //#include <unistd.h>
@@ -31,6 +35,8 @@ SigHandler::SigHandler()
 SigHandler::~SigHandler()
 {
 }
+
+#ifdef HAVE_SIGACTION
 
 /* set a signal */
 int SigHandler::SetSignal(int SIGNAL, SIG_PF ACTION)
@@ -104,3 +110,5 @@ int SigHandler::UnBlockSignal(int SIGNAL)
   /* done */
   return(0);
 }
+
+#endif

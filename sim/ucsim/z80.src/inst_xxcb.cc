@@ -31,6 +31,8 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
+#ifdef UCSIM_MCU_DEF_DONE
+
 static unsigned char n_offset;
 
 int
@@ -725,5 +727,7 @@ cl_z80::inst_XXcb(void)
   //PC= instPC;//rom->inc_address(PC, -1);
   return(resINV_INST);
 }
+
+#endif // UCSIM_MCU_DEF_DONE
 
 /* End of z80.src/inst_xxcb.cc */

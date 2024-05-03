@@ -930,11 +930,13 @@ cl_r4k_cpu::write(class cl_memory_cell *cell, t_mem *val)
 const char *
 cl_r4k_cpu::cfg_help(t_addr addr)
 {
-  switch (addr)
+#if 0
+	switch (addr)
     {
-      //case rxk_cpu_xpc: return "MMU register: XPC";
-      //case rxk_cpu_nuof: return "";
+      case rxk_cpu_xpc: return "MMU register: XPC";
+      case rxk_cpu_nuof: return "";
     }
+#endif
   return "Not used";
 }
 

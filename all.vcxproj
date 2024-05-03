@@ -99,9 +99,6 @@
       <Project>{6e94db45-345e-4697-98da-6c72237d6eca}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="src\avr\avr.vcxproj">
-      <Project>{493caaa0-fccc-455f-9127-706b20c3d4c9}</Project>
-    </ProjectReference>
     <ProjectReference Include="src\ds390\ds390.vcxproj">
       <Project>{14a8a991-bad6-49eb-84fb-6f6cf12b436d}</Project>
     </ProjectReference>

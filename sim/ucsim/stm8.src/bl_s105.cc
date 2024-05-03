@@ -1,3 +1,6 @@
+
+#include "bl.h"
+
 /* http://srecord.sourceforge.net/ */
 u8_t bl_s105[] =
 {

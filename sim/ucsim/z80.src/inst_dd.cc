@@ -28,7 +28,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
-//#include "ddconfig.h"
+#include "ddconfig.h"
 
 // local
 #include "z80cl.h"
@@ -49,6 +49,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 #define inst_Xfix  0xDD
 
+#define UCSIM_MCU_DEF_DONE
 #include "inst_xd.cc"
 
 /* End of z80.src/inst_dd.cc */

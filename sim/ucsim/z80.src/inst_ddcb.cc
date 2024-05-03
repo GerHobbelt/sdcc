@@ -48,6 +48,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #define inst_XXcb_set inst_ddcb_set
 #define inst_XXcb inst_ddcb
 
+#define UCSIM_MCU_DEF_DONE
 #include "inst_xxcb.cc"
 
 /* End of z80.src/inst_ddcb.cc */

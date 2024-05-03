@@ -36,7 +36,9 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <stdarg.h>
 #include <stdlib.h>
 //#include <unistd.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <time.h>
 #include <string.h>
 
@@ -261,6 +263,38 @@ strend(const char *search_in, const char *what)
   return false;
 }
 
+#ifndef HAVE_STRCASECMP
+
+int
+strcasecmp(const char *s1, const char *s2) {
+	if (!s1 || !s2) {
+		if (s1 == s2)
+			return 0;
+		if (s1)
+			return 1;
+		return -1;
+	}
+
+	while (*s1 && *s2) {
+		int c1 = tolower(*s1);
+		int c2 = tolower(*s2);
+		int d = s1 - s2;
+		if (d != 0)
+			return d;
+		s1++;
+		s2++;
+	}
+
+	// s1 and/or s2 is pointing to NUL sentinel char now
+	{
+		int c1 = tolower(*s1);
+		int c2 = tolower(*s2);
+		return s1 - s2;
+	}
+}
+
+#endif
+
 bool
 valid_sym_name(char *s)
 {
@@ -398,7 +432,7 @@ colopt2ansiseq(char *opt)
   int fg= -1, bg= -1;
   int ctype= ct_none;
   class cl_option *o= application->options->get_option("color_bg");
-  char *bgcolor;
+  char *bgcolor = "black";
   if (o) o->get_value(&bgcolor);
   
   if (!opt ||

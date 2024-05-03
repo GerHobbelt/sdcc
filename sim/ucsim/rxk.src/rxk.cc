@@ -25,6 +25,8 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
+#include "ddconfig.h"
+
 #include <stdlib.h>
 #include <ctype.h>
 
@@ -877,12 +879,14 @@ cl_rxk_cpu::init(void)
 const char *
 cl_rxk_cpu::cfg_help(t_addr addr)
 {
-  switch (addr)
+#if 0
+	switch (addr)
     {
-      //case rxk_cpu_xpc: return "MMU register: XPC";
-      //case rxk_cpu_nuof: return "";
+      case rxk_cpu_xpc: return "MMU register: XPC";
+      case rxk_cpu_nuof: return "";
     }
-  return "Not used";
+#endif
+	return "Not used";
 }
 
 void

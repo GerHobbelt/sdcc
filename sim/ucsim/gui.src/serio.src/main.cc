@@ -2,18 +2,22 @@
  * to emulate the serial input and output of an 8051 controller               *
  * main.cc - the main stuff                                                   *
  ******************************************************************************/
-//#include "ddconfig.h"
+#include "ddconfig.h"
 
 #include <stdio.h>
 //#include <sys/types.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <iostream>
 #include <stdlib.h>
 //#include <sys/stat.h>
 //#include <fcntl.h>
 //#include <errno.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <signal.h>
 
 #if defined(HAVE_GETOPT_H)
@@ -23,6 +27,10 @@
 #include "fileio.hh"
 #include "frontend.hh"
 #include "posix_signal.hh"
+
+// TODO: Win32/Win64/MSVC
+
+#if defined(HAVE_MKFIFO) && defined(HAVE_CURSES_H)
 
 Viewer *view;
 FileIO *fobj;
@@ -439,3 +447,5 @@ int main(int argc, char **argv)
   delete[] string;
   return(0);
 }
+
+#endif

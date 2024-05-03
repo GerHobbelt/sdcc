@@ -128,6 +128,7 @@ static const char *S_opts[]= {
   NULL
 };
 
+#ifdef HAVE_GETOPT_H
 
 int
 cl_apppblaze::proc_arguments(int argc, char *argv[])
@@ -545,4 +546,4 @@ cl_apppblaze::proc_arguments(int argc, char *argv[])
   return(0);
 }
 
-
+#endif // HAVE_GETOPT_H

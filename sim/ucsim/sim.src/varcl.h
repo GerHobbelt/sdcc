@@ -163,8 +163,8 @@ class cl_var_list: public cl_base
 
   /*! \brief Create and add (or replace) a var labeling a cell.
    */
-  class cl_cvar *add(chars name, class cl_memory *mem, t_addr addr, chars desc) {
-    return add(name, mem, addr, -1, -1, desc);
+  class cl_cvar *add(chars _name, class cl_memory *mem, t_addr addr, chars desc) {
+    return add(_name, mem, addr, -1, -1, desc);
   }
 
   /*! \brief Create and add (or replace) vars using the given list of definitions.

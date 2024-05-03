@@ -28,6 +28,8 @@ flt_name(enum filter_t f)
   return "unknown";
 }
 
+#ifdef HAVE_CURSES_H
+
 Viewer::Viewer()
 {
   /* initialise the output screen */
@@ -294,3 +296,5 @@ int Viewer::GetChInWin(char *res)
 
   return ret;
 }
+
+#endif // HAVE_CURSES_H

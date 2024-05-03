@@ -25,16 +25,20 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
-#include <string.h>
-#include <strings.h>
-#include <unistd.h>
+#include "ddconfig.h"
 
-//#include "ddconfig.h"
+#include <string.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
 
+#include "utils.h"
 #include "pstr.h"
 /*#include "pobjt.h"*/
 #include "pobjcl.h"

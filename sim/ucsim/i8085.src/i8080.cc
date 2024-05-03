@@ -25,6 +25,8 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
+#include "ddconfig.h"
+
 #include <ctype.h>
 
 #include "utils.h"
@@ -393,9 +395,11 @@ cl_i8080::disassc(t_addr addr, chars *comment)
 	{
 	  i++;
 	  temp= "";
-	  switch (b[i])
+#if 0
+		switch (b[i])
 	    {
 	    }
+#endif
 	  if (comment && temp.nempty())
 	    comment->append(temp);
 	}

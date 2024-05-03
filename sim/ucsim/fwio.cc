@@ -11,19 +11,25 @@
 # include HEADER_SOCKET
 #endif
 
-#include <stdio.h>
-#include <wchar.h>
-#include <windows.h>
-#ifdef HAVE_WINCON_H
-#include <wincon.h>
-#endif
 #ifdef HAVE_WINSOCK2_H
 #include <winsock2.h>
 #endif
+#include <stdio.h>
+#include <wchar.h>
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
+#endif
+#ifdef HAVE_WINCON_H
+#include <wincon.h>
+#endif
+#ifdef HAVE_IO_H
 #include <io.h>
+#endif
 #include <fcntl.h>
 #include <stdarg.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <time.h>
 
 #include "fwiocl.h"
@@ -317,7 +323,8 @@ cl_io::check_dev(void)
 		    pick('~');
 		  }
 		else if ((vk >= VK_F13) &&
-			 (vk <= VK_F24))	;
+			 (vk <= VK_F24))
+					(void)0;
 		//else printf("vk=%d 0x%x c='%c'\n",vk,vk,c);
 	      }
 	  }

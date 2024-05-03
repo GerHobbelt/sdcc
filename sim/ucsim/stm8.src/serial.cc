@@ -218,9 +218,9 @@ cl_serial::conf_op(cl_memory_cell *cell, t_addr addr, t_mem *val)
 {
   if (addr < serconf_common)
     return cl_serial_hw::conf_op(cell, addr, val);
-  switch ((enum serial_cfg)addr)
+#if 0
+	switch ((enum serial_cfg)addr)
     {
-      /*
     case serial_:
       if (val)
 	{
@@ -234,11 +234,12 @@ cl_serial::conf_op(cl_memory_cell *cell, t_addr addr, t_mem *val)
 	  cell->set(on?1:0);
 	}
       break;
-      */
+
     default:
       break;
     }
-  return cell->get();
+#endif
+	return cell->get();
 }
 
 int

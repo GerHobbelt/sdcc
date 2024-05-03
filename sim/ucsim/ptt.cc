@@ -1,11 +1,17 @@
+#include "ddconfig.h"
+
 #include <stdio.h>
+#ifdef HAVE_PTHREAD_H
 #include <pthread.h>
+#endif
 
 // simulated system
 struct app {
   long PC;
   bool simulating;
 } sys;
+
+#ifdef HAVE_PTHREAD_H
 
 // locks
 pthread_mutex_t simulation_lock;
@@ -230,3 +236,5 @@ main(int argc, char *argv[])
     }
   return(0);
 }
+
+#endif

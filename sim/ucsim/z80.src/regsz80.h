@@ -32,6 +32,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 #include "ddconfig.h"
 
+#include "stypes.h"
 
 struct t_regpair
 {

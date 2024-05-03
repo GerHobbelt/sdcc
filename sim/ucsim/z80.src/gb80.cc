@@ -106,7 +106,8 @@ cl_gb80::make_memories(void)
   rom->init();
   address_spaces->add(rom);
 
-  ad= new cl_address_decoder(as= address_space("rom"),
+	as= address_space("rom");
+  ad= new cl_address_decoder(as,
 			     chip,
 			     0,//lr35902_rom_start,
 			     0xffff,//lr35902_rom_size-1,

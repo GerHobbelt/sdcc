@@ -25,6 +25,9 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
+#include "ddconfig.h"
+
+#include "utils.h"
 #include "simi8048cl.h"
 #include "i8041cl.h"
 #include "glob.h"

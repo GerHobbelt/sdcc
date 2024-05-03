@@ -28,8 +28,14 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #ifndef UTILS_HEADER
 #define UTILS_HEADER
 
+#include "ddconfig.h"
+
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
+#ifdef HAVE_STRINGS_H
+#include <strings.h>		// strcasecmp
+#endif
 #include <stdarg.h>
 
 // prj
@@ -56,6 +62,9 @@ extern const char *object_name(class cl_base *o);
 extern char *case_string(enum letter_case lcase, const char *str);
 extern chars cbin(long data, int bits);
 
+#ifndef HAVE_STRCASECMP
+extern int strcasecmp(const char *s1, const char *s2);
+#endif
 extern int strispn(char *s, char c);
 extern bool strend(const char *search_in, const char *what);
 extern bool valid_sym_name(char *s);

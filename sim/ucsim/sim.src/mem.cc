@@ -27,6 +27,8 @@
 */
 /*@1@*/
 
+#include "ddconfig.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -443,7 +445,7 @@ cl_memory::dump(int smart,
               con->dd_printf(" %*u", (nbits > 16 ? 10 : (nbits > 8 ? 5 : 3)), m);
 
               if (nbits == width && (m & (1U << (nbits - 1))))
-                con->dd_printf(" (%*d)", (nbits > 16 ? 10 : (nbits > 8 ? 5 : 3)), 0 - ((1U << nbits) - m));
+                con->dd_printf(" (%*d)", (nbits > 16 ? 10 : (nbits > 8 ? 5 : 3)), 0 - (int)((1U << nbits) - m));
 
               con->dd_printf("\n");
               if (lines > 0)
@@ -2127,7 +2129,7 @@ cl_memory_chip::is_slot(void *data_ptr, t_addr *addr_of)
     return false;
   t_addr i= p - a;
   if (width <= 8)
-    /*i*/;
+    /*i*/ (void)0;
   if (width <= 16)
     i= i/2;
   if (width <= 32)

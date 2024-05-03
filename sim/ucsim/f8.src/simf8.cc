@@ -25,6 +25,9 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
+#include "ddconfig.h"
+
+#include "utils.h"
 #include "simf8cl.h"
 #include "f8cl.h"
 #include "glob.h"

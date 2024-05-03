@@ -1,3 +1,9 @@
+#ifndef SIM_OBSOLETE_HEADER
+#define SIM_OBSOLETE_HEADER
+
+#include "stypes.h"
+#include "memcl.h"
+
 /*
 class cl_mem: public cl_guiobj
 {
@@ -53,7 +59,7 @@ public:
 				     bool announce)
   { return(0); }
   virtual void set_brk(t_addr //addr
-		       , class cl_brk *//brk
+		       , class cl_brk * //brk
 		       ) {}
   virtual void del_brk(t_addr addr, class cl_brk *brk) {}
 #ifdef STATISTIC
@@ -90,7 +96,6 @@ public:
   virtual class cl_event_handler *get_event_handler(void);
 };
 */
-
 
 class cl_m: public cl_memory
 {
@@ -283,4 +288,4 @@ public:
   virtual bool del_bp(class cl_brk *bp);
 };
 
-
+#endif

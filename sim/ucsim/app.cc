@@ -35,7 +35,13 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #endif
 #include <ctype.h>
 #include <errno.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
+
 #include "i_string.h"
 
 // prj
@@ -380,6 +386,8 @@ static const char *I_opts[]= {
   /*IOPT_OUT*/		"out",
   NULL
 };
+
+#ifdef HAVE_GETOPT_H
 
 int
 cl_app::proc_arguments(int argc, char *argv[])
@@ -904,6 +912,11 @@ cl_app::proc_arguments(int argc, char *argv[])
   return(0);
 }
 
+#else
+
+// TODO: minimal app for restricted systems
+
+#endif // HAVE_GETOPT_H
 
 class cl_uc *
 cl_app::get_uc(void)

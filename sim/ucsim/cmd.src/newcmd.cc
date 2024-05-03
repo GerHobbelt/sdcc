@@ -26,14 +26,16 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
-//#include "ddconfig.h"
+#include "ddconfig.h"
 
 #include <stdio.h>
 //#include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <errno.h>
 
@@ -247,7 +249,7 @@ cl_console_base::print_expr_result(t_mem val, const char *fmt)
 		    {
 		    case '\a': con->dd_printf("'\\a'"); break;
 		    case '\b': con->dd_printf("'\\b'"); break;
-		    case '\e': con->dd_printf("'\\e'"); break;
+		    //case '\e': con->dd_printf("'\\e'"); break;
 		    case '\f': con->dd_printf("'\\f'"); break;
 		    case '\n': con->dd_printf("'\\n'"); break;
 		    case '\r': con->dd_printf("'\\r'"); break;
@@ -757,7 +759,7 @@ cl_console_base::set_interactive(bool new_value)
 bool
 cl_console_base::get_flag(int flag)
 {
-  return flags & flag;
+  return !!(flags & flag);
 }
 
 bool
@@ -1124,7 +1126,7 @@ cl_commander_base::flag_printf(int iflags, const char *format, ...)
   for (i= 0; i < cons->count; i++)
     {
       class cl_console_base *c= (class cl_console_base*)(cons->at(i));
-      if ((c->get_flag(iflags)) == iflags)
+      if (c->get_flag(iflags))
         {
           va_start(ap, format);
           ret= c->cmd_do_print(format, ap);

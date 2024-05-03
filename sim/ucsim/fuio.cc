@@ -19,19 +19,33 @@
 # include <gnu/types.h>
 #endif
 
-# include <netinet/in.h>
-# include <arpa/inet.h>
+#if defined HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#if defined HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
 #include <signal.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <time.h>
 #include <string.h>
 #include <stdarg.h>
 #include <fcntl.h>
+#ifdef HAVE_TERMIOS_H
 #include <termios.h>
+#endif
 
 #include "utils.h"
 

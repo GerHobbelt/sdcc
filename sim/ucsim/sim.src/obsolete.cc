@@ -1,3 +1,9 @@
+
+#include "ddconfig.h"
+
+#include "stypes.h"
+#include "obsolete.h"
+
 /*
  * Memory location handled specially by a hw element
  */

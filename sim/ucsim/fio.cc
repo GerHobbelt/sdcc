@@ -27,17 +27,28 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 #include "ddconfig.h"
 
+#ifdef HAVE_WINSOCK2_H
+#include <winsock2.h>
+#endif
 #include <stdio.h>
 //#include <sys/time.h>
 #include <sys/types.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include HEADER_FD
 //#include <errno.h>
 #include <string.h>
 #if defined HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
+#endif
+#if defined HAVE_NETINET_IN_H
 # include <netinet/in.h>
+#endif
+#if defined HAVE_ARPA_INET_H
 # include <arpa/inet.h>
+#endif
+#if defined HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 #endif
 #include <stdlib.h>
@@ -45,13 +56,16 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <stdarg.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-
-// These two flags aren't defined on some platforms
-#ifndef S_IRGRP
-#define S_IRGRP 0
+#ifdef HAVE_IO_H
+#include <io.h>
 #endif
-#ifndef S_IROTH
-#define S_IROTH 0
+
+// These flags aren't defined on some platforms
+#if defined (S_IRUSR) && defined (S_IWUSR) && defined (S_IRGRP) && defined (S_IWGRP) && defined (S_IROTH) && defined (S_IWOTH)
+#define PUBLIC_MODE  \
+    (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
+#else
+#define PUBLIC_MODE 0644
 #endif
 
 #include "fiocl.h"
@@ -248,7 +262,7 @@ cl_f::init(void)
     {
       if (file_mode.empty())
 	file_mode= "r+";
-      if ((file_id= ::open(file_name, open_flags(file_mode), (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH))) >= 0)
+      if ((file_id= ::open(file_name, open_flags(file_mode), PUBLIC_MODE)) >= 0)
 	{
 	  tty= isatty(file_id);
 	  own= true;
@@ -584,12 +598,14 @@ cl_f::process_esc(char c)
     {
       if (ci == '\033')
 	{
-	  esc_buffer[0]= '\033', esc_buffer[1]= 0;
+				esc_buffer[0]= '\033';
+				esc_buffer[1]= 0;
 	  return 0;
 	}
       if (ci == 0xff)
 	{
-	  esc_buffer[0]= 0xff, esc_buffer[1]= 0;
+				esc_buffer[0]= 0xff;
+				esc_buffer[1]= 0;
 	  return 0;
 	}
     }

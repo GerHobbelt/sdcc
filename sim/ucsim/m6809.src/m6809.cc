@@ -25,6 +25,8 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
+#include "ddconfig.h"
+
 #include <stdlib.h>
 #include <ctype.h>
 
@@ -1267,7 +1269,7 @@ cl_m6809::inst_alu(t_mem code)
 {
   u8_t *acc, op8, idx;
   u16_t op16;
-  t_addr ea;
+  t_addr ea = 0;
   
   if (code == 0x87 ||
       code == 0xc7 ||
@@ -2395,7 +2397,7 @@ cl_m6809::inst_page1(t_mem code)
 int
 cl_m6809::inst_page2(t_mem code)
 {
-  t_addr ea;
+  t_addr ea = 0;
   u8_t op8= 0, idx;
   u16_t op16;
   

@@ -31,6 +31,8 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA. */
 /*@1@*/
 
+#if defined(FUNC1) && defined(FUNC2)
+
   switch (operands) {
     case REG_REG:
       if (code & 0x0800) {  /* word op */
@@ -283,3 +285,4 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
     break;
   }
 
+#endif

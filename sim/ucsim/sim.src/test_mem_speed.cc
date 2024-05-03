@@ -1,11 +1,16 @@
+#include "ddconfig.h"
+
 #include <signal.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdio.h>
 
 #include "memcl.h"
 #include "hwcl.h"
 
 #include "newcmdcl.h"
+#include "obsolete.h"
 
 static int go;
 

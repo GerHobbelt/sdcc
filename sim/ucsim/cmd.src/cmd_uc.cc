@@ -914,7 +914,7 @@ COMMAND_DO_WORK_UC(cl_var_cmd)
 				 cmdline->param(3),
 				 cmdline->param(4) };
   class cl_memory *m= NULL;
-  t_addr addr;
+  t_addr addr = 0;
   bool addr_set= false;
   int bitnr_low= -1;
   int bitnr_high= -1;

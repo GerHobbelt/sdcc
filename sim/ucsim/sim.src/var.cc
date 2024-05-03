@@ -338,10 +338,10 @@ cl_var_list::get_max_name_len(void)
 }
 
 bool
-cl_var_list::del(const char *name)
+cl_var_list::del(const char *_name)
 {
   t_index name_i;
-  bool found = by_name.search(name, name_i);
+  bool found = by_name.search(_name, name_i);
 
   if (found)
     {
@@ -360,11 +360,11 @@ cl_var_list::del(const char *name)
 class cl_cvar *
 cl_var_list::add(class cl_cvar *item)
 {
-  const char *name = item->get_name();
+  const char *_name = item->get_name();
 
-  if (!del(name))
+  if (!del(_name))
     {
-      size_t l = strlen(name);
+      size_t l = strlen(_name);
       if (l > max_name_len)
         max_name_len = l;
     }
@@ -415,23 +415,23 @@ cl_var_list::add(class cl_cvar *item)
 }
 
 class cl_cvar *
-cl_var_list::add(chars name, class cl_memory *mem, t_addr addr, int bitnr_high, int bitnr_low, chars desc)
+cl_var_list::add(chars _name, class cl_memory *mem, t_addr addr, int bitnr_high, int bitnr_low, chars desc)
 {
   class cl_cvar *var;
 
-  var = new cl_var(name, mem, addr, desc, bitnr_high, bitnr_low);
+  var = new cl_var(_name, mem, addr, desc, bitnr_high, bitnr_low);
   var->init();
   return add(var);
 }
 
 class cl_cvar *
-cl_var_list::add(chars name, const char *cellname, int bitnr_high, int bitnr_low, chars desc)
+cl_var_list::add(chars _name, const char *cellname, int bitnr_high, int bitnr_low, chars desc)
 {
   int i;
   if (by_name.search(cellname, i))
     {
       class cl_cvar *var = (cl_var*)by_name.at(i);
-      return add(name, var->get_mem(), var->get_addr(), bitnr_high, bitnr_low, desc);
+      return add(_name, var->get_mem(), var->get_addr(), bitnr_high, bitnr_low, desc);
     }
 
   return NULL;
@@ -457,9 +457,9 @@ cl_var_list::add(chars prefix, class cl_memory *mem, t_addr base, const struct v
               int i;
               if (by_name.search(regname, i))
                 {
-                  cl_var *var = (cl_var*)by_name.at(i);
-                  if (var->get_mem() == mem)
-                    offset = var->get_addr() - base;
+                  cl_var *_var = (cl_var*)by_name.at(i);
+                  if (_var->get_mem() == mem)
+                    offset = _var->get_addr() - base;
                 }
             }
           else
@@ -497,12 +497,12 @@ cl_var_list::by_cell(class cl_memory_cell *c)
 }
 
 t_mem
-cl_var_list::read(chars name)
+cl_var_list::read(chars _name)
 {
   bool found;
   t_index i;
   class cl_cvar *v;
-  found= by_name.search(name, i);
+  found= by_name.search(_name, i);
   if (found)
     {
       v= by_name.at(i);

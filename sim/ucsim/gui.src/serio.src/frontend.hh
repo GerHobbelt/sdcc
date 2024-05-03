@@ -5,8 +5,12 @@
 #ifndef FRONTEND_HEADER
 #define FRONTEND_HEADER
 
+#include "ddconfig.h"
+
 #include <sys/types.h>
+#ifdef HAVE_CURSES_H
 #include <curses.h>
+#endif
 
 #include "config.h"
 
@@ -31,6 +35,8 @@ enum filter_t
    flt_none,
    flt_hex
   };
+
+#ifdef HAVE_CURSES_H
 
 class Viewer
 {
@@ -59,5 +65,7 @@ private:
   unsigned char ohex_buf[16];//, ihex_buf[16];
   int ohex_ptr, ihex_ptr, ihex_high, ihex_val;
 };
+
+#endif
 
 #endif

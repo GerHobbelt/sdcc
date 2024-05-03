@@ -56,7 +56,7 @@ Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 COMMAND_DO_WORK_SIM(cl_run_cmd)
 {
   class cl_brk *b;
-  t_addr start, end;
+  t_addr start = 0, end = 0;
   class cl_cmd_arg *params[4]= { cmdline->param(0),
 				 cmdline->param(1),
 				 cmdline->param(2),
@@ -87,7 +87,8 @@ COMMAND_DO_WORK_SIM(cl_run_cmd)
 	      con->dd_printf("Addresses must be different.\n");
 	      return(false);
 	    }
-	  if ((b= sim->uc->fbrk_at(end)))
+		b= sim->uc->fbrk_at(end);
+	  if (b)
 	    {
 	    }
 	  else

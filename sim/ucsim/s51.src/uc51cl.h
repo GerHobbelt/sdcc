@@ -30,6 +30,8 @@
 #ifndef UC51CL_HEADER
 #define UC51CL_HEADER
 
+#include "ddconfig.h"
+
 #include <stdio.h>
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>

@@ -1446,7 +1446,7 @@
 	Use htab->sgot and htab->got_info.
 	(mips_elf_sort_hash_table): Remove the DYNOBJ local variable.
 	Don't call mips_elf_got_info; use htab->got_info instead.
-	(mips_elf_record_global_got_symbol): Turn G from a paramter to
+	(mips_elf_record_global_got_symbol): Turn G from a parameter to
 	a local variable and read it from htab->got_info.
 	(mips_elf_record_local_got_symbol): Replace the G parameter with
 	an INFO parameter.  Make G a local variable and read it from

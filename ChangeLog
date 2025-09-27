@@ -13734,7 +13734,7 @@
 2018-10-08 Philipp Klaus Krause <pkk AT spth.de>
 
 	* src/z80/gen.c:
-	  Improve code generation for 8-bit integers (addition of small constants, paramter passing) (RFE #583).
+	  Improve code generation for 8-bit integers (addition of small constants, parameter passing) (RFE #583).
 	* rc/SDCCBBlock.c,
 	  src/SDCCBBlock.h,
 	  src/SDCCsymt.c,

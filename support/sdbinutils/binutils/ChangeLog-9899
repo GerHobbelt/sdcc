@@ -31,7 +31,7 @@
 
 	* dlltool.c (mtable): Stop compile time warnings about missing
 	initialisers.
-	(yyerror): Stop compile time warnings about unused paramater.
+	(yyerror): Stop compile time warnings about unused parameter.
 	(INIT_SEC_DATA): New macro: initialise an entry in the secdata
 	array.
 	(secdata): Stop ccompile time warnings about uninitialised

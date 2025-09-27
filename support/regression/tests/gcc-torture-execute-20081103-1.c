@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-// TODO: Enable when sdcc can pass structures as paramters.
+// TODO: Enable when sdcc can pass structures as parameters.
 
 struct S { char c; char arr[4]; float f; };
 

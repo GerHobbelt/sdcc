@@ -135,7 +135,7 @@
 	(process_section_headers): Check do_debug_addr and do_debug_cu_index.
 	(section_subset): New global variable.
 	(load_debug_section): Restrict search to section subset.
-	(display_debug_section): Add section index as paramter.  Select subset
+	(display_debug_section): Add section index as parameter.  Select subset
 	of sections when dumping a .dwp file.  Update caller.
 
 2012-10-23  Tom Tromey  <tromey@redhat.com>

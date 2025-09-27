@@ -1,6 +1,6 @@
 /* bug-2773.c
 
-   Missing diagnostic on duplicate paramter name
+   Missing diagnostic on duplicate parameter name
  */
 
 #ifdef TEST1
